@@ -38,9 +38,10 @@
   .topbtn:hover{background:rgba(255,255,255,.16)}
 
   /* ── 드로어 ── */
-  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim{position:fixed;top:var(--drawerTop,0px);left:0;right:0;height:var(--drawerH,100%);background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
   .scrim.open{opacity:1;pointer-events:auto}
-  .drawer{position:fixed;top:0;left:0;bottom:0;width:340px;max-width:88vw;background:var(--paper);
+  .drawer{position:fixed;top:var(--drawerTop,0px);left:0;height:var(--drawerH,100%);
+    width:340px;max-width:88vw;background:var(--paper);
     border-right:1px solid var(--ink);z-index:80;display:flex;flex-direction:column;
     transform:translateX(-100%);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
   .drawer.open{transform:none}
@@ -498,7 +499,7 @@
 
   /* 모바일: 어떤 요소도 화면 밖으로 페이지를 밀지 못하게 가둔다 */
   html,body{max-width:100%;overflow-x:hidden}
-  .wrap,.main,.layout{max-width:100%;min-width:0}
+  .main,.layout{max-width:100%;min-width:0}
   .cmpscroll,.cmpbox,.cmp{max-width:100%}
   .xwrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .item,.iname,.imeta{min-width:0}
@@ -607,7 +608,7 @@
 
   /* 모바일: 필터 버튼·축 라벨·카드의 왼쪽 시작선을 하나로 맞춘다 */
   @media(max-width:760px){
-    .wrap{padding-left:14px;padding-right:14px}
+    .wrap{padding-left:14px;padding-right:14px;max-width:100%}
     .topin{padding-left:14px;padding-right:14px}
     .menubtn{box-shadow:0 0 0 14px var(--ink), 16px 0 12px -8px rgba(0,0,0,.6)}
     .dstrip .wrap{padding-left:14px;padding-right:14px}
@@ -876,6 +877,7 @@ function toList(){
   const y=$('listAnchor').getBoundingClientRect().top+window.pageYOffset-64;
   if(window.pageYOffset>y) window.scrollTo({top:Math.max(y,0)});
 }
+$('menuBtn').addEventListener('click',function(e){ try{ fitDrawer(); }catch(err){} },{capture:true});
 $('menuBtn').addEventListener('click',openDrawer);
 $('closeDrawer').addEventListener('click',closeDrawer);
 $('scrim').addEventListener('click',closeDrawer);
@@ -885,8 +887,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('re
 
 /* ── 필터 구성 ── */
 function buildGroups(){ return [
-  {grp:'운영 확인',field:'confirm',opts:(AGG.confirm||[]).map(([k,v])=>[k,k+' '+v])},
-  {grp:'사업 형태',field:'form',opts:(AGG.form||[]).map(([k,v])=>[k,k+' '+v])},
   {grp:'ESG',field:'esg',opts:[['E','E · 환경'],['S','S · 사회']]},
   {grp:'혁신 유형',field:'innov',opts:(AGG.innov||[]).filter(([k])=>k&&k!=='미분류').map(([k,v])=>[k,k+' '+v])},
   {grp:'산업군',field:'ind',opts:AGG.ind_filter.slice().sort(function(a,b){if(a[0]==='기타')return 1; if(b[0]==='기타')return -1;return String(a[0]).localeCompare(String(b[0]),'ko');}).map(([k,v])=>[k,k+' '+v])},
@@ -912,7 +912,7 @@ $('filterWrap').addEventListener('click',e=>{
   const c=e.target.closest('.chip'); if(!c) return;
   toggleChip(c.dataset.field,c.dataset.val);
 });
-const SINGLE={innov:1,kind:1,confirm:1,form:1};   // 산업군·혁신유형은 하나만 선택
+const SINGLE={innov:1,kind:1};   // 산업군·혁신유형은 하나만 선택
 function toggleChip(field,val){
   const k=field+':'+val;
   const was=!!active[k];
@@ -1290,6 +1290,21 @@ function closeCompare(){
   if(window.cmpReset) window.cmpReset();
   document.documentElement.style.overflow=''; document.body.style.overflow='';$('cmpModal').classList.remove('open');}
 if($('toast')) $('toast').addEventListener('click',hideToast);
+/* 필터 서랍 — iframe 안에서는 창 기준이 어긋나므로 실제 보이는 영역을 계산해 맞춘다 */
+function fitDrawer(){
+  const sy = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+  const vh = window.__viewH || window.innerHeight;
+  const top = (window.__viewTop != null) ? window.__viewTop : sy;
+  document.documentElement.style.setProperty('--drawerTop', Math.round(top) + 'px');
+  document.documentElement.style.setProperty('--drawerH', Math.round(vh) + 'px');
+}
+window.__fitDrawer = fitDrawer;
+window.addEventListener('resize', fitDrawer);
+window.addEventListener('scroll', function(){
+  const dw = $('drawer');
+  if (dw && dw.classList.contains('open')) fitDrawer();
+}, {passive:true});
+fitDrawer();
 /* 로딩 마스크는 상단 검은 바 아래에서 시작한다 */
 (function(){
   function setTop(){
