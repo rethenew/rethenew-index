@@ -47,7 +47,10 @@
   .dhead{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--ink)}
   .dhead h2{font-size:15px;font-weight:900;letter-spacing:.02em}
   .xbtn{background:none;border:none;font-size:19px;line-height:1;cursor:pointer;color:var(--ink);padding:2px 4px}
-  .dbody{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:4px 16px 16px}
+  .dbody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;padding:4px 16px 16px}
+  .dbody > :last-child{margin-bottom:0}
+  .fgroup:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
   .dfoot{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--ink);background:var(--g05)}
   .dfoot button{flex:1;padding:12px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer}
   .dfoot .apply{background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
@@ -553,6 +556,22 @@
     .cmpgo{white-space:nowrap}
     #activeBar:not(:empty){margin:12px 0 14px}
   }
+
+  .loading{padding:26px 10px;text-align:center;font-size:13px;color:var(--g60)}
+  body.ready .loading{display:none}
+  /* 아이폰 상단 바 잘림 방지 */
+  header.top .wrap,.dstrip .wrap{padding-left:max(12px,env(safe-area-inset-left));
+    padding-right:max(12px,env(safe-area-inset-right))}
+  @media(max-width:760px){
+    .topin{padding-left:max(12px,env(safe-area-inset-left));
+      padding-right:max(12px,env(safe-area-inset-right))}
+  }
+
+  /* 제목줄·필터칩·목록의 좌우 시작점을 맞춘다 */
+  .listhead{padding-left:0;padding-right:0}
+  .activebar{padding-left:0;padding-right:0}
+  .lthead{padding-left:1px}
+  .lcwrap{padding-right:1px}
 </style></head>
 <body>
 
@@ -593,6 +612,7 @@
   <div class="layout">
     <div class="main">
       <span id="listAnchor" aria-hidden="true"></span>
+      <div class="loading" id="loadingBox">불러오는 중…</div>
       <div class="listhead"><div class="lthead"><h3 id="listTitle">전체 LIST</h3><span class="innovnote" id="innovNote"></span></div><span class="lcwrap"><span class="lc" id="listCount"></span><span class="btnrow"><button type="button" class="cmpgo shuffle" id="shuffleBtn">LIST 섞기</button><button type="button" class="cmpgo" id="cmpGo">비교하기<span class="cn" id="cmpGoN"></span></button></span></span></div>
       <div class="notice"><b id="pastNoticeTitle">이전 마무리 아카이브</b> — 최근 운영 기록이 확인되지 않는 기획을 모은 자료입니다. <b>운영 중인 캠페인이 아니므로 현행 사례로 인용하지 마십시오.</b> 기획 아이디어·구조 참고용이며, 인용 시 가동 시기를 반드시 함께 표기해야 합니다.</div>
       <div class="activebar" id="activeBar"></div>
@@ -689,6 +709,7 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
   }
   function boot(){
     ready(function(){
+      document.body.classList.add('ready');
       var s=document.getElementById('mainjs');
       if(!s){ note('초기화 실패: mainjs 없음'); return; }
       try{ (new Function(s.textContent))(); }
@@ -831,6 +852,7 @@ function buildGroups(){ return [
   {grp:'GRI',field:'gri',opts:AGG.gri.map(([k])=>[k,'GRI '+k])}
 ];}
 const MULTI={sdgs:1,gri:1,benef:1};
+const MULTI_OR={ind:1};   // 값이 하나뿐인 필드의 복수 선택 = OR
 const LABEL={};
 function buildFilters(){
   let G=buildGroups();
@@ -847,12 +869,12 @@ $('filterWrap').addEventListener('click',e=>{
   const c=e.target.closest('.chip'); if(!c) return;
   toggleChip(c.dataset.field,c.dataset.val);
 });
-const SINGLE={ind:1,innov:1,kind:1,confirm:1,form:1};   // 산업군·혁신유형은 하나만 선택
+const SINGLE={innov:1,kind:1,confirm:1,form:1};   // 산업군·혁신유형은 하나만 선택
 function toggleChip(field,val){
   const k=field+':'+val;
   const was=!!active[k];
   if(SINGLE[field]) Object.keys(active).forEach(x=>{if(x.indexOf(field+':')===0) delete active[x];});
-  if(was) delete active[k]; else active[k]=[field,val,MULTI[field]?1:0];
+  if(was) delete active[k]; else active[k]=[field,val,(MULTI[field]||MULTI_OR[field])?1:0];
   shown=PAGE; sync(); render(); toList();
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
@@ -940,6 +962,7 @@ function matchF(x){
   for(const f in byField){
     const conds=byField[f];
     if(f==='esg'){ if(!conds.every(c=>String(x.esg).indexOf(c[0])>=0)) return false; }
+    else if(MULTI_OR[f]){ if(!conds.some(c=>String(x[f]||'')===c[0])) return false; }
     else if(MULTI[f]){ if(!conds.every(c=>(x[f]||[]).includes(c[0]))) return false; }
     else { if(!conds.some(c=>String(x[f])===String(c[0]))) return false; }
   }
