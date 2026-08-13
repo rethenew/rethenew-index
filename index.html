@@ -576,10 +576,16 @@
   .lthead{padding-left:1px}
   .lcwrap{padding-right:1px}
 
-  .loadmask{position:fixed;left:0;right:0;bottom:0;top:var(--maskTop,56px);z-index:200;
-    background:var(--paper);display:flex;align-items:center;justify-content:center;
+  /* iframe 안에서 fixed는 iframe 전체 높이 기준이라 가운데 정렬하면 글씨가 화면 밖으로 간다.
+     위쪽에 붙여 어떤 높이에서도 보이게 한다. */
+  /* iframe 안에서는 fixed 기준이 어긋난다. 문서 흐름 안에 두고 화면을 덮는다. */
+  .loadmask{position:absolute;left:0;right:0;top:0;min-height:100%;z-index:200;
+    background:var(--paper);display:block;text-align:center;
+    padding:calc(var(--maskTop,56px) + 70px) 16px 40px;
     transition:opacity .2s;opacity:1}
-  body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
+  @media(max-width:620px){ .loadmask{padding-top:calc(var(--maskTop,56px) + 50px)} }
+  body.ready .loadmask{display:none}
+  body{position:relative}
   .loadin{text-align:center}
   .loadmask .ld1{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
   .loadmask .ld2{margin:0;font-size:14px;font-weight:500;color:var(--g60)}
@@ -597,6 +603,17 @@
   @media(max-width:760px){
     .axlab{width:74px}
     .axrow{gap:8px}
+  }
+
+  /* 모바일: 필터 버튼·축 라벨·카드의 왼쪽 시작선을 하나로 맞춘다 */
+  @media(max-width:760px){
+    .wrap{padding-left:14px;padding-right:14px}
+    .topin{padding-left:14px;padding-right:14px}
+    .menubtn{box-shadow:0 0 0 14px var(--ink), 16px 0 12px -8px rgba(0,0,0,.6)}
+    .dstrip .wrap{padding-left:14px;padding-right:14px}
+    .axlab{width:66px}
+    .axrow{gap:8px}
+    .listhead,.activebar,.list2{margin-left:0;margin-right:0}
   }
 </style></head>
 <body>
