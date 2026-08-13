@@ -560,8 +560,11 @@
   .loading{padding:26px 10px;text-align:center;font-size:13px;color:var(--g60)}
   body.ready .loading{display:none}
   /* 아이폰 상단 바 잘림 방지 */
-  header.top .wrap,.dstrip .wrap{padding-left:max(12px,env(safe-area-inset-left));
-    padding-right:max(12px,env(safe-area-inset-right))}
+  header.top .wrap{padding-left:max(14px,env(safe-area-inset-left));
+    padding-right:max(14px,env(safe-area-inset-right))}
+  /* A·B 축 영역을 카드 목록과 같은 시작선에 맞춘다 */
+  .dstrip .wrap{padding-left:max(14px,env(safe-area-inset-left));
+    padding-right:max(14px,env(safe-area-inset-right))}
   @media(max-width:760px){
     .topin{padding-left:max(12px,env(safe-area-inset-left));
       padding-right:max(12px,env(safe-area-inset-right))}
@@ -577,8 +580,24 @@
     background:var(--paper);display:flex;align-items:center;justify-content:center;
     transition:opacity .2s;opacity:1}
   body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
-  .loadmask span{font-size:14px;font-weight:700;color:var(--g60);letter-spacing:-.01em}
+  .loadin{text-align:center}
+  .loadmask .ld1{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .loadmask .ld2{margin:0;font-size:14px;font-weight:500;color:var(--g60)}
+  @media(max-width:620px){
+    .loadmask .ld1{font-size:14px}
+    .loadmask .ld2{font-size:13px}
+  }
   @media print{.loadmask{display:none}}
+
+  /* 축 스트립: 첫 항목이 잘리지 않게 좌우 여백 확보 */
+  .dstripin{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding:2px 2px 2px 0;scroll-padding-left:2px}
+  .dstripin::-webkit-scrollbar{display:none}
+  .axrow{min-width:0}
+  @media(max-width:760px){
+    .axlab{width:74px}
+    .axrow{gap:8px}
+  }
 </style></head>
 <body>
 
@@ -587,7 +606,7 @@
     <span class="bars"><i></i><i></i><i></i></span>필터<span class="fcnt" id="fcnt">0</span>
   </button>
   <div class="logo">리더뉴 지속가능 <span class="idx">INDEX</span></div>
-  <div class="topsearch"><input id="q" placeholder="사회공헌 · CSR · CSV 사업 및 조직명 검색" aria-label="검색"></div>
+  <div class="topsearch"><input id="q" placeholder="검색어를 입력해주세요." aria-label="검색"></div>
   <button class="topbtn label" id="reqBtn" title="정보 반영 요청">정보 반영 요청하기</button>
   <button class="topbtn label" id="noticeBtn" title="안내사항">안내사항</button>
   
@@ -857,7 +876,8 @@ function buildGroups(){ return [
   {grp:'SDGs',field:'sdgs',opts:AGG.sdg.map(([k])=>[k,k])},
   {grp:'GRI',field:'gri',opts:AGG.gri.map(([k])=>[k,'GRI '+k])}
 ];}
-const MULTI={sdgs:1,gri:1,benef:1};
+const MULTI={sdgs:1,gri:1};        // 전부 포함(AND)
+const MULTI_ANY={benef:1};          // 하나라도 해당(OR)
 const MULTI_OR={ind:1};   // 값이 하나뿐인 필드의 복수 선택 = OR
 const LABEL={};
 function buildFilters(){
@@ -880,7 +900,7 @@ function toggleChip(field,val){
   const k=field+':'+val;
   const was=!!active[k];
   if(SINGLE[field]) Object.keys(active).forEach(x=>{if(x.indexOf(field+':')===0) delete active[x];});
-  if(was) delete active[k]; else active[k]=[field,val,(MULTI[field]||MULTI_OR[field])?1:0];
+  if(was) delete active[k]; else active[k]=[field,val,(MULTI[field]||MULTI_OR[field]||MULTI_ANY[field])?1:0];
   shown=PAGE; sync(); render(); toList();
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
@@ -902,7 +922,7 @@ buildStrip();
 $('domStrip').addEventListener('click',e=>{
   const p=e.target.closest('.dpill'); if(!p) return;
   const wasDom = p.dataset.dom ? !!active['domain:'+p.dataset.dom] : false;
-  Object.keys(active).forEach(k=>{if(k.indexOf('domain:')===0) delete active[k];});
+  Object.keys(active).forEach(k=>{if(k.indexOf('domain:')===0) delete active[k];});   // A축 단일
   if(p.dataset.dom && !wasDom) active['domain:'+p.dataset.dom]=['domain',p.dataset.dom,0];
   shown=PAGE; sync(); render(); toList();
 });
@@ -910,9 +930,9 @@ $('domStrip').addEventListener('click',e=>{
 $('benStrip').addEventListener('click',e=>{
   const p=e.target.closest('.dpill'); if(!p) return;
   const k='benef:'+p.dataset.ben;
-  const was=!!active[k];
-  Object.keys(active).forEach(x=>{if(x.indexOf('benef:')===0) delete active[x];});   // 단일 선택
-  if(p.dataset.ben && !was) active[k]=['benef',p.dataset.ben,1];
+  if(!p.dataset.ben){ Object.keys(active).forEach(x=>{if(x.indexOf('benef:')===0) delete active[x];}); }
+  else if(active[k]) delete active[k];
+  else active[k]=['benef',p.dataset.ben,1];   // B축 복수 선택
   shown=PAGE; sync(); render(); toList();
 });
 
@@ -959,16 +979,25 @@ $('activeBar').addEventListener('click',e=>{
 });
 
 /* ── 필터링 ── */
-function matchF(x){
+let __byField=null, __qTokens=null;
+function prepFilter(){
+  __byField={};
+  for(const key in active){const f=active[key][0],v=active[key][1],mode=active[key][2];(__byField[f]=__byField[f]||[]).push([v,mode]);}
   const q=$('q').value.trim().toLowerCase();
-  if(q){const hay=(x.name+x.host+x.partner+x.impact+x.action+x.domain+x.ind+x.benef+(x.sdgs||[]).join()+(x.gri||[]).join()).toLowerCase();
-    if(!q.split(' ').filter(Boolean).every(t=>hay.indexOf(t)>=0)) return false;}
-  const byField={};
-  for(const key in active){const f=active[key][0],v=active[key][1],mode=active[key][2];(byField[f]=byField[f]||[]).push([v,mode]);}
+  __qTokens=q?q.split(' ').filter(Boolean):null;
+}
+function matchF(x){
+  if(__byField===null) prepFilter();
+  if(__qTokens){
+    if(!x.__hay) x.__hay=(x.name+x.host+x.partner+x.impact+x.action+x.domain+x.ind+x.benef+(x.sdgs||[]).join()+(x.gri||[]).join()).toLowerCase();
+    for(let i=0;i<__qTokens.length;i++) if(x.__hay.indexOf(__qTokens[i])<0) return false;
+  }
+  const byField=__byField;
   for(const f in byField){
     const conds=byField[f];
     if(f==='esg'){ if(!conds.every(c=>String(x.esg).indexOf(c[0])>=0)) return false; }
     else if(MULTI_OR[f]){ if(!conds.some(c=>String(x[f]||'')===c[0])) return false; }
+    else if(MULTI_ANY[f]){ if(!conds.some(c=>(x[f]||[]).includes(c[0]))) return false; }
     else if(MULTI[f]){ if(!conds.every(c=>(x[f]||[]).includes(c[0]))) return false; }
     else { if(!conds.some(c=>String(x[f])===String(c[0]))) return false; }
   }
@@ -1046,6 +1075,7 @@ function itemHTML(x){
     '</div></div></article>';
 }
 function render(){
+  prepFilter();
   const out=DATA.filter(matchF), nf=Object.keys(active).length;
   $('listCount').textContent=out.length+'건';
   const d=Object.keys(active).find(k=>k.indexOf('domain:')===0);
@@ -1558,7 +1588,7 @@ document.querySelector('.viewtabs').addEventListener('click',e=>{
 sync(); render();
 
 /* ── 보고서 내보내기 ── */
-function curRows(){ return DATA.filter(matchF); }
+function curRows(){ prepFilter(); return DATA.filter(matchF); }
 function curCond(){
   const nf=Object.keys(active).length, q=$('q').value.trim();
   return [q?('검색 "'+q+'"'):'', nf?('필터 '+nf+'개'):''].filter(Boolean).join(' · ')||'전체';
@@ -1815,5 +1845,10 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ntsign">매거진 리더뉴 드림</p>
   </div>
 </div>
-<div class="loadmask" id="loadMask" aria-hidden="true"><span>불러오는 중</span></div>
+<div class="loadmask" id="loadMask" aria-hidden="true">
+  <div class="loadin">
+    <p class="ld1">리더뉴 지속가능 INDEX 불러오는 중</p>
+    <p class="ld2">잠시만 기다려주세요.</p>
+  </div>
+</div>
 </body></html>
