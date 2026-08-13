@@ -572,6 +572,19 @@
   .activebar{padding-left:0;padding-right:0}
   .lthead{padding-left:1px}
   .lcwrap{padding-right:1px}
+
+  .loadmask{position:fixed;inset:0;z-index:200;background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .25s;opacity:1}
+  body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
+  .loadbox{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .loadspin{width:26px;height:26px;border:2.5px solid var(--g20);border-top-color:var(--ink);
+    border-radius:50%;animation:ldspin .8s linear infinite}
+  @keyframes ldspin{to{transform:rotate(360deg)}}
+  .loadtxt{text-align:center;font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+  .loadtxt span{display:block;margin-top:5px;font-size:12px;font-weight:600;color:var(--g60)}
+  @media(prefers-reduced-motion:reduce){.loadspin{animation:none}}
+  @media print{.loadmask{display:none}}
 </style></head>
 <body>
 
@@ -612,7 +625,6 @@
   <div class="layout">
     <div class="main">
       <span id="listAnchor" aria-hidden="true"></span>
-      <div class="loading" id="loadingBox">불러오는 중…</div>
       <div class="listhead"><div class="lthead"><h3 id="listTitle">전체 LIST</h3><span class="innovnote" id="innovNote"></span></div><span class="lcwrap"><span class="lc" id="listCount"></span><span class="btnrow"><button type="button" class="cmpgo shuffle" id="shuffleBtn">LIST 섞기</button><button type="button" class="cmpgo" id="cmpGo">비교하기<span class="cn" id="cmpGoN"></span></button></span></span></div>
       <div class="notice"><b id="pastNoticeTitle">이전 마무리 아카이브</b> — 최근 운영 기록이 확인되지 않는 기획을 모은 자료입니다. <b>운영 중인 캠페인이 아니므로 현행 사례로 인용하지 마십시오.</b> 기획 아이디어·구조 참고용이며, 인용 시 가동 시기를 반드시 함께 표기해야 합니다.</div>
       <div class="activebar" id="activeBar"></div>
@@ -1797,6 +1809,12 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ntlast">앞으로도 리더뉴는 연결과 협력을 통해 지속가능한 사회에 보탬이 되도록 계속하겠습니다.</p>
     <p class="ntthx">감사합니다.</p>
     <p class="ntsign">매거진 리더뉴 드림</p>
+  </div>
+</div>
+<div class="loadmask" id="loadMask" aria-hidden="true">
+  <div class="loadbox">
+    <div class="loadspin" aria-hidden="true"></div>
+    <div class="loadtxt">리더뉴 지속가능 INDEX<span>불러오는 중…</span></div>
   </div>
 </div>
 </body></html>
