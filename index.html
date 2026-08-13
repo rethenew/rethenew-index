@@ -1486,8 +1486,11 @@ window.addEventListener('resize',function(){
     return Math.ceil(max)+8;
   }
   function send(){
-    const v=contentHeight();
+    let v=contentHeight();
     if(!v || v<300) return;
+    // 결과가 적어도 화면이 갑자기 줄어 하단 영역이 딸려 올라오지 않게 최소 높이를 둔다
+    const MINH = (window.__viewH || window.innerHeight || 900);
+    if (v < MINH) v = MINH;
     if(Math.abs(v-last)<40) return;      // 작은 변화는 무시 — 진동·깜빡임 방지
     last=v;
     const msg={type:'rtn-height', height:v};
