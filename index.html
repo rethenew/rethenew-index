@@ -573,17 +573,11 @@
   .lthead{padding-left:1px}
   .lcwrap{padding-right:1px}
 
-  .loadmask{position:fixed;inset:0;z-index:200;background:var(--paper);
-    display:flex;align-items:center;justify-content:center;
-    transition:opacity .25s;opacity:1}
+  .loadmask{position:fixed;left:0;right:0;bottom:0;top:var(--maskTop,56px);z-index:200;
+    background:var(--paper);display:flex;align-items:center;justify-content:center;
+    transition:opacity .2s;opacity:1}
   body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
-  .loadbox{display:flex;flex-direction:column;align-items:center;gap:14px}
-  .loadspin{width:26px;height:26px;border:2.5px solid var(--g20);border-top-color:var(--ink);
-    border-radius:50%;animation:ldspin .8s linear infinite}
-  @keyframes ldspin{to{transform:rotate(360deg)}}
-  .loadtxt{text-align:center;font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
-  .loadtxt span{display:block;margin-top:5px;font-size:12px;font-weight:600;color:var(--g60)}
-  @media(prefers-reduced-motion:reduce){.loadspin{animation:none}}
+  .loadmask span{font-size:14px;font-weight:700;color:var(--g60);letter-spacing:-.01em}
   @media print{.loadmask{display:none}}
 </style></head>
 <body>
@@ -1249,6 +1243,16 @@ function closeCompare(){
   if(window.cmpReset) window.cmpReset();
   document.documentElement.style.overflow=''; document.body.style.overflow='';$('cmpModal').classList.remove('open');}
 if($('toast')) $('toast').addEventListener('click',hideToast);
+/* 로딩 마스크는 상단 검은 바 아래에서 시작한다 */
+(function(){
+  function setTop(){
+    var h=document.querySelector('header.top');
+    var v=h?Math.round(h.getBoundingClientRect().height):56;
+    document.documentElement.style.setProperty('--maskTop', v+'px');
+  }
+  setTop();
+  window.addEventListener('resize',setTop);
+})();
 /* 안내사항 모달 */
 (function(){
   const m=$('ntModal');
@@ -1811,10 +1815,5 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ntsign">매거진 리더뉴 드림</p>
   </div>
 </div>
-<div class="loadmask" id="loadMask" aria-hidden="true">
-  <div class="loadbox">
-    <div class="loadspin" aria-hidden="true"></div>
-    <div class="loadtxt">리더뉴 지속가능 INDEX<span>불러오는 중…</span></div>
-  </div>
-</div>
+<div class="loadmask" id="loadMask" aria-hidden="true"><span>불러오는 중</span></div>
 </body></html>
