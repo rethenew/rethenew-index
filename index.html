@@ -48,7 +48,7 @@
   .dhead{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--ink)}
   .dhead h2{font-size:15px;font-weight:900;letter-spacing:.02em}
   .xbtn{background:none;border:none;font-size:19px;line-height:1;cursor:pointer;color:var(--ink);padding:2px 4px}
-  .dbody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  .dbody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:22px;
     -webkit-overflow-scrolling:touch;padding:4px 16px 16px}
   .dbody > :last-child{margin-bottom:0}
   .fgroup:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
@@ -636,10 +636,6 @@
 <nav class="drawer" id="drawer" aria-label="필터">
   <div class="dhead"><h2>필터</h2><button class="xbtn" id="closeDrawer" aria-label="닫기">✕</button></div>
   <div class="dbody" id="filterWrap"></div>
-  <div class="dfoot">
-    <button class="reset" id="resetBtn">초기화</button>
-    <button class="apply" id="applyBtn">결과 보기</button>
-  </div>
 </nav>
 
 <div class="viewtabs" style="display:none"><div class="wrap"><div class="vtin">
@@ -881,7 +877,7 @@ $('menuBtn').addEventListener('click',function(e){ try{ fitDrawer(); }catch(err)
 $('menuBtn').addEventListener('click',openDrawer);
 $('closeDrawer').addEventListener('click',closeDrawer);
 $('scrim').addEventListener('click',closeDrawer);
-$('applyBtn').addEventListener('click',()=>{closeDrawer();toList();});
+if($('applyBtn')) $('applyBtn').addEventListener('click',()=>{closeDrawer();toList();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('reqModal').classList.remove('open');
   const c=$('cmpModal'); if(c) c.classList.remove('open');}});
 
@@ -921,7 +917,7 @@ function toggleChip(field,val){
   shown=PAGE; sync(); render(); toList();
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
-$('resetBtn').addEventListener('click',clearAll);
+if($('resetBtn')) $('resetBtn').addEventListener('click',clearAll);
 
 /* ── 도메인 스트립 ── */
 function pills(list,total,attr){
