@@ -874,6 +874,24 @@ function latestYear_(x){
   const ys=(String(t).match(/(19\d{2}|20[0-2]\d)/g)||[]).map(Number);
   return ys.length?Math.max.apply(null,ys):0;
 }
+
+/* 산업군 표기 통일 — 내장 예비 데이터의 옛 표기를 표준값으로 바꾼다 */
+const IND_FIX={
+ '은행':'금융','보험':'금융','증권':'금융','카드':'금융',
+ '생활용품':'화장품·뷰티','화장품':'화장품·뷰티','뷰티':'화장품·뷰티','소비재':'화장품·뷰티',
+ '화학':'화학·에너지·중공업','에너지':'화학·에너지·중공업','중공업':'화학·에너지·중공업','철강':'화학·에너지·중공업',
+ '전자':'전자·IT','IT':'전자·IT','반도체':'전자·IT',
+ '외식·프랜차이즈':'식품·음료','외식':'식품·음료','식품':'식품·음료','음료':'식품·음료',
+ '의료':'제약·바이오','제약':'제약·바이오','바이오':'제약·바이오',
+ '물류':'항공·물류·교통','항공':'항공·물류·교통','운수':'항공·물류·교통',
+ '의류':'패션','건축':'건설','엔터':'스포츠·엔터·미디어','미디어':'스포츠·엔터·미디어',
+ '플랫폼':'IT·플랫폼','인터넷':'IT·플랫폼','NGO':'비영리·NGO','비영리':'비영리·NGO',
+ '공공':'공공·정부','정부':'공공·정부','교육':'교육·연구','연구':'교육·연구'};
+function normInd(v){
+  const t=String(v||'').trim();
+  if(!t) return '기타';
+  return IND_FIX[t] || t;
+}
 const INNOV_MAP={'①':'①지원중심형','②':'②자산활용형','③':'③참여확산형'};
 function normInnov(v){
   const t=String(v||'').trim();
@@ -891,6 +909,7 @@ function mergeData_(){
   cur.forEach(function(x){
     const y=latestYear_(x);
     out.push(Object.assign({},x,{
+      ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y===0||y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
       form: x.kind?'단발 행사':'지속·반복'
@@ -899,6 +918,7 @@ function mergeData_(){
   past.forEach(function(x){
     const y=latestYear_(x);
     out.push(Object.assign({},x,{
+      ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
       form:'단발 행사'
