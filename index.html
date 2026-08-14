@@ -28,8 +28,9 @@
   .menubtn.has .fcnt{display:inline-block}
   .logo{font-size:17px;font-weight:900;letter-spacing:-.01em;white-space:nowrap}
   .logo .idx{font-weight:400;opacity:.7}
-  .topsearch{flex:1;max-width:320px;min-width:90px;margin-left:auto}
-  .topsearch input{width:100%;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;
+  .topsearch{flex:1 1 auto;max-width:320px;min-width:90px;margin-left:12px}
+
+  .topsearch input{width:100%;padding:8px 12px 8px 16px;border:1px solid rgba(255,255,255,.3);border-radius:8px;
     font-size:14px;background:rgba(255,255,255,.1);color:#fff}
   .topsearch input::placeholder{color:rgba(255,255,255,.55)}
   .topsearch input:focus{outline:none;background:rgba(255,255,255,.2)}
@@ -520,9 +521,11 @@
     .topin > *{flex:0 0 auto}
     /* 필터 버튼 뒤로 항목이 비쳐 보이지 않도록 불투명 배경 + 여백까지 덮는다 */
     .menubtn{position:sticky;left:0;z-index:5;background:var(--ink);
-      box-shadow:0 0 0 12px var(--ink), 14px 0 12px -8px rgba(0,0,0,.6);
-      border-color:rgba(255,255,255,.55)}
-    .topin{padding-left:12px}
+      box-shadow:0 0 0 10px var(--ink), 12px 0 10px -8px rgba(0,0,0,.55);
+      border-color:rgba(255,255,255,.55);margin-right:2px}
+    .topin{padding-left:14px;gap:8px}
+    .topsearch{margin-left:6px;width:180px;flex:0 0 auto}
+    .topsearch input{padding-left:14px}
     .logo{white-space:nowrap}
     .topsearch{flex:0 0 auto;width:190px;max-width:none;min-width:0;margin-left:0}
     .topbtn.label{white-space:nowrap}
@@ -571,6 +574,10 @@
   @media(max-width:760px){
     .topin{padding-left:max(12px,env(safe-area-inset-left));
       padding-right:max(12px,env(safe-area-inset-right))}
+    /* 필터 버튼이 오른쪽으로 쏠리지 않게 왼쪽에 붙이고, 검색창은 여백을 준다 */
+    .topsearch{margin-left:0}
+    .topsearch input{padding-left:16px;font-size:13.5px}
+    .menubtn{margin-right:2px}
   }
 
   /* 제목줄·필터칩·목록의 좌우 시작점을 맞춘다 */
@@ -649,6 +656,16 @@
     max-height:none !important;padding:8px 16px 0 !important}
   body.filter-open .dbody::after{height:60px}
   body.filter-open > .scrim{display:none !important}
+
+  /* 모바일 상단바 — 필터는 왼쪽 끝, 검색창은 안쪽 여백 확보 */
+  @media(max-width:760px){
+    .topin{gap:8px}
+    .menubtn{margin-left:0}
+    .topsearch{margin-left:2px}
+  
+    .logo{margin-left:2px}
+  }
+
 </style></head>
 <body>
 
@@ -893,7 +910,7 @@ try{ shuffleArr(window.INDEX_PAST); }catch(e){
 }
 const ALL=DATA;
 const $=id=>document.getElementById(id);
-const PAGE=24; let shown=PAGE; let active={};
+const PAGE=30; let shown=PAGE; let active={};
 const esgLabel={'E':'E','S':'S','E·S':'E·S'};
 const esc=s=>String(s==null?'':(Array.isArray(s)?s.join('·'):s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
@@ -959,12 +976,17 @@ $('filterWrap').addEventListener('click',e=>{
   toggleChip(c.dataset.field,c.dataset.val);
 });
 const SINGLE={innov:1,kind:1};   // 산업군·혁신유형은 하나만 선택
+let __renderTimer=null;
+function renderSoon(){
+  clearTimeout(__renderTimer);
+  __renderTimer=setTimeout(function(){ render(); },0);
+}
 function toggleChip(field,val){
   const k=field+':'+val;
   const was=!!active[k];
   if(SINGLE[field]) Object.keys(active).forEach(x=>{if(x.indexOf(field+':')===0) delete active[x];});
   if(was) delete active[k]; else active[k]=[field,val,(MULTI[field]||MULTI_OR[field]||MULTI_ANY[field])?1:0];
-  shown=PAGE; sync(); render(); toList();
+  shown=PAGE; sync(); renderSoon(); toList();
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
 if($('resetBtn')) $('resetBtn').addEventListener('click',clearAll);
@@ -996,7 +1018,7 @@ $('benStrip').addEventListener('click',e=>{
   if(!p.dataset.ben){ Object.keys(active).forEach(x=>{if(x.indexOf('benef:')===0) delete active[x];}); }
   else if(active[k]) delete active[k];
   else active[k]=['benef',p.dataset.ben,1];   // B축 복수 선택
-  shown=PAGE; sync(); render(); toList();
+  shown=PAGE; sync(); renderSoon(); toList();
 });
 
 /* ── 위젯 ── */
@@ -1189,7 +1211,9 @@ function fixUrl(u){
   if(/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(t)) return 'https://'+t;   // 도메인만 있으면 붙인다
   return '';                                                       // 그 외는 링크로 쓰지 않는다
 }
+const __cardCache={};
 function itemHTML(x){
+  if(__cardCache[x.no]) return __cardCache[x.no];
   x.href=fixUrl(x.href);
   const srcHost=x.href?x.href.split('//').pop().split('/')[0]:'';
   const tags=[].concat(
@@ -1202,7 +1226,7 @@ function itemHTML(x){
       return '<button type="button" class="tag2 gri" data-gri="'+esc(g)+'">GRI '+esc(g)
            +' <i>'+esc(d[0])+'</i><span class="gx">+</span></button>';
     })).join('');
-  return '<article class="item" data-no="'+x.no+'"><div class="ihead">'+
+  const __h='<article class="item" data-no="'+x.no+'"><div class="ihead">'+
     '<div class="icore"><div class="iname">'+esc(x.name)+'</div><div class="imeta">'+esc(x.ind)+
     ' <span class="sep">·</span> '+esc(x.domain)+' <span class="sep">·</span> '+esc(x.host)+'</div></div>'+
     '<span class="minib">'+
@@ -1230,6 +1254,8 @@ function itemHTML(x){
     '<button type="button" class="fixbtn" data-fix="'+x.no+'">정보 수정 요청하기</button>'+
     '</div>'+
     '</div></div></article>';
+  __cardCache[x.no]=__h;
+  return __h;
 }
 function render(){
   prepFilter();
@@ -1258,7 +1284,11 @@ function render(){
   const L=$('list'),E=$('empty'),M=$('moreBtn');
   if(!out.length){L.innerHTML='';E.style.display='block';M.style.display='none';return;}
   E.style.display='none';
-  L.innerHTML=out.slice(0,shown).map(itemHTML).join('');
+  // 카드 HTML을 캐시해 필터를 바꿔도 다시 만들지 않는다
+  L.innerHTML=out.slice(0,shown).map(function(x){
+    if(!x.__html) x.__html=itemHTML(x);
+    return x.__html;
+  }).join('');
   if(out.length>shown){M.style.display='block';M.textContent='더보기 ('+(out.length-shown)+'건 남음)';}
   else M.style.display='none';
   syncPick();
@@ -1267,6 +1297,7 @@ function render(){
 const MAXPICK=4; let picked=[];
 function byNo(n){return ALL.find(d=>d.no===n);}
 function togglePick(no){
+  try{ delete __cardCache[no]; }catch(e){}
   const i=picked.indexOf(no);
   if(i>=0) picked.splice(i,1);
   else{
