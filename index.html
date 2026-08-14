@@ -644,6 +644,7 @@
   .gridesc b{color:var(--g80);font-weight:700}
 
   /* 필터 서랍 — 목록만 스크롤하고 취소·적용은 하단에 고정한다 */
+  .drawer{max-height:100dvh}
   @media(max-width:760px){
     .drawer{width:100% !important;max-width:100% !important}
     .drawer:not(.open){transform:translateX(-100%) !important;visibility:hidden}
@@ -925,8 +926,12 @@ const esgLabel={'E':'E','S':'S','E·S':'E·S'};
 const esc=s=>String(s==null?'':(Array.isArray(s)?s.join('·'):s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
 /* ── 드로어 ── */
-function openDrawer(){$('drawer').classList.add('open');$('scrim').classList.add('open');
-  $('menuBtn').setAttribute('aria-expanded','true');}
+function openDrawer(){
+  $('drawer').classList.add('open');$('scrim').classList.add('open');
+  $('menuBtn').setAttribute('aria-expanded','true');
+  try{ fitDrawer(); }catch(e){}
+  setTimeout(function(){ try{ fitDrawer(); }catch(e){} },50);
+}
 function closeDrawer(){
   document.body.classList.remove('filter-open');
   const dw=$('drawer'), sc=$('scrim'), bd=$('filterWrap');
@@ -1592,15 +1597,18 @@ function fitDrawer(){
     } else {
       // 그마저 안 되면 화면 크기로 추정 — 세로로 지나치게 크면 iframe 높이로 본다
       const ih = window.innerHeight || 800;
-      const sw = (window.screen && window.screen.height) ? window.screen.height : 900;
-      vh = ih > sw ? Math.max(360, Math.round(sw * 0.78)) : ih;
+      const sw = (window.screen && window.screen.availHeight) ? window.screen.availHeight
+               : ((window.screen && window.screen.height) ? window.screen.height : 900);
+      // iframe 높이가 화면보다 크면 실제 창 크기를 쓸 수 없으므로 화면 기준으로 잡는다
+      vh = ih > sw ? Math.max(360, Math.round(sw * 0.72)) : ih;
       top = window.scrollY || window.pageYOffset || 0;
     }
   }
   // 서랍은 보이는 화면의 최상단에 붙인다 — 스크롤 위치만큼만 내려간다
   const y = Math.round(top || 0);
   const h = Math.round(vh);
-  if (dw) { dw.style.top = y+'px'; dw.style.height = h+'px'; dw.style.bottom='auto'; }
+  // 화면에 실제로 보이는 만큼만 — 하단 버튼이 화면 밖으로 나가지 않게 한다
+  if (dw) { dw.style.top = y+'px'; dw.style.height = h+'px'; dw.style.maxHeight = h+'px'; dw.style.bottom='auto'; }
   if (sc) { sc.style.top = y+'px'; sc.style.height = h+'px'; sc.style.bottom='auto'; }
   return;
 }
