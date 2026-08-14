@@ -41,7 +41,7 @@
   /* ── 드로어 ── */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
   .scrim.open{opacity:1;pointer-events:auto}
-  .drawer{position:fixed;top:0;left:0;height:100dvh;max-height:100dvh;
+  .drawer{position:fixed;top:0;left:0;bottom:0;height:auto;max-height:none;
     width:340px;max-width:88vw;background:var(--paper);
     display:grid;grid-template-rows:auto minmax(0,1fr) auto;
     border-right:1px solid var(--ink);z-index:80;
@@ -926,12 +926,8 @@ const esgLabel={'E':'E','S':'S','E·S':'E·S'};
 const esc=s=>String(s==null?'':(Array.isArray(s)?s.join('·'):s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
 /* ── 드로어 ── */
-function openDrawer(){
-  $('drawer').classList.add('open');$('scrim').classList.add('open');
-  $('menuBtn').setAttribute('aria-expanded','true');
-  try{ fitDrawer(); }catch(e){}
-  setTimeout(function(){ try{ fitDrawer(); }catch(e){} },50);
-}
+function openDrawer(){$('drawer').classList.add('open');$('scrim').classList.add('open');
+  $('menuBtn').setAttribute('aria-expanded','true');}
 function closeDrawer(){
   document.body.classList.remove('filter-open');
   const dw=$('drawer'), sc=$('scrim'), bd=$('filterWrap');
@@ -945,12 +941,30 @@ function toList(){
   const y=$('listAnchor').getBoundingClientRect().top+window.pageYOffset-64;
   if(window.pageYOffset>y) window.scrollTo({top:Math.max(y,0)});
 }
+function setViewVars(){
+  let vh = window.__viewH, top = window.__viewTop;
+  if (!vh) {
+    const ih = window.innerHeight || 800;
+    const sh = (window.screen && window.screen.height) ? window.screen.height : 900;
+    vh = ih > sh ? Math.round(sh * 0.78) : ih;      // iframe 높이면 화면 기준으로 추정
+    top = window.scrollY || window.pageYOffset || 0;
+  }
+  window.__vH = Math.round(vh);
+  window.__vTop = Math.round(top || 0);
+}
+setViewVars();
+window.addEventListener('resize', setViewVars);
+window.addEventListener('scroll', function(){
+  const dw = document.getElementById('drawer');
+  if (dw && dw.classList.contains('open')) setViewVars();
+}, {passive:true});
 let __snapshot=null;
 $('menuBtn').addEventListener('click',function(){
   __snapshot=JSON.parse(JSON.stringify(active));
   const bd0=$('filterWrap'), dw0=$('drawer');
   if(bd0) bd0.removeAttribute('style');
   if(dw0) dw0.removeAttribute('style');
+  setViewVars();
 },{capture:true});
 $('closeDrawer').addEventListener('click',function(){
   active={}; shown=PAGE; sync(); render();      // ✕ 는 전체 취소
@@ -1578,40 +1592,8 @@ function fitDrawerBody(){
   const h=dw.getBoundingClientRect().height - (hd?hd.offsetHeight:0);
   if(h>120){ bd.style.height=Math.round(h)+'px'; bd.style.maxHeight=Math.round(h)+'px'; }
 }
-function fitDrawer(){
-  return;   // 서랍은 본문 전환 방식이라 높이 계산이 필요 없다
-  const dw=$('drawer'), sc=$('scrim');
-  let vh = window.__viewH;
-  let top = window.__viewTop;
-  if (!vh) {
-    // 부모가 알려주지 않을 때: iframe이 부모 화면에서 어디에 걸쳐 있는지 직접 계산한다
-    let pvh = 0, myTop = 0;
-    try {
-      const fe = window.frameElement;          // 같은 출처가 아니면 접근 불가 → catch
-      if (fe) { pvh = window.parent.innerHeight; myTop = fe.getBoundingClientRect().top; }
-    } catch (e) {}
-    if (pvh) {
-      // 부모 화면에 보이는 iframe 구간만큼만 서랍을 잡는다
-      vh = Math.max(320, Math.min(pvh, pvh - Math.max(0, myTop)));
-      top = Math.max(0, -myTop);
-    } else {
-      // 그마저 안 되면 화면 크기로 추정 — 세로로 지나치게 크면 iframe 높이로 본다
-      const ih = window.innerHeight || 800;
-      const sw = (window.screen && window.screen.availHeight) ? window.screen.availHeight
-               : ((window.screen && window.screen.height) ? window.screen.height : 900);
-      // iframe 높이가 화면보다 크면 실제 창 크기를 쓸 수 없으므로 화면 기준으로 잡는다
-      vh = ih > sw ? Math.max(360, Math.round(sw * 0.72)) : ih;
-      top = window.scrollY || window.pageYOffset || 0;
-    }
-  }
-  // 서랍은 보이는 화면의 최상단에 붙인다 — 스크롤 위치만큼만 내려간다
-  const y = Math.round(top || 0);
-  const h = Math.round(vh);
-  // 화면에 실제로 보이는 만큼만 — 하단 버튼이 화면 밖으로 나가지 않게 한다
-  if (dw) { dw.style.top = y+'px'; dw.style.height = h+'px'; dw.style.maxHeight = h+'px'; dw.style.bottom='auto'; }
-  if (sc) { sc.style.top = y+'px'; sc.style.height = h+'px'; sc.style.bottom='auto'; }
-  return;
-}
+function fitDrawer(){ return; }
+
 function fitDrawerOld(){
   const sy = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
   // iframe 안에서는 innerHeight가 실제 창보다 훨씬 크다. 부모가 알려준 값을 우선한다.
@@ -1760,6 +1742,7 @@ window.addEventListener('message',function(e){
   const d=e&&e.data; if(!d||d.type!=='rtn-view') return;
   window.__viewH = parseInt(d.h,10)||window.innerHeight;
   window.__viewTop = Math.max(0, parseInt(d.top,10)||0);
+  try{ setViewVars(); }catch(err){}
   try{ if(typeof fitDrawer==='function') fitDrawer(); }catch(err){}
   const m=$('cmpModal');
   if(m&&m.classList.contains('open')){
