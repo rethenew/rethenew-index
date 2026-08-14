@@ -688,6 +688,15 @@
   .dapply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
   .dapply:hover{opacity:.86}
   .dhead{position:sticky;top:0;z-index:6;background:var(--paper)}
+
+  /* 모바일 상단바 — 여러 규칙이 겹쳐 밀리던 것을 여기서 확정한다 */
+  @media(max-width:760px){
+    header.top .wrap{padding-left:0 !important;padding-right:0 !important;max-width:100%}
+    .topin{padding-left:10px !important;padding-right:10px !important;gap:8px !important}
+    .menubtn{margin-left:0 !important;margin-right:8px !important;
+      box-shadow:8px 0 0 0 var(--ink), 16px 0 10px -8px rgba(0,0,0,.5) !important}
+    .topsearch{margin-left:0 !important}
+  }
 </style></head>
 <body>
 
