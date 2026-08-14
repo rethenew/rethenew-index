@@ -1811,6 +1811,18 @@ window.addEventListener('resize',function(){
   }
   function ping(){ clearTimeout(timer); timer = setTimeout(send, 400); }
   window.__pingHeight = function(){ ping(); };
+  window.__forceHeight = function(){
+    // 더보기·카드 펼침처럼 높이가 크게 바뀔 때는 문턱과 잠금을 건너뛴다
+    setTimeout(function(){
+      let v = contentHeight();
+      if (!v || v < 300) return;
+      if (v < 900) v = 900;
+      last = v;
+      const msg = { type:'rtn-height', height:v };
+      try { if (window.top && window.top !== window) window.top.postMessage(msg,'*'); } catch(e){}
+      try { if (window.parent && window.parent !== window) window.parent.postMessage(msg,'*'); } catch(e){}
+    }, 60);
+  };
   window.addEventListener('load', ping);
   document.addEventListener('click', ping);
   iv = setInterval(send, 4000);
@@ -1904,10 +1916,14 @@ $('list').addEventListener('click',e=>{
     if(o!==it) o.classList.remove('open');
   });
   it.classList.toggle('open', !wasOpen);
+  try{ window.__forceHeight(); }catch(e){}
   const after=it.getBoundingClientRect().top;           // 위쪽 카드가 닫혀 밀린 만큼 보정
   if(Math.abs(after-before)>1) window.scrollBy({top:after-before});
 });
-$('moreBtn').addEventListener('click',()=>{shown+=PAGE;render();});
+$('moreBtn').addEventListener('click',()=>{
+  shown+=PAGE; render();
+  try{ window.__forceHeight(); }catch(e){}
+});
 $('q').addEventListener('input',()=>{shown=PAGE;sync();render();});
 $('tabCurN').textContent=(AGG&&AGG.total)||DATA.length;
 $('tabPastN').textContent=window.AGG_PAST.total;
