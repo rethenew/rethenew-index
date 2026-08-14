@@ -1263,6 +1263,10 @@ function itemHTML(x){
   __cardCache[x.no]=__h;
   return __h;
 }
+let __renderKey='';
+function __filterKey(){
+  return Object.keys(active).sort().join('|')+'#'+$('q').value.trim()+'#'+VIEW;
+}
 function render(){
   prepFilter();
   const out=DATA.filter(matchF), nf=Object.keys(active).length;
@@ -1291,10 +1295,21 @@ function render(){
   if(!out.length){L.innerHTML='';E.style.display='block';M.style.display='none';return;}
   E.style.display='none';
   // 카드 HTML을 캐시해 필터를 바꿔도 다시 만들지 않는다
-  L.innerHTML=out.slice(0,shown).map(function(x){
-    if(!x.__html) x.__html=itemHTML(x);
-    return x.__html;
-  }).join('');
+  // 이미 그려둔 뒤에 '더보기'로 늘어난 경우에는 추가분만 이어붙인다
+  const want=out.slice(0,shown);
+  if(__renderKey===__filterKey() && L.children.length && want.length>L.children.length){
+    const add=want.slice(L.children.length).map(function(x){
+      if(!x.__html) x.__html=itemHTML(x);
+      return x.__html;
+    }).join('');
+    L.insertAdjacentHTML('beforeend', add);
+  } else {
+    L.innerHTML=want.map(function(x){
+      if(!x.__html) x.__html=itemHTML(x);
+      return x.__html;
+    }).join('');
+  }
+  __renderKey=__filterKey();
   if(out.length>shown){M.style.display='block';M.textContent='더보기 ('+(out.length-shown)+'건 남음)';}
   else M.style.display='none';
   syncPick();
