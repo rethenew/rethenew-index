@@ -524,8 +524,8 @@
     .topin > *{flex:0 0 auto}
     /* 필터 버튼 뒤로 항목이 비쳐 보이지 않도록 불투명 배경 + 여백까지 덮는다 */
     .menubtn{position:sticky;left:0;z-index:5;background:var(--ink);
-      box-shadow:0 0 0 10px var(--ink), 12px 0 10px -8px rgba(0,0,0,.55);
-      border-color:rgba(255,255,255,.55);margin-right:2px}
+      box-shadow:6px 0 0 0 var(--ink), 14px 0 10px -8px rgba(0,0,0,.5);
+      border-color:rgba(255,255,255,.55);margin-right:10px}
     .topin{padding-left:14px;gap:8px}
     .topsearch{margin-left:6px;width:180px;flex:0 0 auto}
     .topsearch input{padding-left:14px}
@@ -656,7 +656,7 @@
   @media(max-width:760px){
     .topin{gap:8px}
     .menubtn{margin-left:0}
-    .topsearch{margin-left:2px}
+    .topsearch{margin-left:8px}
   
     .logo{margin-left:2px}
   }
