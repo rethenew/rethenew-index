@@ -53,7 +53,7 @@
   .xbtn{background:none;border:none;font-size:19px;line-height:1;cursor:pointer;color:var(--ink);padding:2px 4px}
   .dbody{min-height:0;overflow-y:auto;overscroll-behavior:contain;
     -webkit-overflow-scrolling:touch;padding:4px 16px 0}
-  .dbody::after{content:'';display:block;height:24px}
+  .dbody::after{content:'';display:block;height:72px}
   .dbody > :last-child{margin-bottom:0}
   .fgroup:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
   .dfoot{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--ink);
@@ -681,6 +681,9 @@
   .dbtns button{padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:800;
     cursor:pointer;font-family:inherit;line-height:1;white-space:nowrap}
   .dcancel{background:var(--paper);border:1px solid var(--g20);color:var(--g80)}
+  .dclose{background:var(--g05);border:1px solid var(--g20);color:var(--g60)}
+  .dclose:hover{background:var(--g10);color:var(--ink)}
+  @media(max-width:420px){ .dbtns button{padding:7px 10px;font-size:11.5px} .dhead h2{font-size:14px} }
   .dcancel:hover{background:var(--g05)}
   .dapply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
   .dapply:hover{opacity:.86}
@@ -705,8 +708,9 @@
 <nav class="drawer" id="drawer" aria-label="필터">
   <div class="dhead"><h2>필터</h2>
     <span class="dbtns">
-      <button type="button" class="dcancel" id="resetBtn">취소</button>
       <button type="button" class="dapply" id="applyBtn">적용</button>
+      <button type="button" class="dcancel" id="resetBtn">적용 취소</button>
+      <button type="button" class="dclose" id="closeDrawer">닫기</button>
     </span>
   </div>
   <div class="dbody" id="filterWrap"></div>
@@ -1036,9 +1040,13 @@ function toggleChip(field,val){
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
 if($('resetBtn')) $('resetBtn').addEventListener('click',function(){
-  if(__snapshot) active=JSON.parse(JSON.stringify(__snapshot));   // 취소 = 열기 전으로
+  // 적용 취소 — 이 창에서 누른 것만 되돌린다. 창은 열어둔다.
+  if(__snapshot) active=JSON.parse(JSON.stringify(__snapshot));
   shown=PAGE; sync(); render();
-  document.body.classList.remove('filter-open');
+});
+if($('closeDrawer')) $('closeDrawer').addEventListener('click',function(){
+  // 닫기 — 전체 취소하고 창을 닫는다
+  active={}; shown=PAGE; $('q').value=''; sync(); render();
   closeDrawer();
 });
 
