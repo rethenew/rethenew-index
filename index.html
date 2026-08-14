@@ -44,7 +44,7 @@
   .drawer{position:fixed;top:var(--dTop,0px);left:0;bottom:auto;
     height:var(--dH,100dvh);max-height:var(--dH,100dvh);
     width:340px;max-width:88vw;background:var(--paper);
-    display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+    display:grid;grid-template-rows:auto minmax(0,1fr);
     border-right:1px solid var(--ink);z-index:80;
     transform:translateX(-100%);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
   .drawer.open{transform:none}
@@ -676,6 +676,15 @@
   .dfoot .reset{background:var(--paper);border:1px solid var(--g20);color:var(--g80)}
   .dfoot .apply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
   @media(max-width:760px){ body.filter-open .dfoot{position:sticky;bottom:0} }
+
+  .dbtns{display:flex;gap:6px;align-items:center}
+  .dbtns button{padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:800;
+    cursor:pointer;font-family:inherit;line-height:1;white-space:nowrap}
+  .dcancel{background:var(--paper);border:1px solid var(--g20);color:var(--g80)}
+  .dcancel:hover{background:var(--g05)}
+  .dapply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
+  .dapply:hover{opacity:.86}
+  .dhead{position:sticky;top:0;z-index:6;background:var(--paper)}
 </style></head>
 <body>
 
@@ -694,12 +703,13 @@
 
 <div class="scrim" id="scrim"></div>
 <nav class="drawer" id="drawer" aria-label="필터">
-  <div class="dhead"><h2>필터</h2><button class="xbtn" id="closeDrawer" aria-label="닫기">✕</button></div>
-  <div class="dbody" id="filterWrap"></div>
-  <div class="dfoot">
-    <button class="reset" id="resetBtn">취소</button>
-    <button class="apply" id="applyBtn">적용</button>
+  <div class="dhead"><h2>필터</h2>
+    <span class="dbtns">
+      <button type="button" class="dcancel" id="resetBtn">취소</button>
+      <button type="button" class="dapply" id="applyBtn">적용</button>
+    </span>
   </div>
+  <div class="dbody" id="filterWrap"></div>
 </nav>
 
 <div class="viewtabs" style="display:none"><div class="wrap"><div class="vtin">
@@ -972,17 +982,10 @@ $('menuBtn').addEventListener('click',function(){
   if(dw0) dw0.removeAttribute('style');
   setViewVars();
 },{capture:true});
-$('closeDrawer').addEventListener('click',function(){
-  active={}; shown=PAGE; sync(); render();      // ✕ 는 전체 취소
-  document.body.classList.remove('filter-open');
-  const bd=$('filterWrap'), dw=$('drawer');
-  if(bd) bd.removeAttribute('style');
-  if(dw) dw.removeAttribute('style');
-  try{ window.__pingHeight(); }catch(e){}
-},{capture:true});
+
 window.addEventListener('message',function(){ const dw=$('drawer'); if(dw&&dw.classList.contains('open')){ try{ fitDrawer(); }catch(e){} } });
 $('menuBtn').addEventListener('click',openDrawer);
-$('closeDrawer').addEventListener('click',closeDrawer);
+
 $('scrim').addEventListener('click',function(){ document.body.classList.remove('filter-open'); closeDrawer(); });
 if($('applyBtn')) $('applyBtn').addEventListener('click',function(){
   document.body.classList.remove('filter-open');
