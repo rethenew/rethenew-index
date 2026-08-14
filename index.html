@@ -38,12 +38,11 @@
   .topbtn:hover{background:rgba(255,255,255,.16)}
 
   /* ── 드로어 ── */
-  .scrim{position:fixed;top:var(--drawerTop,0px);left:0;right:0;height:var(--drawerH,100%);background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
   .scrim.open{opacity:1;pointer-events:auto}
-  .drawer{position:fixed;top:var(--drawerTop,0px);left:0;
-    height:var(--drawerH,100dvh);max-height:100dvh;
+  .drawer{position:fixed;top:0;left:0;height:100dvh;max-height:100dvh;
     width:340px;max-width:88vw;background:var(--paper);
-    display:grid;grid-template-rows:auto 1fr;
+    display:grid;grid-template-rows:auto minmax(0,1fr);
     border-right:1px solid var(--ink);z-index:80;
     transform:translateX(-100%);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
   .drawer.open{transform:none}
@@ -418,7 +417,7 @@
   .innovnote.on{display:inline-block}
   @media(max-width:620px){ .innovnote{font-size:11.5px;padding:3px 9px} }
 
-  .srcrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .srcrow{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:10px}
   .fixbtn{background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:999px;
     padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
   .fixbtn:hover{opacity:.86}
@@ -1193,7 +1192,7 @@ function itemHTML(x){
     })()+
     (x.impact?'<div class="impact">'+blist(splitImpact(x.impact))+'</div>':'')+
     '<div class="srcrow">'+
-    (x.href?'<a class="srcbtn" href="'+esc(x.href)+'" target="_blank" rel="noopener">출처 · '+esc(srcHost)+' ↗</a>':'<span></span>')+
+    '<span></span>'+
     '<button type="button" class="fixbtn" data-fix="'+x.no+'">정보 수정 요청하기</button>'+
     '</div>'+
     '</div></div></article>';
@@ -1428,6 +1427,19 @@ function fitDrawerBody(){
   if(h>120){ bd.style.height=Math.round(h)+'px'; bd.style.maxHeight=Math.round(h)+'px'; }
 }
 function fitDrawer(){
+  const dw=$('drawer'), sc=$('scrim');
+  let vh = window.__viewH;
+  let top = window.__viewTop;
+  if (!vh) {                                  // 부모 통지가 없으면 화면 기준으로 잡는다
+    const ih = window.innerHeight || 800;
+    vh = ih > 1000 ? Math.min(ih, 780) : ih;
+    top = window.scrollY || window.pageYOffset || 0;
+  }
+  if (dw) { dw.style.top = Math.round(top||0)+'px'; dw.style.height = Math.round(vh)+'px'; }
+  if (sc) { sc.style.top = Math.round(top||0)+'px'; sc.style.height = Math.round(vh)+'px'; }
+  return;
+}
+function fitDrawerOld(){
   const sy = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
   // iframe 안에서는 innerHeight가 실제 창보다 훨씬 크다. 부모가 알려준 값을 우선한다.
   let vh = window.__viewH;
