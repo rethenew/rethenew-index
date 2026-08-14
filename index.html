@@ -1431,10 +1431,24 @@ function fitDrawer(){
   const dw=$('drawer'), sc=$('scrim');
   let vh = window.__viewH;
   let top = window.__viewTop;
-  if (!vh) {                                  // 부모 통지가 없으면 화면 기준으로 잡는다
-    const ih = window.innerHeight || 800;
-    vh = ih > 1000 ? Math.min(ih, 780) : ih;
-    top = window.scrollY || window.pageYOffset || 0;
+  if (!vh) {
+    // 부모가 알려주지 않을 때: iframe이 부모 화면에서 어디에 걸쳐 있는지 직접 계산한다
+    let pvh = 0, myTop = 0;
+    try {
+      const fe = window.frameElement;          // 같은 출처가 아니면 접근 불가 → catch
+      if (fe) { pvh = window.parent.innerHeight; myTop = fe.getBoundingClientRect().top; }
+    } catch (e) {}
+    if (pvh) {
+      // 부모 화면에 보이는 iframe 구간만큼만 서랍을 잡는다
+      vh = Math.max(320, Math.min(pvh, pvh - Math.max(0, myTop)));
+      top = Math.max(0, -myTop);
+    } else {
+      // 그마저 안 되면 화면 크기로 추정 — 세로로 지나치게 크면 iframe 높이로 본다
+      const ih = window.innerHeight || 800;
+      const sw = (window.screen && window.screen.height) ? window.screen.height : 900;
+      vh = ih > sw ? Math.max(360, Math.round(sw * 0.78)) : ih;
+      top = window.scrollY || window.pageYOffset || 0;
+    }
   }
   // 서랍은 보이는 화면의 최상단에 붙인다 — 스크롤 위치만큼만 내려간다
   const y = Math.round(top || 0);
@@ -1591,6 +1605,7 @@ window.addEventListener('message',function(e){
   const d=e&&e.data; if(!d||d.type!=='rtn-view') return;
   window.__viewH = parseInt(d.h,10)||window.innerHeight;
   window.__viewTop = Math.max(0, parseInt(d.top,10)||0);
+  try{ if(typeof fitDrawer==='function') fitDrawer(); }catch(err){}
   const m=$('cmpModal');
   if(m&&m.classList.contains('open')){
     const box=document.querySelector('.cmpbox'), sc=$('cmpScroll');
