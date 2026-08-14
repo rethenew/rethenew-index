@@ -890,6 +890,7 @@ function toList(){
   if(window.pageYOffset>y) window.scrollTo({top:Math.max(y,0)});
 }
 $('menuBtn').addEventListener('click',function(e){ try{ fitDrawer(); }catch(err){} },{capture:true});
+window.addEventListener('message',function(){ const dw=$('drawer'); if(dw&&dw.classList.contains('open')){ try{ fitDrawer(); }catch(e){} } });
 $('menuBtn').addEventListener('click',openDrawer);
 $('closeDrawer').addEventListener('click',closeDrawer);
 $('scrim').addEventListener('click',closeDrawer);
@@ -1435,8 +1436,11 @@ function fitDrawer(){
     vh = ih > 1000 ? Math.min(ih, 780) : ih;
     top = window.scrollY || window.pageYOffset || 0;
   }
-  if (dw) { dw.style.top = Math.round(top||0)+'px'; dw.style.height = Math.round(vh)+'px'; }
-  if (sc) { sc.style.top = Math.round(top||0)+'px'; sc.style.height = Math.round(vh)+'px'; }
+  // 서랍은 보이는 화면의 최상단에 붙인다 — 스크롤 위치만큼만 내려간다
+  const y = Math.round(top || 0);
+  const h = Math.round(vh);
+  if (dw) { dw.style.top = y+'px'; dw.style.height = h+'px'; dw.style.bottom='auto'; }
+  if (sc) { sc.style.top = y+'px'; sc.style.height = h+'px'; sc.style.bottom='auto'; }
   return;
 }
 function fitDrawerOld(){
