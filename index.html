@@ -43,7 +43,7 @@
   .scrim.open{opacity:1;pointer-events:auto}
   .drawer{position:fixed;top:0;left:0;height:100dvh;max-height:100dvh;
     width:340px;max-width:88vw;background:var(--paper);
-    display:grid;grid-template-rows:auto minmax(0,1fr);
+    display:grid;grid-template-rows:auto minmax(0,1fr) auto;
     border-right:1px solid var(--ink);z-index:80;
     transform:translateX(-100%);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
   .drawer.open{transform:none}
@@ -644,6 +644,7 @@
 
   /* 필터 서랍 — 내부 스크롤을 쓰지 않고 페이지 스크롤로 본다.
      iframe 안에서 높이 계산이 어긋나는 문제를 구조적으로 없앤다. */
+  @media(max-width:760px){
   body.filter-open > *{display:none !important}
   body.filter-open{background:var(--paper) !important}
   body.filter-open > .drawer{
@@ -657,6 +658,7 @@
     max-height:none !important;padding:8px 16px 0 !important}
   body.filter-open .dbody::after{height:60px}
   body.filter-open > .scrim{display:none !important}
+  }
 
   /* 모바일 상단바 — 필터는 왼쪽 끝, 검색창은 안쪽 여백 확보 */
   @media(max-width:760px){
@@ -672,6 +674,13 @@
   .dstripin,.topin{touch-action:pan-x;overscroll-behavior-x:contain}
   .list2,.board,#list{touch-action:pan-y}
   html{overflow-x:clip}
+
+  .dfoot{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--ink);background:var(--g05)}
+  .dfoot button{flex:1;padding:10px 0;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;
+    font-family:inherit}
+  .dfoot .reset{background:var(--paper);border:1px solid var(--g20);color:var(--g80)}
+  .dfoot .apply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
+  body.filter-open .dfoot{position:sticky;bottom:0}
 </style></head>
 <body>
 
@@ -692,6 +701,10 @@
 <nav class="drawer" id="drawer" aria-label="필터">
   <div class="dhead"><h2>필터</h2><button class="xbtn" id="closeDrawer" aria-label="닫기">✕</button></div>
   <div class="dbody" id="filterWrap"></div>
+  <div class="dfoot">
+    <button class="reset" id="resetBtn">취소</button>
+    <button class="apply" id="applyBtn">적용</button>
+  </div>
 </nav>
 
 <div class="viewtabs" style="display:none"><div class="wrap"><div class="vtin">
@@ -930,7 +943,9 @@ function toList(){
   const y=$('listAnchor').getBoundingClientRect().top+window.pageYOffset-64;
   if(window.pageYOffset>y) window.scrollTo({top:Math.max(y,0)});
 }
+let __snapshot=null;
 $('menuBtn').addEventListener('click',function(){
+  __snapshot=JSON.parse(JSON.stringify(active));
   document.body.classList.add('filter-open');
   const bd=$('filterWrap');
   if(bd){ bd.style.cssText+=';overflow:visible;height:auto;max-height:none;'; }
@@ -940,6 +955,7 @@ $('menuBtn').addEventListener('click',function(){
   try{ window.__pingHeight(); }catch(e){}
 },{capture:true});
 $('closeDrawer').addEventListener('click',function(){
+  active={}; shown=PAGE; sync(); render();      // ✕ 는 전체 취소
   document.body.classList.remove('filter-open');
   const bd=$('filterWrap'), dw=$('drawer');
   if(bd) bd.removeAttribute('style');
@@ -950,7 +966,10 @@ window.addEventListener('message',function(){ const dw=$('drawer'); if(dw&&dw.cl
 $('menuBtn').addEventListener('click',openDrawer);
 $('closeDrawer').addEventListener('click',closeDrawer);
 $('scrim').addEventListener('click',function(){ document.body.classList.remove('filter-open'); closeDrawer(); });
-if($('applyBtn')) $('applyBtn').addEventListener('click',()=>{closeDrawer();toList();});
+if($('applyBtn')) $('applyBtn').addEventListener('click',function(){
+  document.body.classList.remove('filter-open');
+  closeDrawer(); toList();
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('reqModal').classList.remove('open');
   const c=$('cmpModal'); if(c) c.classList.remove('open');}});
 
@@ -995,7 +1014,12 @@ function toggleChip(field,val){
   shown=PAGE; sync(); renderSoon(); toList();
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
-if($('resetBtn')) $('resetBtn').addEventListener('click',clearAll);
+if($('resetBtn')) $('resetBtn').addEventListener('click',function(){
+  if(__snapshot) active=JSON.parse(JSON.stringify(__snapshot));   // 취소 = 열기 전으로
+  shown=PAGE; sync(); render();
+  document.body.classList.remove('filter-open');
+  closeDrawer();
+});
 
 /* ── 도메인 스트립 ── */
 function pills(list,total,attr){
