@@ -921,7 +921,8 @@ function mergeData_(){
       ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y===0||y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
-      form: x.kind?'단발 행사':'지속·반복'
+      form: x.kind?'단발 행사':'지속·반복',
+      _past: false
     }));
   });
   past.forEach(function(x){
@@ -930,7 +931,8 @@ function mergeData_(){
       ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
-      form:'단발 행사'
+      form:'단발 행사',
+      _past: true
     }));
   });
   return out;
@@ -966,6 +968,12 @@ try{ shuffleArr(window.INDEX_PAST); }catch(e){
   })(window.INDEX_PAST);
 }
 const ALL=DATA;
+/* v65 — 탭 전환 시 내장 스냅샷으로 되돌아가던 문제 수정.
+   초기 병합 결과(원격 발행DB 기준)를 보관해 두고 그것만 쓴다. */
+const ALL_AGG=AGG;
+let __curRows=null, __curAgg=null;
+function CUR_ROWS(){ if(!__curRows) __curRows=ALL.filter(function(x){return !x._past;}); return __curRows; }
+function CUR_AGG(){ if(!__curAgg) __curAgg=buildAggFrom_(CUR_ROWS()); return __curAgg; }
 const $=id=>document.getElementById(id);
 const PAGE=30; let shown=PAGE; let active={};
 const esgLabel={'E':'E','S':'S','E·S':'E·S'};
@@ -2022,8 +2030,8 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  DATA = v==='cur'?window.INDEX_CUR:window.INDEX_PAST;
-  AGG  = v==='cur'?window.AGG_CUR:window.AGG_PAST;
+  DATA = v==='cur'?ALL:window.INDEX_PAST;
+  AGG  = v==='cur'?ALL_AGG:window.AGG_PAST;
   active={}; shown=PAGE; $('q').value='';
   document.body.classList.toggle('pastview', v==='past');
   document.querySelectorAll('.vtab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
@@ -2173,7 +2181,7 @@ $('dgBody').addEventListener('click',e=>{
   if(ab){dgAns[ab.dataset.dom]=ab.dataset.v;dgRender();return;}
 });
 
-function dgPeers(){return window.INDEX_CUR.filter(d=>d.ind===dgInd);}
+function dgPeers(){return CUR_ROWS().filter(d=>d.ind===dgInd);}
 function dgRender(){
   $('dgStep').textContent='STEP '+dgStep+' / 3';
   $('dgPrint').style.display=dgStep===3?'inline-block':'none';
@@ -2184,7 +2192,7 @@ function dgRender(){
   if(dgStep===1){
     B.innerHTML='<div class="dgq">귀사의 산업군을 선택해 주세요.</div>'+
       '<div class="dgsub">회사명·연락처는 받지 않습니다. 선택한 산업군의 등재 사례를 기준으로 비교합니다.</div>'+
-      '<div class="indgrid">'+window.AGG_CUR.ind.map(([k,v])=>
+      '<div class="indgrid">'+CUR_AGG().ind.map(([k,v])=>
         '<button type="button" class="indbtn'+(dgInd===k?' on':'')+'" data-ind="'+esc(k)+'">'+esc(k)+
         '<span class="n">'+v+'</span></button>').join('')+'</div>';
     return;
@@ -2224,7 +2232,7 @@ function dgRender(){
   if(gaps.length){
     html+='<div class="rsec"><h3>비어 있는 축 · 참고 사례</h3>'+gaps.map(d=>{
       let ex=peers.filter(p=>p.domain===d&&p.impact);
-      if(ex.length<3) ex=ex.concat(window.INDEX_CUR.filter(p=>p.domain===d&&p.impact&&p.ind!==dgInd));
+      if(ex.length<3) ex=ex.concat(CUR_ROWS().filter(p=>p.domain===d&&p.impact&&p.ind!==dgInd));
       ex=ex.slice(0,3);
       return '<div class="gapbox"><h4>'+d+'</h4><div class="meta">동종 '+cnt[d]+'건 등재 · 귀사 미운영</div><ul>'+
         ex.map(p=>'<li><b>'+esc(p.name)+'</b>'+(p.ind!==dgInd?' ('+esc(p.ind)+')':'')+
@@ -2237,7 +2245,7 @@ function dgRender(){
 
   html+='<div class="disc"><b>본 진단은 리더뉴 지속가능 INDEX 등재 사례를 기준으로 한 참고 자료이며, '+
     '공시 적합성이나 ESG 성과에 대한 평가가 아닙니다.</b> 등재 사례는 공개 자료 기준으로 수집·검증된 것으로 '+
-    '해당 산업 전체를 대표하지 않습니다. 기준일 2026-08-07 · 리더뉴 지속가능 INDEX</div>';
+    '해당 산업 전체를 대표하지 않습니다. 기준일 '+today()+' · 리더뉴 지속가능 INDEX</div>';
   B.innerHTML=html;
 }
 /* ===== 지속가능 자가진단 모듈 끝 ===== */
