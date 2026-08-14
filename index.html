@@ -1040,9 +1040,9 @@ function toggleChip(field,val){
 }
 function clearAll(){active={};shown=PAGE;$('q').value='';sync();render();toList();}
 if($('resetBtn')) $('resetBtn').addEventListener('click',function(){
-  // 적용 취소 — 이 창에서 누른 것만 되돌린다. 창은 열어둔다.
-  if(__snapshot) active=JSON.parse(JSON.stringify(__snapshot));
-  shown=PAGE; sync(); render();
+  // 적용 취소 — 걸려 있는 필터를 전부 해제한다. 창은 열어둔다.
+  active={}; shown=PAGE; $('q').value=''; sync(); render();
+  __snapshot={};
 });
 if($('closeDrawer')) $('closeDrawer').addEventListener('click',function(){
   // 닫기 — 전체 취소하고 창을 닫는다
