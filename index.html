@@ -616,6 +616,21 @@
     .axrow{gap:8px}
     .listhead,.activebar,.list2{margin-left:0;margin-right:0}
   }
+
+  .tag2 i{font-style:normal;font-size:inherit;font-weight:inherit;color:inherit;margin-left:4px}
+  button.tag2.gri{cursor:pointer;display:inline-flex;align-items:center;gap:4px;
+    font-family:inherit;font-size:10.5px;font-weight:700;line-height:inherit;
+    padding:3px 7px;border-radius:5px;background:var(--g05);color:var(--g80);border:1px solid var(--g10)}
+  button.tag2.gri .gx{font-weight:800;color:var(--g40);font-size:10.5px}
+  button.tag2.gri.open .gx{transform:rotate(45deg)}
+  /* GRI 설명 — 왼쪽 세로선으로 부연임을 표시하고, 여러 개가 열려도 한 덩어리로 보이게 한다 */
+  .gridesc{display:none;margin:0;padding:6px 0 6px 10px;background:none;border:0;
+    border-left:2px solid var(--g20);border-radius:0;
+    font-size:10.5px;font-weight:400;line-height:1.5;color:var(--g60)}
+  .gridesc.on{display:block;cursor:pointer;margin:5px 0}
+  .gridesc.on + .gridesc.on{margin-top:-1px}
+  .gridesc.on:hover{border-left-color:var(--ink);color:var(--g80)}
+  .gridesc b{color:var(--g80);font-weight:700}
 </style></head>
 <body>
 
@@ -1051,13 +1066,98 @@ function splitImpact(s){
 }
 function drow(k,html){return html?('<div class="drow"><span class="k">'+k+'</span><span class="v">'+html+'</span></div>'):'';}
 
+
+/* ── SDG 명칭 · GRI 세부 공시항목 설명 ── */
+const SDG_NAME={
+ 'SDG1':'빈곤 종식','SDG2':'기아 종식','SDG3':'건강과 웰빙','SDG4':'양질의 교육',
+ 'SDG5':'성평등','SDG6':'깨끗한 물과 위생','SDG7':'깨끗한 에너지','SDG8':'양질의 일자리와 경제성장',
+ 'SDG9':'산업·혁신·인프라','SDG10':'불평등 완화','SDG11':'지속가능한 도시','SDG12':'책임있는 소비와 생산',
+ 'SDG13':'기후변화 대응','SDG14':'해양 생태계','SDG15':'육상 생태계','SDG16':'평화·정의·제도',
+ 'SDG17':'글로벌 파트너십'};
+const GRI_DEF={
+ '201-1':['창출·분배된 직접적 경제가치','수익과 지출을 이해관계자별로 나눠 공시한다.'],
+ '202-2':['지역사회 출신 고위경영진','주요 사업장에서 지역 출신 경영진 비율을 공시한다.'],
+ '203-1':['인프라 투자 및 지원 서비스','시설·서비스 지원의 범위와 영향을 공시한다.'],
+ '203-2':['중대한 간접 경제효과','파급된 경제적 영향의 사례와 규모를 공시한다.'],
+ '204-1':['지역 공급업체 지출 비율','주요 사업장의 지역 조달 비중을 공시한다.'],
+ '301-1':['사용된 원부자재','제품·포장에 쓰인 원부자재의 중량·부피를 공시한다.'],
+ '301-2':['재생 투입 원부자재','재생 원료가 차지하는 비율을 공시한다.'],
+ '301-3':['재생된 제품 및 포장재','회수·재생된 제품과 포장재 비율을 공시한다.'],
+ '302-4':['에너지 소비 감축','감축량과 산정 기준을 공시한다.'],
+ '303-1':['공유자원으로서의 용수','용수 취수·사용이 미치는 영향과 관리 방식을 공시한다.'],
+ '304-1':['보호지역 인근 사업장','보호지역과 인접한 사업장의 위치·면적을 공시한다.'],
+ '304-2':['생물다양성에 대한 영향','사업활동이 서식지·종에 미치는 영향을 공시한다.'],
+ '304-3':['서식지 보호 또는 복원','보호·복원한 서식지의 규모와 성과를 공시한다.'],
+ '305-5':['온실가스 배출 감축','감축량을 기준연도 대비로 공시한다.'],
+ '306-2':['폐기물 영향 관리','발생 억제와 처리 방식을 공시한다.'],
+ '306-4':['폐기물 재활용','재활용으로 전환한 폐기물의 양과 방법을 공시한다.'],
+ '401-2':['임직원 복리후생','정규직에게 제공하는 복리후생 항목을 공시한다.'],
+ '403-6':['근로자 건강 증진','건강 지원 서비스와 프로그램을 공시한다.'],
+ '404-1':['연간 교육시간','임직원 1인당 평균 교육시간을 공시한다.'],
+ '404-2':['역량 강화 프로그램','교육·훈련과 전환 지원 프로그램을 공시한다.'],
+ '405-1':['거버넌스 및 임직원 다양성','성별·연령 등 구성 비율을 공시한다.'],
+ '406-1':['차별 사건 및 시정조치','발생한 차별 사건과 조치 결과를 공시한다.'],
+ '411-1':['원주민 권리 침해','침해 사건과 대응을 공시한다.'],
+ '413-1':['지역사회 참여·개발 프로그램','지역사회 프로그램을 시행한 사업장 비율을 공시한다.'],
+ '413-2':['지역사회 부정적 영향','부정적 영향이 있거나 우려되는 사업장을 공시한다.'],
+ '414-1':['공급업체 사회적 심사','사회적 기준으로 심사한 신규 공급업체 비율을 공시한다.'],
+ '416-1':['제품·서비스 안전보건 영향','안전보건 영향을 평가한 제품군 비율을 공시한다.'],
+ '101':['생물다양성','생물다양성 관련 경영방식과 영향을 공시한다.'],
+ '203':['간접 경제효과','인프라 투자와 파급 효과를 공시한다.'],
+ '301':['원부자재','원부자재 사용과 재생 비율을 공시한다.'],
+ '302':['에너지','에너지 소비와 감축을 공시한다.'],
+ '305':['배출','온실가스·대기오염물질 배출을 공시한다.'],
+ '306':['폐기물','폐기물 발생과 처리를 공시한다.'],
+ '401':['고용','채용·이직과 복리후생을 공시한다.'],
+ '403':['산업안전보건','안전보건 체계와 성과를 공시한다.'],
+ '404':['훈련 및 교육','교육시간과 역량개발 프로그램을 공시한다.'],
+ '405':['다양성과 기회균등','구성 다양성과 보수 격차를 공시한다.'],
+ '413':['지역사회','지역사회 참여와 영향을 공시한다.'],
+ '102':['일반 공시','조직 개요와 지배구조를 공시한다.'],
+ '103':['중대 주제 관리','중대 주제의 선정과 관리 방식을 공시한다.'],
+ '201':['경제성과','창출한 경제가치와 재무 영향을 공시한다.'],
+ '202':['시장 지위','지역 임금 수준과 지역 채용을 공시한다.'],
+ '204':['조달 관행','지역 공급업체 지출 비중을 공시한다.'],
+ '205':['반부패','부패 위험 평가와 교육을 공시한다.'],
+ '303':['용수와 폐수','용수 취수·사용·배출과 그 영향을 공시한다.'],
+ '304':['생물다양성','서식지 영향과 보호·복원 활동을 공시한다.'],
+ '308':['공급업체 환경 심사','환경 기준에 따른 공급업체 심사를 공시한다.'],
+ '402':['노사관계','경영상 변동 시 최소 통지기간을 공시한다.'],
+ '406':['차별금지','차별 사건과 시정조치를 공시한다.'],
+ '408':['아동노동','아동노동 위험과 대응을 공시한다.'],
+ '410':['보안 관행','보안인력 인권교육을 공시한다.'],
+ '411':['원주민 권리','원주민 권리 침해와 대응을 공시한다.'],
+ '414':['공급업체 사회 심사','사회적 기준에 따른 공급업체 심사를 공시한다.'],
+ '415':['공공정책','정치 기부금 내역을 공시한다.'],
+ '416':['고객 안전보건','제품·서비스의 안전보건 영향을 공시한다.'],
+ '417':['마케팅 및 라벨링','제품 정보 표시와 광고 준수를 공시한다.'],
+ '418':['고객 개인정보','개인정보 침해 사건을 공시한다.'],
+ '302-1':['조직 내 에너지 소비','연료·전력 사용량을 공시한다.'],
+ '303-3':['용수 취수','취수원별 취수량을 공시한다.'],
+ '303-5':['용수 소비','소비한 용수량을 공시한다.'],
+ '305-1':['직접 온실가스 배출(Scope 1)','직접 배출량을 공시한다.'],
+ '305-2':['간접 온실가스 배출(Scope 2)','에너지 사용에 따른 간접 배출량을 공시한다.'],
+ '306-1':['폐기물 발생과 영향','폐기물 발생원과 영향을 공시한다.'],
+ '306-3':['발생 폐기물','폐기물 총량을 유형별로 공시한다.'],
+ '306-5':['매립 폐기물','재활용되지 않고 처리된 폐기물을 공시한다.'],
+ '401-1':['신규 채용과 이직','채용·이직 현황을 공시한다.'],
+ '403-1':['산업안전보건 경영시스템','안전보건 관리체계를 공시한다.'],
+ '403-5':['근로자 안전보건 교육','교육 내용과 대상을 공시한다.'],
+ '405-2':['남녀 보수 비율','성별 기본급·보수 비율을 공시한다.'],
+ '404-3':['성과 평가 비율','정기 성과·경력 개발 평가를 받은 비율을 공시한다.']};
+
 function itemHTML(x){
   const srcHost=x.href?x.href.split('//').pop().split('/')[0]:'';
   const tags=[].concat(
     x.kind?['<span class="tag2">'+esc(x.kind)+'</span>']:[],
     ['<span class="tag2">'+esc(x.domain)+'</span>'].concat((x.benef||[]).map(b=>'<span class="tag2">'+esc(b)+'</span>')),
-    (x.sdgs||[]).map(s=>'<span class="tag2">'+esc(s)+'</span>'),
-    (x.gri||[]).map(g=>'<span class="tag2">GRI '+esc(g)+'</span>')).join('');
+    (x.sdgs||[]).map(s=>'<span class="tag2">'+esc(s)+(SDG_NAME[s]?' <i>'+esc(SDG_NAME[s])+'</i>':'')+'</span>'),
+    (x.gri||[]).map(function(g){
+      const d=GRI_DEF[g];
+      if(!d) return '<span class="tag2">GRI '+esc(g)+'</span>';
+      return '<button type="button" class="tag2 gri" data-gri="'+esc(g)+'">GRI '+esc(g)
+           +' <i>'+esc(d[0])+'</i><span class="gx">+</span></button>';
+    })).join('');
   return '<article class="item" data-no="'+x.no+'"><div class="ihead">'+
     '<div class="icore"><div class="iname">'+esc(x.name)+'</div><div class="imeta">'+esc(x.ind)+
     ' <span class="sep">·</span> '+esc(x.domain)+' <span class="sep">·</span> '+esc(x.host)+'</div></div>'+
@@ -1286,6 +1386,29 @@ function closeCompare(){
   if(window.cmpReset) window.cmpReset();
   document.documentElement.style.overflow=''; document.body.style.overflow='';$('cmpModal').classList.remove('open');}
 if($('toast')) $('toast').addEventListener('click',hideToast);
+/* GRI 설명 상자 — 눌러도 카드는 그대로 두고 그 상자만 닫는다 */
+$('list').addEventListener('click',function(e){
+  const dbox=e.target.closest('.gridesc');
+  if(dbox){
+    e.stopPropagation();
+    const code=dbox.getAttribute('data-for');
+    const btn=dbox.closest('.item').querySelector('button.tag2.gri[data-gri="'+code+'"]');
+    dbox.classList.remove('on');
+    if(btn) btn.classList.remove('open');
+    return;
+  }
+  const b=e.target.closest('button.tag2.gri'); if(!b) return;
+  e.stopPropagation();
+  const code=b.dataset.gri, d=GRI_DEF[code]; if(!d) return;
+  const box=b.closest('.tags')||b.parentElement;
+  let el=box.parentElement.querySelector('.gridesc[data-for="'+code+'"]');
+  if(el){ el.classList.toggle('on'); b.classList.toggle('open'); return; }
+  el=document.createElement('div');
+  el.className='gridesc on'; el.setAttribute('data-for',code);
+  el.innerHTML='<b>GRI '+esc(code)+'</b> '+esc(d[1]);
+  box.insertAdjacentElement('afterend',el);
+  b.classList.add('open');
+});
 /* 필터 서랍 — iframe 안에서는 창 기준이 어긋나므로 실제 보이는 영역을 계산해 맞춘다 */
 function fitDrawer(){
   const sy = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -1581,7 +1704,7 @@ $('list').addEventListener('pointerdown',e=>{ __dnX=e.clientX; __dnY=e.clientY; 
 $('list').addEventListener('click',e=>{
   const pk=e.target.closest('.cmpbtn');
   if(pk){e.stopPropagation();togglePick(+pk.dataset.pick);return;}
-  if(e.target.closest('a')||e.target.closest('button')) return;
+  if(e.target.closest('a')||e.target.closest('button')||e.target.closest('.gridesc')) return;
   // 글자 한 칸(약 3px) 이상 움직이면 드래그(복사)로 본다. 클릭 흔들림은 2px 이내.
   const moved=Math.abs(e.clientX-__dnX)>2||Math.abs(e.clientY-__dnY)>2;
   if(moved) return;
