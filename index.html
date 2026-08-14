@@ -646,7 +646,7 @@
      iframe 안에서 높이 계산이 어긋나는 문제를 구조적으로 없앤다. */
   @media(max-width:760px){
   body.filter-open > *{display:none !important}
-  body.filter-open{background:var(--paper) !important}
+
   body.filter-open > .drawer{
     display:block !important;position:static !important;
     width:100% !important;max-width:100% !important;height:auto !important;
@@ -680,7 +680,7 @@
     font-family:inherit}
   .dfoot .reset{background:var(--paper);border:1px solid var(--g20);color:var(--g80)}
   .dfoot .apply{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
-  body.filter-open .dfoot{position:sticky;bottom:0}
+  @media(max-width:760px){ body.filter-open .dfoot{position:sticky;bottom:0} }
 </style></head>
 <body>
 
@@ -946,11 +946,17 @@ function toList(){
 let __snapshot=null;
 $('menuBtn').addEventListener('click',function(){
   __snapshot=JSON.parse(JSON.stringify(active));
-  document.body.classList.add('filter-open');
-  const bd=$('filterWrap');
-  if(bd){ bd.style.cssText+=';overflow:visible;height:auto;max-height:none;'; }
-  const dw=$('drawer');
-  if(dw){ dw.style.cssText+=';position:static;height:auto;max-height:none;transform:none;width:100%;max-width:100%;'; }
+  if(window.innerWidth<=760) document.body.classList.add('filter-open');
+  if(window.innerWidth<=760){
+    const bd=$('filterWrap');
+    if(bd){ bd.style.cssText+=';overflow:visible;height:auto;max-height:none;'; }
+    const dw=$('drawer');
+    if(dw){ dw.style.cssText+=';position:static;height:auto;max-height:none;transform:none;width:100%;max-width:100%;'; }
+  } else {
+    const bd=$('filterWrap'), dw=$('drawer');
+    if(bd) bd.removeAttribute('style');
+    if(dw) dw.removeAttribute('style');
+  }
   try{ window.scrollTo(0,0); }catch(e){}
   try{ window.__pingHeight(); }catch(e){}
 },{capture:true});
