@@ -1811,12 +1811,23 @@ window.addEventListener('resize',function(){
   }
   function ping(){ clearTimeout(timer); timer = setTimeout(send, 400); }
   window.__pingHeight = function(){ ping(); };
+  // 추가될 카드 수만큼 높이를 미리 확보한다(카드 1장 약 84px, 2열이므로 절반)
+  window.__preGrow = function(n){
+    const rows = Math.ceil((n||30)/2);
+    const grow = rows * 92;
+    const v = Math.max(900, (last || contentHeight() || 900) + grow);
+    last = v;
+    const msg = { type:'rtn-height', height:v };
+    try { if (window.top && window.top !== window) window.top.postMessage(msg,'*'); } catch(e){}
+    try { if (window.parent && window.parent !== window) window.parent.postMessage(msg,'*'); } catch(e){}
+  };
   window.__forceHeight = function(){
     // 더보기·카드 펼침처럼 높이가 크게 바뀔 때는 문턱과 잠금을 건너뛴다
     setTimeout(function(){
       let v = contentHeight();
       if (!v || v < 300) return;
       if (v < 900) v = 900;
+      if (Math.abs(v - last) < 24) return;    // 미리 늘린 값과 비슷하면 그대로 둔다
       last = v;
       const msg = { type:'rtn-height', height:v };
       try { if (window.top && window.top !== window) window.top.postMessage(msg,'*'); } catch(e){}
@@ -1921,6 +1932,8 @@ $('list').addEventListener('click',e=>{
   if(Math.abs(after-before)>1) window.scrollBy({top:after-before});
 });
 $('moreBtn').addEventListener('click',()=>{
+  // 늘어날 높이를 미리 알려 iframe을 먼저 키운 뒤 카드를 그린다
+  try{ window.__preGrow(PAGE); }catch(e){}
   shown+=PAGE; render();
   try{ window.__forceHeight(); }catch(e){}
 });
