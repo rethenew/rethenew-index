@@ -497,11 +497,12 @@
 
   .ntbox .ntlast{margin-top:14px}
 
-  html,body{max-width:100%;overflow-x:hidden}
+  body{max-width:100%;overflow-x:hidden}
   body.cmp-inline{overflow-x:hidden !important}
 
-  /* 모바일: 어떤 요소도 화면 밖으로 페이지를 밀지 못하게 가둔다 */
-  html,body{max-width:100%;overflow-x:hidden}
+  /* 모바일: 화면 밖으로 밀리지 않게 가두되, html에는 걸지 않는다.
+     html+body 동시 overflow-x:hidden은 모바일에서 세로 스크롤을 잠근다. */
+  body{max-width:100%;overflow-x:hidden}
   .main,.layout{max-width:100%;min-width:0}
   .cmpscroll,.cmpbox,.cmp{max-width:100%}
   .xwrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -666,6 +667,11 @@
     .logo{margin-left:2px}
   }
 
+
+  /* 가로로 넘기는 띠는 가로만 처리하고 세로 제스처는 페이지로 넘긴다 */
+  .dstripin,.topin{touch-action:pan-x;overscroll-behavior-x:contain}
+  .list2,.board,#list{touch-action:pan-y}
+  html{overflow-x:clip}
 </style></head>
 <body>
 
@@ -1461,6 +1467,50 @@ function closeCompare(){
   if(window.cmpReset) window.cmpReset();
   document.documentElement.style.overflow=''; document.body.style.overflow='';$('cmpModal').classList.remove('open');}
 if($('toast')) $('toast').addEventListener('click',hideToast);
+
+/* iOS — 키보드를 내리면 입력란 포커스도 함께 푼다.
+   사파리는 키보드가 닫혀도 포커스를 유지해 화면이 어긋난 채로 남는다. */
+(function(){
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (!isTouch) return;
+  const vv = window.visualViewport;
+  let base = vv ? vv.height : window.innerHeight;
+  let kbOpen = false;
+
+  function isField(el){
+    return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
+  }
+  function check(){
+    const h = vv ? vv.height : window.innerHeight;
+    const shrunk = base - h;
+    if (shrunk > 120) { kbOpen = true; return; }          // 키보드가 올라온 상태
+    if (kbOpen && shrunk < 60) {                          // 키보드가 내려갔다
+      kbOpen = false;
+      const el = document.activeElement;
+      if (isField(el)) el.blur();
+    }
+    if (h > base) base = h;                               // 화면 회전 등 대응
+  }
+  if (vv) { vv.addEventListener('resize', check); }
+  else { window.addEventListener('resize', check); }
+
+  // 입력란 밖을 누르면 바로 포커스를 푼다
+  document.addEventListener('touchend', function(e){
+    const el = document.activeElement;
+    if (!isField(el)) return;
+    if (e.target === el) return;
+    if (e.target.closest && e.target.closest('input,textarea,button,a')) return;
+    el.blur();
+  }, {passive:true});
+
+  // 키보드의 '완료'·엔터로도 닫히게
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && isField(document.activeElement)
+        && document.activeElement.tagName === 'INPUT') {
+      document.activeElement.blur();
+    }
+  });
+})();
 /* GRI 설명 상자 — 눌러도 카드는 그대로 두고 그 상자만 닫는다 */
 $('list').addEventListener('click',function(e){
   const dbox=e.target.closest('.gridesc');
@@ -1709,43 +1759,47 @@ window.addEventListener('resize',function(){
 });
 
 /* ── 부모 페이지(아임웹)에 콘텐츠 높이를 알린다 ──
-   scrollHeight는 최소 화면 높이를 포함해 절대 줄지 않는다(무한 증가).
-   그래서 흐름상 마지막 요소의 바닥을 직접 잰다. */
+   높이가 오르내리며 화면이 떨리지 않도록: 한 방향으로만 늘리고, 줄일 때는 크게 줄 때만. */
 (function(){
-  let last=0, timer=null;
+  let last = 0, timer = null, iv = null;
   function contentHeight(){
-    let max=0;
-    const kids=document.body.children;
-    for(let i=0;i<kids.length;i++){
-      const el=kids[i];
-      let cs;
-      try{ cs=getComputedStyle(el); }catch(e){ continue; }
-      if(cs.display==='none' || cs.position==='fixed') continue;   // 고정·숨김 요소는 제외
-      const r=el.getBoundingClientRect();
-      if(r.height===0 && r.width===0) continue;
-      const bottom=r.bottom + (window.scrollY||window.pageYOffset||0);
-      if(bottom>max) max=bottom;
+    let max = 0;
+    const kids = document.body.children;
+    for (let i = 0; i < kids.length; i++){
+      const el = kids[i];
+      let cs; try { cs = getComputedStyle(el); } catch(e){ continue; }
+      if (cs.display === 'none' || cs.position === 'fixed') continue;
+      const r = el.getBoundingClientRect();
+      if (r.height === 0 && r.width === 0) continue;
+      const bottom = r.bottom + (window.scrollY || window.pageYOffset || 0);
+      if (bottom > max) max = bottom;
     }
-    return Math.ceil(max)+8;
+    return Math.ceil(max) + 8;
   }
+  let __sendBusy=false;
   function send(){
-    let v=contentHeight();
-    if(!v || v<300) return;
-    // 결과가 적어도 화면이 갑자기 줄어 하단 영역이 딸려 올라오지 않게 최소 높이를 둔다
-    const MINH = (window.__viewH || window.innerHeight || 900);
+    let v = contentHeight();
+    if (!v || v < 300) return;
+    // 화면이 갑자기 줄어 하단이 딸려 올라오지 않게 최소치를 둔다
+    const MINH = 900;
     if (v < MINH) v = MINH;
-    if(Math.abs(v-last)<40) return;      // 작은 변화는 무시 — 진동·깜빡임 방지
-    last=v;
-    const msg={type:'rtn-height', height:v};
-    try{ if(window.top && window.top!==window) window.top.postMessage(msg,'*'); }catch(e){}
-    try{ if(window.parent && window.parent!==window) window.parent.postMessage(msg,'*'); }catch(e){}
+    // 늘릴 때도 최소 60px 이상 차이 날 때만, 줄일 때는 240px 이상 — 밀고 당기는 진동을 막는다
+    if (v > last) { if (v - last < 60) return; v = v + 40; }
+    else if (last - v < 240) return;
+    if (__sendBusy) return;
+    __sendBusy = true;
+    setTimeout(function(){ __sendBusy = false; }, 700);
+    last = v;
+    const msg = { type:'rtn-height', height:v };
+    try { if (window.top && window.top !== window) window.top.postMessage(msg,'*'); } catch(e){}
+    try { if (window.parent && window.parent !== window) window.parent.postMessage(msg,'*'); } catch(e){}
   }
-  function ping(){ clearTimeout(timer); timer=setTimeout(send,120); }
-  window.__pingHeight=function(){ last=0; ping(); };
-  window.addEventListener('load',ping);
-  document.addEventListener('click',ping);
-  const iv=setInterval(send,3000);
-  window.addEventListener('pagehide',function(){clearInterval(iv);});
+  function ping(){ clearTimeout(timer); timer = setTimeout(send, 400); }
+  window.__pingHeight = function(){ ping(); };
+  window.addEventListener('load', ping);
+  document.addEventListener('click', ping);
+  iv = setInterval(send, 4000);
+  window.addEventListener('pagehide', function(){ clearInterval(iv); });
   ping();
 })();
 
