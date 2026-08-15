@@ -700,7 +700,7 @@
 
 
   /* ══════════════════════════════════════════════════════════════
-     v72 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
+     v73 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
 
        · 손가락(pointer:coarse) = 밀면 된다
            → 한 줄 + 가로 스크롤. 지금까지 그대로. 세로가 길어지지 않는다.
@@ -719,13 +719,22 @@
        ② 검색창이 sticky 가 아니라 스크롤돼서 필터 버튼 옆으로 흘러 나온다
      검색창도 필터 옆에 고정하고 배경을 불투명하게 만든다.
      그러면 「정보 반영 요청」·「안내사항」이 밀려도 검색창 뒤로 완전히 숨는다. */
+  /* iframe 안 세로 스크롤바 없애기.
+     높이는 부모(아임웹 삽입코드)가 rtn-height 로 계속 맞춰 주므로 세로 스크롤이 필요 없다.
+     몇 px만 모자라도 스크롤바가 생기고, 그 폭이 화면 오른쪽에 흰 띠로 남는다. */
+  html{scrollbar-width:none;-ms-overflow-style:none}
+  html::-webkit-scrollbar{display:none}
+
   @media(max-width:760px){
-    .topsearch{position:sticky;left:82px;z-index:4;background:var(--ink);
-      box-shadow:-10px 0 0 0 var(--ink);
-      /* 상단바 높이를 꽉 덮어야 뒤 버튼의 위아래 테두리가 안 삐져나온다 */
-      align-self:stretch;display:flex;align-items:center}
+    /* 검색창은 고정하지 않는다. 같이 밀리되, 필터 버튼 뒤로 지나갈 때 안 보이면 된다.
+       ① 검색창 배경을 불투명으로 — 반투명(rgba .1)이라 뒤가 비쳤다
+       ② 필터 버튼이 덮는 폭을 넓혀 버튼과 검색창 사이 틈까지 검게 채운다 */
     .topsearch input{background:#1c1c1c}
     .topsearch input:focus{background:#2b2b2b}
+    /* 그림자를 사방으로 편다. 오른쪽만 덮으면 필터 왼쪽 여백으로 검색창이 비친다.
+       앞쪽에 !important 로 박힌 규칙이 있어 여기도 !important 를 붙여야 이긴다. */
+    .menubtn{z-index:6 !important;
+      box-shadow:0 0 0 18px var(--ink), 24px 0 12px -8px rgba(0,0,0,.6) !important}
   }
 
   /* 상단바 잘림 방지.
@@ -953,7 +962,7 @@ function normInnov(v){
   if(/참여|개방|확산/.test(t)) return '③참여확산형';
   return t;
 }
-/* v72 — 「현행」 데이터의 출처를 한 곳으로 모은다.
+/* v73 — 「현행」 데이터의 출처를 한 곳으로 모은다.
    원격(INDEX_REMOTE)이 있으면 그것, 없을 때만 HTML에 박힌 스냅샷으로 내려간다. */
 function curSource_(){
   return (window.INDEX_REMOTE && window.INDEX_REMOTE.length) ? window.INDEX_REMOTE : (window.INDEX_CUR || []);
@@ -2069,7 +2078,7 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  /* v72 수정 — 원격 발행DB를 먼저 본다.
+  /* v73 수정 — 원격 발행DB를 먼저 본다.
      기존엔 HTML에 박힌 옛 스냅샷(window.INDEX_CUR)을 바로 써서,
      「이전 마무리」에 갔다가 「현행」으로 돌아오면 건수가 스냅샷 수로 줄었다. */
   DATA = v==='cur'?curSource_():(window.INDEX_PAST||[]);
