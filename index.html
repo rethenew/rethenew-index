@@ -700,7 +700,7 @@
 
 
   /* ══════════════════════════════════════════════════════════════
-     v69 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
+     v70 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
 
        · 손가락(pointer:coarse) = 밀면 된다
            → 한 줄 + 가로 스크롤. 지금까지 그대로. 세로가 길어지지 않는다.
@@ -712,6 +712,11 @@
      JS 0줄. 폰트 크기는 건드리지 않는다(폭에 따라 튀는 원인이 된다).
      ══════════════════════════════════════════════════════════════ */
   .dstripin{flex:1 1 0;min-width:0}          /* flex 기본 min-width:auto가 라벨을 밀어냈다 */
+
+  /* 상단바 잘림 방지.
+     621~760px 구간은 검색창이 190px로 고정되는데 로고가 아직 살아 있어
+     「안내사항」이 최대 72px 밀려 잘렸다. 로고 숨김 기준을 620 → 760px로 올린다. */
+  @media(max-width:760px){ .logo{display:none} }
 
   @media (pointer:fine){
     .dstripin{flex-wrap:wrap;overflow-x:visible;row-gap:6px;padding-right:0}
@@ -728,7 +733,7 @@
   </button>
   <div class="logo">리더뉴 지속가능 <span class="idx">INDEX</span></div>
   <div class="topsearch"><input id="q" placeholder="검색어를 입력해주세요." aria-label="검색"></div>
-  <button class="topbtn label" id="reqBtn" title="정보 반영 요청">정보 반영 요청하기</button>
+  <button class="topbtn label" id="reqBtn" title="정보 반영 요청">정보 반영</button>
   <button class="topbtn label" id="noticeBtn" title="안내사항">안내사항</button>
   
   
@@ -933,7 +938,7 @@ function normInnov(v){
   if(/참여|개방|확산/.test(t)) return '③참여확산형';
   return t;
 }
-/* v69 — 「현행」 데이터의 출처를 한 곳으로 모은다.
+/* v70 — 「현행」 데이터의 출처를 한 곳으로 모은다.
    원격(INDEX_REMOTE)이 있으면 그것, 없을 때만 HTML에 박힌 스냅샷으로 내려간다. */
 function curSource_(){
   return (window.INDEX_REMOTE && window.INDEX_REMOTE.length) ? window.INDEX_REMOTE : (window.INDEX_CUR || []);
@@ -2049,7 +2054,7 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  /* v69 수정 — 원격 발행DB를 먼저 본다.
+  /* v70 수정 — 원격 발행DB를 먼저 본다.
      기존엔 HTML에 박힌 옛 스냅샷(window.INDEX_CUR)을 바로 써서,
      「이전 마무리」에 갔다가 「현행」으로 돌아오면 건수가 스냅샷 수로 줄었다. */
   DATA = v==='cur'?curSource_():(window.INDEX_PAST||[]);
@@ -2317,7 +2322,7 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ntq">“다른 곳은 어떻게 하고 있나요?”</p>
     <p>지난 5년간 파이브세컨즈와 매거진 리더뉴가 가장 자주 받은 질문입니다.</p>
     <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다.</p>
-    <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영 요청하기</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하겠습니다.</p>
+    <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하겠습니다.</p>
     <p>같은 자리에서 애쓰는 모든 분들을 응원합니다.</p>
     <p class="ntlast">앞으로도 리더뉴는 연결과 협력을 통해 지속가능한 사회에 보탬이 되도록 함께하겠습니다.</p>
     <p class="ntthx">감사합니다.</p>
