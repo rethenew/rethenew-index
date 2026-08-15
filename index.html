@@ -700,7 +700,7 @@
 
 
   /* ══════════════════════════════════════════════════════════════
-     v74 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
+     v75 — A·B 축 띠. 분기 기준은 「화면 폭」이 아니라 「마우스냐 손가락이냐」다.
 
        · 손가락(pointer:coarse) = 밀면 된다
            → 한 줄 + 가로 스크롤. 지금까지 그대로. 세로가 길어지지 않는다.
@@ -734,11 +734,13 @@
     /* 필터 버튼 뒤를 덮는 검은 영역.
        사방 균등(spread)으로 하면 오른쪽이 검색창을 침범한다.
        실측: 필터 오른쪽 끝 82px, 검색창 시작 98px — 간격은 16px뿐이다.
-       왼쪽은 화면 밖이라 넓게 덮어도 무해하고, 오른쪽은 간격보다 좁아야 한다.
-       블러 그림자는 검색창 글자를 어둡게 만들어 뺐다.
+       왼쪽만 덮는다. 오른쪽은 0이다 —
+       검색창이 필터 밑으로 들어가면 버튼 본체(불투명)가 이미 가리므로 오른쪽 그림자는 필요 없고,
+       조금이라도 오른쪽으로 뻗으면 검색창 글자를 먹는다.
+       블러 그림자도 같은 이유로 뺐다.
        앞쪽에 !important 로 박힌 규칙이 있어 여기도 !important 가 필요하다. */
     .menubtn{z-index:6 !important;
-      box-shadow:-26px 0 0 26px var(--ink), 12px 0 0 0 var(--ink) !important}
+      box-shadow:-26px 0 0 26px var(--ink) !important}
   }
 
   /* 상단바 잘림 방지.
@@ -966,7 +968,7 @@ function normInnov(v){
   if(/참여|개방|확산/.test(t)) return '③참여확산형';
   return t;
 }
-/* v74 — 「현행」 데이터의 출처를 한 곳으로 모은다.
+/* v75 — 「현행」 데이터의 출처를 한 곳으로 모은다.
    원격(INDEX_REMOTE)이 있으면 그것, 없을 때만 HTML에 박힌 스냅샷으로 내려간다. */
 function curSource_(){
   return (window.INDEX_REMOTE && window.INDEX_REMOTE.length) ? window.INDEX_REMOTE : (window.INDEX_CUR || []);
@@ -2082,7 +2084,7 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  /* v74 수정 — 원격 발행DB를 먼저 본다.
+  /* v75 수정 — 원격 발행DB를 먼저 본다.
      기존엔 HTML에 박힌 옛 스냅샷(window.INDEX_CUR)을 바로 써서,
      「이전 마무리」에 갔다가 「현행」으로 돌아오면 건수가 스냅샷 수로 줄었다. */
   DATA = v==='cur'?curSource_():(window.INDEX_PAST||[]);
