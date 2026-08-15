@@ -699,32 +699,19 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     v66 — 가로 띠 스크롤 확정 (이 블록이 마지막이므로 여기 값이 이긴다)
-     문제: 760~1100px 구간에서 상단바·축 띠의 오른쪽 내용이 잘리는데
-           스크롤바를 숨겨놔서 마우스로 움직일 방법이 없었다.
+     v66 — A·B 축 띠, PC는 줄바꿈 (이 블록이 마지막이므로 여기 값이 이긴다)
+     문제: PC에는 가로 스크롤 수단이 없다(스크롤바를 숨겨놔서 더더욱).
+           그래서 오른쪽 칩이 잘린 채 접근이 안 됐다.
+     방침: 모바일(≤760px)은 손가락으로 잘 밀리므로 손대지 않는다.
+           PC에서만 칩을 다음 줄로 내려 스크롤 자체를 없앤다. JS 0줄.
      ══════════════════════════════════════════════════════════════ */
+  .dstripin{flex:1 1 0;min-width:0}          /* flex 기본 min-width:auto가 라벨을 밀어냈다 */
 
-  /* 1) 상단바 가로 스크롤을 모든 폭에서 켠다. 기존엔 max-width:760px 안에만 있었다 */
-  .topin{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none;-ms-overflow-style:none}
-  .topin::-webkit-scrollbar{display:none}
-  .topin > *{flex:0 0 auto}
-
-  /* 2) 축 띠가 라벨을 밀어내지 않게 한다. flex 기본 min-width:auto 때문에 넘쳤다 */
-  .dstripin{flex:1 1 0;min-width:0}
-  .axrow{position:relative}
-
-  /* 3) 마우스로 끌 수 있음을 커서로 알린다 */
-  .topin.canscroll,.dstripin.canscroll{cursor:grab}
-  .topin.dragging,.dstripin.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
-  .topin.dragging *,.dstripin.dragging *{pointer-events:none}
-
-  /* 4) 오른쪽에 내용이 더 있으면 페이드로 표시한다 */
-  .axrow::after{content:'';position:absolute;right:0;top:0;bottom:0;width:36px;
-    pointer-events:none;opacity:0;transition:opacity .15s;
-    background:linear-gradient(90deg,rgba(255,255,255,0),#fff)}
-  .axrow.more::after{opacity:1}
-  @media print{.axrow::after{display:none}}
+  @media(min-width:761px){
+    .dstripin{flex-wrap:wrap;overflow-x:visible;row-gap:6px;padding-right:0}
+    .axrow{align-items:flex-start}
+    .axlab{padding-top:5px}
+  }
 </style></head>
 <body>
 
@@ -939,8 +926,13 @@ function normInnov(v){
   if(/참여|개방|확산/.test(t)) return '③참여확산형';
   return t;
 }
+/* v66 — 「현행」 데이터의 출처를 한 곳으로 모은다.
+   원격(INDEX_REMOTE)이 있으면 그것, 없을 때만 HTML에 박힌 스냅샷으로 내려간다. */
+function curSource_(){
+  return (window.INDEX_REMOTE && window.INDEX_REMOTE.length) ? window.INDEX_REMOTE : (window.INDEX_CUR || []);
+}
 function mergeData_(){
-  const cur=(window.INDEX_REMOTE&&window.INDEX_REMOTE.length)?window.INDEX_REMOTE:(window.INDEX_CUR||[]);
+  const cur=curSource_();
   const past=window.INDEX_PAST||[];
   const out=[];
   cur.forEach(function(x){
@@ -2050,7 +2042,10 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  DATA = v==='cur'?window.INDEX_CUR:window.INDEX_PAST;
+  /* v66 수정 — 원격 발행DB를 먼저 본다.
+     기존엔 HTML에 박힌 옛 스냅샷(window.INDEX_CUR)을 바로 썼다.
+     그래서 「이전 마무리」에 갔다가 「현행」으로 돌아오면 건수가 스냅샷 수로 줄었다. */
+  DATA = v==='cur'?curSource_():(window.INDEX_PAST||[]);
   AGG  = v==='cur'?window.AGG_CUR:window.AGG_PAST;
   active={}; shown=PAGE; $('q').value='';
   document.body.classList.toggle('pastview', v==='past');
@@ -2201,7 +2196,7 @@ $('dgBody').addEventListener('click',e=>{
   if(ab){dgAns[ab.dataset.dom]=ab.dataset.v;dgRender();return;}
 });
 
-function dgPeers(){return window.INDEX_CUR.filter(d=>d.ind===dgInd);}
+function dgPeers(){return curSource_().filter(d=>d.ind===dgInd);}
 function dgRender(){
   $('dgStep').textContent='STEP '+dgStep+' / 3';
   $('dgPrint').style.display=dgStep===3?'inline-block':'none';
@@ -2328,94 +2323,4 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ld2">잠시만 기다려주세요.</p>
   </div>
 </div>
-
-<script>
-/* ── v66: 가로 띠를 마우스로 끌어서·휠로 움직인다 ─────────────────
-   PC에는 가로 스크롤 수단이 없다. 스크롤바를 숨긴 상태라 더더욱 없다.
-   클릭과 드래그는 5px로 구분한다 — 칩을 누르려던 손이 필터를 켜지 않게. */
-(function(){
-  function bind(el){
-    if(!el || el.__hbound) return; el.__hbound=1;
-    var down=false, sx=0, sl=0, moved=false;
-
-    function hint(){
-      var max = el.scrollWidth - el.clientWidth;
-      el.classList.toggle('canscroll', max > 1);
-      var row = el.closest ? el.closest('.axrow') : null;
-      if(row) row.classList.toggle('more', max > 1 && el.scrollLeft < max - 2);
-    }
-    el.__hint = hint;
-
-    el.addEventListener('pointerdown', function(e){
-      el.__sup = false;
-      if(e.pointerType === 'touch') return;      // 터치는 브라우저 관성 스크롤이 낫다
-      if(e.button !== 0) return;
-      if(el.scrollWidth - el.clientWidth <= 1) return;
-      down = true; moved = false; sx = e.clientX; sl = el.scrollLeft;
-    });
-
-    el.addEventListener('pointermove', function(e){
-      if(!down) return;
-      var dx = e.clientX - sx;
-      if(!moved){
-        if(Math.abs(dx) < 5) return;             // 손떨림은 클릭으로 본다
-        moved = true; el.classList.add('dragging');
-        try{ el.setPointerCapture(e.pointerId); }catch(_){}
-      }
-      el.scrollLeft = sl - dx;
-      hint();
-      if(e.cancelable) e.preventDefault();
-    });
-
-    function up(e){
-      if(!down) return;
-      down = false;
-      if(moved){ el.__sup = true; }              // 뒤따라 오는 click 한 번만 막는다
-      moved = false;
-      el.classList.remove('dragging');
-      try{ el.releasePointerCapture(e.pointerId); }catch(_){}
-    }
-    el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
-    el.addEventListener('lostpointercapture', up);
-
-    el.addEventListener('click', function(e){
-      if(el.__sup){ el.__sup = false; e.stopPropagation(); e.preventDefault(); }
-    }, true);
-
-    /* 세로 휠을 가로 이동으로 넘긴다. 끝에 닿으면 페이지 스크롤로 돌려준다 */
-    el.addEventListener('wheel', function(e){
-      var max = el.scrollWidth - el.clientWidth;
-      if(max <= 1) return;
-      var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if(!d) return;
-      var before = el.scrollLeft;
-      el.scrollLeft = Math.max(0, Math.min(max, before + d));
-      hint();
-      if(el.scrollLeft !== before && e.cancelable) e.preventDefault();
-    }, {passive:false});
-
-    el.addEventListener('scroll', hint, {passive:true});
-    hint();
-  }
-
-  function bindAll(){
-    var els = document.querySelectorAll('.topin,.dstripin');
-    for(var i=0;i<els.length;i++){ bind(els[i]); if(els[i].__hint) els[i].__hint(); }
-  }
-
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindAll);
-  else bindAll();
-  window.addEventListener('resize', bindAll);
-  window.addEventListener('load', bindAll);
-  /* 칩은 데이터를 받은 뒤 그려진다. 그려지면 폭이 바뀌므로 다시 잰다 */
-  ['domStrip','benStrip'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el && window.MutationObserver){
-      new MutationObserver(function(){ bind(el); if(el.__hint) el.__hint(); })
-        .observe(el, {childList:true});
-    }
-  });
-})();
-</script>
 </body></html>
