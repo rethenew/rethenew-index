@@ -707,10 +707,20 @@
      ══════════════════════════════════════════════════════════════ */
   .dstripin{flex:1 1 0;min-width:0}          /* flex 기본 min-width:auto가 라벨을 밀어냈다 */
 
-  @media(min-width:761px){
-    .dstripin{flex-wrap:wrap;overflow-x:visible;row-gap:6px;padding-right:0}
-    .axrow{align-items:flex-start}
-    .axlab{padding-top:5px}
+  /* 폭을 가리지 않고 줄바꿈한다.
+     PC 창을 좁힌 상태는 「모바일 폭」이지 「손가락」이 아니다 — 밀 수단이 없다. */
+  .dstripin{flex-wrap:wrap;overflow-x:visible;row-gap:6px;padding-right:0}
+  .axrow{align-items:flex-start}
+  .axlab{padding-top:5px}
+
+  /* 좁은 화면에서는 칩을 줄여 줄 수를 낮춘다 */
+  @media(max-width:600px){
+    .dstripin{gap:5px;row-gap:5px}
+    .dpill{padding:6px 9px;gap:5px}
+    .dpill .dn{font-size:13.5px}
+    .dpill .dl{font-size:11px}
+    .axlab{width:52px;padding-top:4px}
+    .axlab b{font-size:10.5px}
   }
 </style></head>
 <body>
