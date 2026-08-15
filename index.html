@@ -697,6 +697,34 @@
       box-shadow:8px 0 0 0 var(--ink), 16px 0 10px -8px rgba(0,0,0,.5) !important}
     .topsearch{margin-left:0 !important}
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     v66 — 가로 띠 스크롤 확정 (이 블록이 마지막이므로 여기 값이 이긴다)
+     문제: 760~1100px 구간에서 상단바·축 띠의 오른쪽 내용이 잘리는데
+           스크롤바를 숨겨놔서 마우스로 움직일 방법이 없었다.
+     ══════════════════════════════════════════════════════════════ */
+
+  /* 1) 상단바 가로 스크롤을 모든 폭에서 켠다. 기존엔 max-width:760px 안에만 있었다 */
+  .topin{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;-ms-overflow-style:none}
+  .topin::-webkit-scrollbar{display:none}
+  .topin > *{flex:0 0 auto}
+
+  /* 2) 축 띠가 라벨을 밀어내지 않게 한다. flex 기본 min-width:auto 때문에 넘쳤다 */
+  .dstripin{flex:1 1 0;min-width:0}
+  .axrow{position:relative}
+
+  /* 3) 마우스로 끌 수 있음을 커서로 알린다 */
+  .topin.canscroll,.dstripin.canscroll{cursor:grab}
+  .topin.dragging,.dstripin.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
+  .topin.dragging *,.dstripin.dragging *{pointer-events:none}
+
+  /* 4) 오른쪽에 내용이 더 있으면 페이드로 표시한다 */
+  .axrow::after{content:'';position:absolute;right:0;top:0;bottom:0;width:36px;
+    pointer-events:none;opacity:0;transition:opacity .15s;
+    background:linear-gradient(90deg,rgba(255,255,255,0),#fff)}
+  .axrow.more::after{opacity:1}
+  @media print{.axrow::after{display:none}}
 </style></head>
 <body>
 
@@ -921,8 +949,7 @@ function mergeData_(){
       ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y===0||y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
-      form: x.kind?'단발 행사':'지속·반복',
-      _past: false
+      form: x.kind?'단발 행사':'지속·반복'
     }));
   });
   past.forEach(function(x){
@@ -931,8 +958,7 @@ function mergeData_(){
       ind: normInd(x.ind),
       innov: normInnov(x.innov),
       confirm: (y>=CY-1)?CONFIRM_RECENT:CONFIRM_OLD,
-      form:'단발 행사',
-      _past: true
+      form:'단발 행사'
     }));
   });
   return out;
@@ -968,12 +994,6 @@ try{ shuffleArr(window.INDEX_PAST); }catch(e){
   })(window.INDEX_PAST);
 }
 const ALL=DATA;
-/* v65 — 탭 전환 시 내장 스냅샷으로 되돌아가던 문제 수정.
-   초기 병합 결과(원격 발행DB 기준)를 보관해 두고 그것만 쓴다. */
-const ALL_AGG=AGG;
-let __curRows=null, __curAgg=null;
-function CUR_ROWS(){ if(!__curRows) __curRows=ALL.filter(function(x){return !x._past;}); return __curRows; }
-function CUR_AGG(){ if(!__curAgg) __curAgg=buildAggFrom_(CUR_ROWS()); return __curAgg; }
 const $=id=>document.getElementById(id);
 const PAGE=30; let shown=PAGE; let active={};
 const esgLabel={'E':'E','S':'S','E·S':'E·S'};
@@ -2030,8 +2050,8 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  DATA = v==='cur'?ALL:window.INDEX_PAST;
-  AGG  = v==='cur'?ALL_AGG:window.AGG_PAST;
+  DATA = v==='cur'?window.INDEX_CUR:window.INDEX_PAST;
+  AGG  = v==='cur'?window.AGG_CUR:window.AGG_PAST;
   active={}; shown=PAGE; $('q').value='';
   document.body.classList.toggle('pastview', v==='past');
   document.querySelectorAll('.vtab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
@@ -2181,7 +2201,7 @@ $('dgBody').addEventListener('click',e=>{
   if(ab){dgAns[ab.dataset.dom]=ab.dataset.v;dgRender();return;}
 });
 
-function dgPeers(){return CUR_ROWS().filter(d=>d.ind===dgInd);}
+function dgPeers(){return window.INDEX_CUR.filter(d=>d.ind===dgInd);}
 function dgRender(){
   $('dgStep').textContent='STEP '+dgStep+' / 3';
   $('dgPrint').style.display=dgStep===3?'inline-block':'none';
@@ -2192,7 +2212,7 @@ function dgRender(){
   if(dgStep===1){
     B.innerHTML='<div class="dgq">귀사의 산업군을 선택해 주세요.</div>'+
       '<div class="dgsub">회사명·연락처는 받지 않습니다. 선택한 산업군의 등재 사례를 기준으로 비교합니다.</div>'+
-      '<div class="indgrid">'+CUR_AGG().ind.map(([k,v])=>
+      '<div class="indgrid">'+window.AGG_CUR.ind.map(([k,v])=>
         '<button type="button" class="indbtn'+(dgInd===k?' on':'')+'" data-ind="'+esc(k)+'">'+esc(k)+
         '<span class="n">'+v+'</span></button>').join('')+'</div>';
     return;
@@ -2232,7 +2252,7 @@ function dgRender(){
   if(gaps.length){
     html+='<div class="rsec"><h3>비어 있는 축 · 참고 사례</h3>'+gaps.map(d=>{
       let ex=peers.filter(p=>p.domain===d&&p.impact);
-      if(ex.length<3) ex=ex.concat(CUR_ROWS().filter(p=>p.domain===d&&p.impact&&p.ind!==dgInd));
+      if(ex.length<3) ex=ex.concat(window.INDEX_CUR.filter(p=>p.domain===d&&p.impact&&p.ind!==dgInd));
       ex=ex.slice(0,3);
       return '<div class="gapbox"><h4>'+d+'</h4><div class="meta">동종 '+cnt[d]+'건 등재 · 귀사 미운영</div><ul>'+
         ex.map(p=>'<li><b>'+esc(p.name)+'</b>'+(p.ind!==dgInd?' ('+esc(p.ind)+')':'')+
@@ -2245,7 +2265,7 @@ function dgRender(){
 
   html+='<div class="disc"><b>본 진단은 리더뉴 지속가능 INDEX 등재 사례를 기준으로 한 참고 자료이며, '+
     '공시 적합성이나 ESG 성과에 대한 평가가 아닙니다.</b> 등재 사례는 공개 자료 기준으로 수집·검증된 것으로 '+
-    '해당 산업 전체를 대표하지 않습니다. 기준일 '+today()+' · 리더뉴 지속가능 INDEX</div>';
+    '해당 산업 전체를 대표하지 않습니다. 기준일 2026-08-07 · 리더뉴 지속가능 INDEX</div>';
   B.innerHTML=html;
 }
 /* ===== 지속가능 자가진단 모듈 끝 ===== */
@@ -2308,4 +2328,94 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ld2">잠시만 기다려주세요.</p>
   </div>
 </div>
+
+<script>
+/* ── v66: 가로 띠를 마우스로 끌어서·휠로 움직인다 ─────────────────
+   PC에는 가로 스크롤 수단이 없다. 스크롤바를 숨긴 상태라 더더욱 없다.
+   클릭과 드래그는 5px로 구분한다 — 칩을 누르려던 손이 필터를 켜지 않게. */
+(function(){
+  function bind(el){
+    if(!el || el.__hbound) return; el.__hbound=1;
+    var down=false, sx=0, sl=0, moved=false;
+
+    function hint(){
+      var max = el.scrollWidth - el.clientWidth;
+      el.classList.toggle('canscroll', max > 1);
+      var row = el.closest ? el.closest('.axrow') : null;
+      if(row) row.classList.toggle('more', max > 1 && el.scrollLeft < max - 2);
+    }
+    el.__hint = hint;
+
+    el.addEventListener('pointerdown', function(e){
+      el.__sup = false;
+      if(e.pointerType === 'touch') return;      // 터치는 브라우저 관성 스크롤이 낫다
+      if(e.button !== 0) return;
+      if(el.scrollWidth - el.clientWidth <= 1) return;
+      down = true; moved = false; sx = e.clientX; sl = el.scrollLeft;
+    });
+
+    el.addEventListener('pointermove', function(e){
+      if(!down) return;
+      var dx = e.clientX - sx;
+      if(!moved){
+        if(Math.abs(dx) < 5) return;             // 손떨림은 클릭으로 본다
+        moved = true; el.classList.add('dragging');
+        try{ el.setPointerCapture(e.pointerId); }catch(_){}
+      }
+      el.scrollLeft = sl - dx;
+      hint();
+      if(e.cancelable) e.preventDefault();
+    });
+
+    function up(e){
+      if(!down) return;
+      down = false;
+      if(moved){ el.__sup = true; }              // 뒤따라 오는 click 한 번만 막는다
+      moved = false;
+      el.classList.remove('dragging');
+      try{ el.releasePointerCapture(e.pointerId); }catch(_){}
+    }
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+    el.addEventListener('lostpointercapture', up);
+
+    el.addEventListener('click', function(e){
+      if(el.__sup){ el.__sup = false; e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    /* 세로 휠을 가로 이동으로 넘긴다. 끝에 닿으면 페이지 스크롤로 돌려준다 */
+    el.addEventListener('wheel', function(e){
+      var max = el.scrollWidth - el.clientWidth;
+      if(max <= 1) return;
+      var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if(!d) return;
+      var before = el.scrollLeft;
+      el.scrollLeft = Math.max(0, Math.min(max, before + d));
+      hint();
+      if(el.scrollLeft !== before && e.cancelable) e.preventDefault();
+    }, {passive:false});
+
+    el.addEventListener('scroll', hint, {passive:true});
+    hint();
+  }
+
+  function bindAll(){
+    var els = document.querySelectorAll('.topin,.dstripin');
+    for(var i=0;i<els.length;i++){ bind(els[i]); if(els[i].__hint) els[i].__hint(); }
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindAll);
+  else bindAll();
+  window.addEventListener('resize', bindAll);
+  window.addEventListener('load', bindAll);
+  /* 칩은 데이터를 받은 뒤 그려진다. 그려지면 폭이 바뀌므로 다시 잰다 */
+  ['domStrip','benStrip'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el && window.MutationObserver){
+      new MutationObserver(function(){ bind(el); if(el.__hint) el.__hint(); })
+        .observe(el, {childList:true});
+    }
+  });
+})();
+</script>
 </body></html>
