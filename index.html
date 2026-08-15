@@ -699,7 +699,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     v67 — A·B 축 띠, PC는 줄바꿈 (이 블록이 마지막이므로 여기 값이 이긴다)
+     v68 — A·B 축 띠, PC는 줄바꿈 (이 블록이 마지막이므로 여기 값이 이긴다)
      문제: PC에는 가로 스크롤 수단이 없다(스크롤바를 숨겨놔서 더더욱).
            그래서 오른쪽 칩이 잘린 채 접근이 안 됐다.
      방침: 모바일(≤760px)은 손가락으로 잘 밀리므로 손대지 않는다.
@@ -936,7 +936,7 @@ function normInnov(v){
   if(/참여|개방|확산/.test(t)) return '③참여확산형';
   return t;
 }
-/* v67 — 「현행」 데이터의 출처를 한 곳으로 모은다.
+/* v68 — 「현행」 데이터의 출처를 한 곳으로 모은다.
    원격(INDEX_REMOTE)이 있으면 그것, 없을 때만 HTML에 박힌 스냅샷으로 내려간다. */
 function curSource_(){
   return (window.INDEX_REMOTE && window.INDEX_REMOTE.length) ? window.INDEX_REMOTE : (window.INDEX_CUR || []);
@@ -2052,7 +2052,7 @@ if($('footCount')) $('footCount').textContent=(AGG&&AGG.total)||DATA.length;
 function switchView(v){
   if(v===VIEW) return;
   VIEW=v;
-  /* v67 수정 — 원격 발행DB를 먼저 본다.
+  /* v68 수정 — 원격 발행DB를 먼저 본다.
      기존엔 HTML에 박힌 옛 스냅샷(window.INDEX_CUR)을 바로 썼다.
      그래서 「이전 마무리」에 갔다가 「현행」으로 돌아오면 건수가 스냅샷 수로 줄었다. */
   DATA = v==='cur'?curSource_():(window.INDEX_PAST||[]);
