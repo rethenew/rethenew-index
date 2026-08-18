@@ -39,7 +39,7 @@
   .topbtn:hover{background:rgba(255,255,255,.16)}
 
   /* ── 드로어 ── */
-  .scrim{position:fixed;top:var(--dTop,0px);left:0;right:0;height:var(--dH,100dvh);background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim{position:fixed;top:var(--dTop,0px);left:0;right:0;height:var(--dH,100dvh);background:rgba(0,0,0,.38);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
   .scrim.open{opacity:1;pointer-events:auto}
   .drawer{position:fixed;top:var(--dTop,0px);left:0;bottom:auto;
     height:var(--dH,100dvh);max-height:var(--dH,100dvh);
@@ -174,6 +174,8 @@
   /* ── 우측 위젯 ── */
   .aside{position:sticky;top:72px;display:flex;flex-direction:column;gap:9px}
   .widget{border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+  /* v80 — TOP 위젯이 시장 점유율로 읽히지 않게 범위를 밝힌다 */
+  .asidenote{font-size:10.5px;line-height:1.65;color:var(--g40);padding:2px 4px 0;word-break:keep-all}
   .widget h3{font-size:10px;font-weight:800;color:var(--g60);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
   .rankrow{display:flex;align-items:center;gap:6px;padding:3px;border-radius:5px;cursor:pointer;background:none;border:none;width:100%;text-align:left}
   .rankrow:hover{background:var(--g05)}
@@ -795,6 +797,8 @@
       <div class="widget"><h3>산업군 TOP</h3><div id="indrank"></div></div>
       <div class="widget"><h3>주제 TOP</h3><div id="domrank"></div></div>
       <div class="widget"><h3>대상별 TOP</h3><div id="benrank"></div></div>
+      <p class="asidenote">위 지표는 리더뉴 지속가능 INDEX에 수집된 자료를 기준으로 한 것이며,
+        전체 시장 분포를 나타내지 않습니다. 수집은 주 1회 진행되며 수집 환경에 따라 수치가 달라질 수 있습니다.</p>
     </aside>
   </div>
 </div></main>
@@ -2356,8 +2360,8 @@ $('reqSend').addEventListener('click',()=>{
     <h2>리더뉴 지속가능 INDEX 안내</h2>
     <p class="ntq">“다른 곳은 어떻게 하고 있나요?”</p>
     <p>지난 5년간 파이브세컨즈와 매거진 리더뉴가 가장 자주 받은 질문입니다.</p>
-    <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다.</p>
-    <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영 요청</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하겠습니다.</p>
+    <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다. 특히, 조직과 담당자의 진정성을 담은 프로그램을 더 알리고 기록하는 것이 정말 중요하다고 생각했습니다.</p>
+    <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영 요청</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하고, 더 정확한 정보를 담을 수 있도록 노력하겠습니다.</p>
     <p>같은 자리에서 애쓰는 모든 분들을 응원합니다.</p>
     <p class="ntlast">앞으로도 리더뉴는 연결과 협력을 통해 지속가능한 사회에 보탬이 되도록 함께하겠습니다.</p>
     <p class="ntthx">감사합니다.</p>
