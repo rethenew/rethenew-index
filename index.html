@@ -174,10 +174,21 @@
   /* ── 우측 위젯 ── */
   .aside{position:sticky;top:72px;display:flex;flex-direction:column;gap:9px}
   .widget{border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
-  /* v83 — GRI·SDGs 를 「확정 분류」가 아니라 「연계 제안」으로 표기 (2026-09-05 단장님 확정)
+  /* v84 — 표기 성격을 「제안 지표」에서 「공시 연계 후보 지표」로 다시 좁힌다 (2026-09-05)
+       ① 카드 상세·비교창 문구 교체
+          「GRI·SDGs 연계는 리더뉴의 제안 지표입니다」
+          → 「공시 연계 후보 지표 (리더뉴 제안) · 지표 확정에는 활동 경계 · 산정 기준 · 증빙이 필요합니다」
+          v83 문구는 리더뉴가 자체 지표를 만든 것처럼 읽혔다. 우리가 말하려던 건
+          「지금 바로 공시에 쓸 수 있다」가 아니라 「보완하면 채울 수 있는 후보」다.
+       ② 안내사항에 공시 전환 요건 문단 추가 — 「공시를 대신하지 않는다」
+       ③ 대문자 강제(text-transform) 제거 — 「SDGS 연계」로 출력되던 것 수정
+     화면에는 「남는다·연결된다」만 쓴다. 「대행·서비스」 어휘는 제안서와 파브 접점에만 둔다.
+     INDEX 는 매거진 리더뉴의 공개 DB 다. 영업 문구가 들어가면 1,355건의 중립성이 깨진다.
+
+     v83 — GRI·SDGs 를 「확정 분류」가 아니라 「연계 제안」으로 표기
        ① 필터 그룹명 「GRI」→「GRI 연계」, 「SDGs」→「SDGs 연계」
        ② 안내사항 모달에 표기 성격 문단 추가
-       ③ 비교창·카드 상세에 「리더뉴의 제안 지표」 한 줄
+       ③ 비교창·카드 상세에 제안 표기 한 줄
      GRI 는 본래 조직 단위 공시 기준이라 개별 캠페인과 1:1 대응하지 않는다.
      확정처럼 적으면 표준의 성격을 잘못 쓰는 것이고, 기업 공시와 충돌하면 우리가 틀린 게 된다.
      v82 — 타이틀을 「리더뉴 지속가능 사회공헌 INDEX」로 변경 (v80 기반, v81 성과표기는 미포함·보류)
@@ -310,9 +321,10 @@
   .warnbox{border:1px solid var(--ink);border-left-width:4px;background:var(--g05);padding:11px 13px;
     font-size:12.5px;line-height:1.55;margin-bottom:16px}
   .disc{font-size:11px;color:var(--g60);line-height:1.55;border-top:1px solid var(--g10);padding-top:10px}
-  /* v83 — GRI·SDGs 가 확정 분류가 아니라 제안임을 알리는 한 줄 */
+  /* v83 — GRI·SDGs 가 확정 분류가 아니라 제안임을 알리는 한 줄 / v84 — 라벨 강조 */
   .mapnote{font-size:11px;color:var(--g60);line-height:1.5;border-top:1px solid var(--g10);
-    padding-top:9px;margin-top:11px}
+    padding-top:9px;margin-top:11px;word-break:keep-all}
+  .mapnote b{color:var(--g80);font-weight:800}
   @media print{
     body.diag-print .board,body.diag-print footer,body.diag-print .viewtabs{display:none !important}
     body.diag-print .diag{display:block !important;position:static;background:none;padding:0}
@@ -1420,7 +1432,7 @@ function itemHTML(x){
     })()+
     (x.impact?'<div class="impact">'+blist(splitImpact(x.impact))+'</div>':'')+
     (((x.gri||[]).length||(x.sdgs||[]).length)
-      ? '<div class="mapnote">GRI·SDGs 연계는 리더뉴의 제안 지표입니다.</div>' : '')+
+      ? '<div class="mapnote"><b>공시 연계 후보 지표</b> (리더뉴 제안) · 지표 확정에는 활동 경계 · 산정 기준 · 증빙이 필요합니다.</div>' : '')+
     '<div class="srcrow">'+
     '<span></span>'+
     '<button type="button" class="fixbtn" data-fix="'+x.no+'">정보 수정 요청하기</button>'+
@@ -1581,7 +1593,7 @@ function openCompare(){
   html+='</tbody></table>';
   // 항목열 96px + 캠페인열 각 240px 고정 → 모든 단 폭·간격 동일
   $('cmpScroll').innerHTML='<div class="xwrap">'+html+'</div>'
-    +'<div class="mapnote">GRI·SDGs 연계는 리더뉴의 제안 지표입니다.</div>';
+    +'<div class="mapnote"><b>공시 연계 후보 지표</b> (리더뉴 제안) · 지표 확정에는 활동 경계 · 산정 기준 · 증빙이 필요합니다.</div>';
   // 표 폭 맞추기 — 모달이 화면에 나온 뒤에 실행해야 컨테이너 폭을 읽을 수 있다
   window.__fitCmpTable=function(){
     const sc=$('cmpScroll'); if(!sc) return;
@@ -2376,6 +2388,7 @@ $('reqSend').addEventListener('click',()=>{
     <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다. 특히, 조직과 담당자의 진정성을 담은 프로그램을 더 알리고 기록하는 것이 정말 중요하다고 생각했습니다.</p>
     <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영 요청</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하고, 더 정확한 정보를 담을 수 있도록 노력하겠습니다.</p>
     <p><b>INDEX에 표기된 GRI·SDGs는 리더뉴가 공개 자료를 근거로 연계 가능성을 제안한 것입니다.</b> 해당 조직의 공식 공시 내용이 아니며, 공시 적합성에 대한 평가도 아닙니다. GRI는 본래 조직 단위 공시 기준이므로 개별 캠페인과 1:1로 대응하지 않으며, 같은 활동도 보고 목적에 따라 다른 지표로 연계될 수 있습니다.</p>
+    <p>표기된 지표를 실제 공시로 옮기려면 활동 경계, 산정 기준, 정량 실적, 증빙 자료가 함께 확정되어야 합니다. INDEX의 연계 표기는 그 출발점을 제시하는 것이며, 공시를 대신하지 않습니다.</p>
     <p>같은 자리에서 애쓰는 모든 분들을 응원합니다.</p>
     <p class="ntlast">앞으로도 리더뉴는 연결과 협력을 통해 지속가능한 사회에 보탬이 되도록 함께하겠습니다.</p>
     <p class="ntthx">감사합니다.</p>
