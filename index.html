@@ -63,7 +63,7 @@
   .dfoot .reset{background:var(--paper);color:var(--g60);border:1px solid var(--g20)}
   .fgroup{padding:13px 0;border-bottom:1px solid var(--g10)}
   .fgroup:last-child{border-bottom:none}
-  .fl{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g60);
+  .fl{display:block;font-size:10px;letter-spacing:.1em;text-transform:none;color:var(--g60);
     font-weight:800;margin-bottom:7px}
   .chips{display:flex;flex-wrap:wrap;gap:5px}
   .chip{font-size:12px;padding:5px 10px;border:1px solid var(--g20);border-radius:999px;background:var(--paper);
@@ -174,7 +174,13 @@
   /* ── 우측 위젯 ── */
   .aside{position:sticky;top:72px;display:flex;flex-direction:column;gap:9px}
   .widget{border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
-  /* v82 — 타이틀을 「리더뉴 지속가능 사회공헌 INDEX」로 변경 (v80 기반, v81 성과표기는 미포함·보류)
+  /* v83 — GRI·SDGs 를 「확정 분류」가 아니라 「연계 제안」으로 표기 (2026-09-05 단장님 확정)
+       ① 필터 그룹명 「GRI」→「GRI 연계」, 「SDGs」→「SDGs 연계」
+       ② 안내사항 모달에 표기 성격 문단 추가
+       ③ 비교창·카드 상세에 「리더뉴의 제안 지표」 한 줄
+     GRI 는 본래 조직 단위 공시 기준이라 개별 캠페인과 1:1 대응하지 않는다.
+     확정처럼 적으면 표준의 성격을 잘못 쓰는 것이고, 기업 공시와 충돌하면 우리가 틀린 게 된다.
+     v82 — 타이틀을 「리더뉴 지속가능 사회공헌 INDEX」로 변경 (v80 기반, v81 성과표기는 미포함·보류)
      v80 — TOP 위젯이 시장 점유율로 읽히지 않게 범위를 밝힌다 */
   .asidenote{font-size:10.5px;line-height:1.65;color:var(--g40);padding:2px 4px 0;word-break:keep-all}
   .widget h3{font-size:10px;font-weight:800;color:var(--g60);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
@@ -227,7 +233,7 @@
   .cmptable thead th{position:sticky;top:0;background:var(--ink);color:var(--paper);font-size:13px;font-weight:800;z-index:2}
   .cmptable thead th:first-child,.cmptable tbody th{position:sticky;left:0;z-index:1}
   .cmptable tbody th{background:var(--g05);color:var(--g60);font-size:10.5px;font-weight:800;letter-spacing:.06em;
-    text-transform:uppercase}
+    text-transform:none}
   .cmptable thead th:first-child{z-index:3}
   .cmptable tbody tr:nth-child(even) td{background:#fcfcfc}
   .cmptable .cno{display:block;font-size:10.5px;font-weight:700;opacity:.6;margin-bottom:2px}
@@ -304,6 +310,9 @@
   .warnbox{border:1px solid var(--ink);border-left-width:4px;background:var(--g05);padding:11px 13px;
     font-size:12.5px;line-height:1.55;margin-bottom:16px}
   .disc{font-size:11px;color:var(--g60);line-height:1.55;border-top:1px solid var(--g10);padding-top:10px}
+  /* v83 — GRI·SDGs 가 확정 분류가 아니라 제안임을 알리는 한 줄 */
+  .mapnote{font-size:11px;color:var(--g60);line-height:1.5;border-top:1px solid var(--g10);
+    padding-top:9px;margin-top:11px}
   @media print{
     body.diag-print .board,body.diag-print footer,body.diag-print .viewtabs{display:none !important}
     body.diag-print .diag{display:block !important;position:static;background:none;padding:0}
@@ -1105,8 +1114,8 @@ function buildGroups(){ return [
   {grp:'ESG',field:'esg',opts:[['E','E · 환경'],['S','S · 사회']]},
   {grp:'혁신 유형',field:'innov',opts:(AGG.innov||[]).filter(([k])=>k&&k!=='미분류').map(([k,v])=>[k,k+' '+v])},
   {grp:'산업군',field:'ind',opts:AGG.ind_filter.slice().sort(function(a,b){if(a[0]==='기타')return 1; if(b[0]==='기타')return -1;return String(a[0]).localeCompare(String(b[0]),'ko');}).map(([k,v])=>[k,k+' '+v])},
-  {grp:'SDGs',field:'sdgs',opts:AGG.sdg.map(([k])=>[k,k])},
-  {grp:'GRI',field:'gri',opts:AGG.gri.map(([k])=>[k,'GRI '+k])}
+  {grp:'SDGs 연계',field:'sdgs',opts:AGG.sdg.map(([k])=>[k,k])},
+  {grp:'GRI 연계',field:'gri',opts:AGG.gri.map(([k])=>[k,'GRI '+k])}
 ];}
 const MULTI={sdgs:1,gri:1};        // 전부 포함(AND)
 const MULTI_ANY={benef:1};          // 하나라도 해당(OR)
@@ -1410,6 +1419,8 @@ function itemHTML(x){
            + (x.period?drow('시기', esc(x.period)+' <span class="yr">(추정)</span>'):'');
     })()+
     (x.impact?'<div class="impact">'+blist(splitImpact(x.impact))+'</div>':'')+
+    (((x.gri||[]).length||(x.sdgs||[]).length)
+      ? '<div class="mapnote">GRI·SDGs 연계는 리더뉴의 제안 지표입니다.</div>' : '')+
     '<div class="srcrow">'+
     '<span></span>'+
     '<button type="button" class="fixbtn" data-fix="'+x.no+'">정보 수정 요청하기</button>'+
@@ -1552,8 +1563,8 @@ const CMPROWS=[
   ['시작연도', x=>x.year?esc(x.year)+'~':'—'],
   ['활동 내용', x=>bulletize(x.action)],
   ['공개 성과', x=>bulletize(x.impact)],
-  ['SDGs', x=>(x.sdgs||[]).join(' · ')||'—'],
-  ['GRI', x=>(x.gri||[]).map(g=>'GRI '+g).join(' · ')||'—']
+  ['SDGs 연계', x=>(x.sdgs||[]).join(' · ')||'—'],
+  ['GRI 연계', x=>(x.gri||[]).map(g=>'GRI '+g).join(' · ')||'—']
   /* v79 — 비교창에서 출처(URL) 행을 뺐다. 비교에 쓰이지 않고 폭만 잡아먹는다.
      원문 링크는 카드를 펼치면 그대로 있다. */
 ];
@@ -1569,7 +1580,8 @@ function openCompare(){
   });
   html+='</tbody></table>';
   // 항목열 96px + 캠페인열 각 240px 고정 → 모든 단 폭·간격 동일
-  $('cmpScroll').innerHTML='<div class="xwrap">'+html+'</div>';
+  $('cmpScroll').innerHTML='<div class="xwrap">'+html+'</div>'
+    +'<div class="mapnote">GRI·SDGs 연계는 리더뉴의 제안 지표입니다.</div>';
   // 표 폭 맞추기 — 모달이 화면에 나온 뒤에 실행해야 컨테이너 폭을 읽을 수 있다
   window.__fitCmpTable=function(){
     const sc=$('cmpScroll'); if(!sc) return;
@@ -2363,6 +2375,7 @@ $('reqSend').addEventListener('click',()=>{
     <p>지난 5년간 파이브세컨즈와 매거진 리더뉴가 가장 자주 받은 질문입니다.</p>
     <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다. 특히, 조직과 담당자의 진정성을 담은 프로그램을 더 알리고 기록하는 것이 정말 중요하다고 생각했습니다.</p>
     <p>본래 내부 활용을 목적으로 AI를 활용해 자료를 모으고 검증해 왔습니다. 그렇다 보니 미처 살피지 못한 부분이 있을 수 있습니다. 반영되지 않은 조직의 이야기, 추가로 필요한 기능이나 바로잡을 정보가 있다면 <button type="button" class="ntlink" id="ntReq">정보 반영 요청</button>에 남겨 주십시오. 살펴보고 가능한 범위에서 빠르게 반영하고, 더 정확한 정보를 담을 수 있도록 노력하겠습니다.</p>
+    <p><b>INDEX에 표기된 GRI·SDGs는 리더뉴가 공개 자료를 근거로 연계 가능성을 제안한 것입니다.</b> 해당 조직의 공식 공시 내용이 아니며, 공시 적합성에 대한 평가도 아닙니다. GRI는 본래 조직 단위 공시 기준이므로 개별 캠페인과 1:1로 대응하지 않으며, 같은 활동도 보고 목적에 따라 다른 지표로 연계될 수 있습니다.</p>
     <p>같은 자리에서 애쓰는 모든 분들을 응원합니다.</p>
     <p class="ntlast">앞으로도 리더뉴는 연결과 협력을 통해 지속가능한 사회에 보탬이 되도록 함께하겠습니다.</p>
     <p class="ntthx">감사합니다.</p>
