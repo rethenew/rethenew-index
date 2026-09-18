@@ -24,6 +24,13 @@ button{font-family:inherit}
 .logo .sep{margin:0 6px;color:rgba(255,255,255,.45);font-weight:400}
 .asof{font-size:12.5px;color:rgba(255,255,255,.6);white-space:nowrap}
 @media(max-width:700px){.logo .idx,.asof{display:none}.topsearch{max-width:none}}
+@media(max-width:620px){
+  .topin{height:auto;padding:9px 0;flex-wrap:wrap;gap:8px}
+  .logo{font-size:15px;flex:1 1 100%}
+  .logo .sep{display:none}.logo .pr{display:block;margin-top:2px}
+  .topsearch{flex:1 1 100%;order:3}
+  .topbtn{font-size:12.5px;padding:8px 11px}
+}
 /* 필터 스트립 */
 .pbar{background:#FFF8E6;border-bottom:1px solid #F0DFA8;color:#6B5518;font-size:12.5px;padding:7px 0;line-height:1.5}
 .pbar b{font-weight:900}
@@ -76,12 +83,32 @@ table{width:100%;border-collapse:collapse;font-size:14.5px}
 th{text-align:left;font-size:11.5px;font-weight:800;color:var(--g60);letter-spacing:.06em;text-transform:uppercase;padding:0 12px 10px;border-bottom:2px solid var(--mint)}
 td{padding:14px 12px;border-bottom:1px solid var(--g10);vertical-align:middle}
 td.rk{font-size:12px;font-weight:900;color:var(--g40);font-variant-numeric:tabular-nums}
-td.nm{font-weight:700}td.nm .sub{font-size:12.5px;font-weight:600;color:var(--g60);margin-top:2px}
-td.num{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;font-size:15px}
-td.na{font-size:12px;color:var(--g40);font-weight:700}
+td.nm{font-weight:700;font-size:15px;line-height:1.35}
+td.meta{font-size:13px;font-weight:600;color:var(--g60);line-height:1.5}
+td.meta b{font-weight:700;color:var(--g80)}
+td.na{font-size:12.5px;color:var(--g40);font-weight:700}
 tr.me td{background:var(--mint-05)}
-.sbar{position:relative;height:8px;background:var(--g10);border-radius:4px;overflow:hidden}
-.sbar i{position:absolute;left:0;top:0;bottom:0;background:var(--mint);border-radius:4px}.sbar i.md{background:var(--mint-l)}.sbar i.lo{background:#cfd6d4}
+/* 지수 막대 — 숫자를 막대 안에 넣고, 산업군 평균 눈금을 함께 표시한다 */
+.sbar{position:relative;height:28px;background:var(--g05);border-radius:7px;overflow:hidden;border:1px solid var(--g10)}
+.sbar i{position:absolute;left:0;top:0;bottom:0;background:var(--mint);border-radius:6px 0 0 6px}
+.sbar i.md{background:var(--mint-l)}.sbar i.lo{background:#b9c6c2}
+.sbar .av{position:absolute;top:0;bottom:0;width:0;border-left:2px dotted rgba(0,0,0,.42);z-index:2}
+.sbar .sv{position:absolute;top:0;bottom:0;display:flex;align-items:center;font-size:14px;font-weight:900;
+  font-variant-numeric:tabular-nums;z-index:3;line-height:1}
+.sbar .sv.in{color:#fff;right:auto;padding-right:9px;justify-content:flex-end}
+.sbar .sv.out{color:var(--ink);padding-left:8px}
+.avcap{font-size:11px;color:var(--g40);margin-top:3px;font-weight:600}
+@media(max-width:860px){
+  #lTbl thead,#cTbl thead,#hTbl thead{display:none}
+  #lTbl tr,#cTbl tr,#hTbl tr{display:grid;grid-template-columns:30px 1fr;gap:2px 8px;
+    padding:12px 2px;border-bottom:1px solid var(--g10)}
+  #lTbl td,#cTbl td,#hTbl td{display:block;border:0;padding:0}
+  #lTbl td.rk,#cTbl td.rk,#hTbl td.rk{grid-row:1/3;padding-top:2px}
+  #lTbl td.nm,#cTbl td.nm,#hTbl td.nm{font-size:15px}
+  #lTbl td.meta,#cTbl td.meta,#hTbl td.meta{font-size:12.5px;margin-top:1px}
+  #lTbl td.bar,#cTbl td.bar,#hTbl td.bar{grid-column:2;margin-top:8px}
+  #lTbl td.na,#cTbl td.na,#hTbl td.na{grid-column:2;margin-top:6px}
+}
 .more{display:block;width:100%;padding:12px;margin-top:10px;background:var(--paper);border:1px solid var(--ink);color:var(--ink);border-radius:9px;font-weight:800;font-size:14px;cursor:pointer}
 .more{border-color:var(--mint);color:var(--mint-d)}.more:hover{background:var(--mint);color:var(--paper);border-color:var(--mint)}
 /* KPI · 도표 */
@@ -215,6 +242,7 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--g60);font-siz
 </div></div>
 <main class="board"><div class="wrap">
   <div class="topwrap"><h4 id="topTitle">TOP 10</h4><div id="chTop"></div></div>
+  <div class="avcap" id="lCap" style="display:none">막대 안 점선 = 그 캠페인이 속한 산업군의 평균 지수</div>
   <table id="lTbl"></table>
   <button class="more" id="lMore"></button>
 </div></main>
@@ -282,12 +310,15 @@ var $=function(s){return document.querySelector(s)}; var $$=function(s){return A
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]})};
 function mean(a){if(!a.length)return null;return Math.round(a.reduce(function(x,y){return x+y},0)/a.length)}
 function bandOf(s){return s>=75?'hi':(s>=25?'md':'lo')}
+var INDAVG={};
 
 /* ---------- 데이터 : 캠페인 [이름, 주최, 산업군, 점수|null, 주제, 대상[], ESG, 혁신유형] ---------- */
 var CAMP=D.camp.map(function(r){return {n:r[0],host:r[1],ind:r[2],s:(r[3]===null||r[3]===undefined||r[3]<0)?null:r[3],
   dom:r[4]||'',ben:r[5]||[],esg:r[6]||'',innov:r[7]||'',sdgs:r[8]||[],gri:r[9]||[]}});
 var MEAS=CAMP.filter(function(c){return c.s!==null});
 CAMP.forEach(function(c,i){c.i=i});
+(function(){var m={};CAMP.forEach(function(c){if(c.s===null)return;(m[c.ind]=m[c.ind]||[]).push(c.s)});
+  Object.keys(m).forEach(function(k){var a=m[k];INDAVG[k]=Math.round(a.reduce(function(x,y){return x+y},0)/a.length)});})();
 var HOSTS={}; CAMP.forEach(function(c){(HOSTS[c.host]=HOSTS[c.host]||[]).push(c)});
 Object.keys(HOSTS).forEach(function(h){HOSTS[h].sort(function(a,b){return (b.s===null?-1:b.s)-(a.s===null?-1:a.s)})});
 var ALLNAMES=Object.keys(HOSTS);
@@ -380,12 +411,26 @@ document.addEventListener('click',function(e){
 });
 
 /* ---------- 캠페인 순위표 ---------- */
+function metaCell(c){
+  return '<b>'+esc(c.host)+'</b>'+(c.ind?' · '+esc(c.ind):'')+(c.dom?' · '+esc(c.dom):'');
+}
+function scoreCell(c){
+  var av=INDAVG[c.ind];
+  var inside = c.s>=26;
+  return '<div class="sbar" title="'+esc(c.ind)+' 평균 '+(av===undefined?'—':av)+'">'
+    + '<i class="'+bandOf(c.s)+'" style="width:'+Math.max(c.s,2)+'%"></i>'
+    + (av===undefined?'':'<span class="av" style="left:'+av+'%"></span>')
+    + '<span class="sv '+(inside?'in':'out')+'" style="'+(inside?('left:0;width:'+c.s+'%'):('left:'+Math.max(c.s,2)+'%'))+'">'+c.s+'</span>'
+    + '</div>';
+}
 function rowHTML(c,i,me){
   var mine=me&&c.host===me;
-  if(c.s===null) return '<tr data-i="'+c.i+'"'+(mine?' class="me"':'')+'><td class="rk">—</td><td class="nm">'+esc(c.n)+'<div class="sub">'+esc(c.host)+' · '+esc(c.ind)+'</div></td>'+
-    '<td colspan="2" class="na">미확인 · 검토 중</td></tr>';
-  return '<tr data-i="'+c.i+'"'+(mine?' class="me"':'')+'><td class="rk">'+(i+1)+'</td><td class="nm">'+esc(c.n)+'<div class="sub">'+esc(c.host)+' · '+esc(c.ind)+(c.dom?' · '+esc(c.dom):'')+'</div></td>'+
-    '<td class="bar"><div class="sbar"><i class="'+bandOf(c.s)+'" style="width:'+c.s+'%"></i></div></td><td class="num">'+c.s+'</td></tr>';
+  if(c.s===null) return '<tr data-i="'+c.i+'"'+(mine?' class="me"':'')+'><td class="rk">—</td>'+
+    '<td class="nm">'+esc(c.n)+'</td><td class="meta">'+metaCell(c)+'</td>'+
+    '<td class="na">미확인 · 검토 중</td></tr>';
+  return '<tr data-i="'+c.i+'"'+(mine?' class="me"':'')+'><td class="rk">'+(i+1)+'</td>'+
+    '<td class="nm">'+esc(c.n)+'</td><td class="meta">'+metaCell(c)+'</td>'+
+    '<td class="bar">'+scoreCell(c)+'</td></tr>';
 }
 /* ---------- 도표 ---------- */
 function hbars(rows, opts){ /* rows: [{k, v, n, on}] — HTML 막대, 글자 왜곡 없음 */
@@ -426,7 +471,8 @@ function drawList(){
   var scoredN=list.filter(function(c){return c.s!==null}).length;
   $('#topTitle').textContent=title+(scoredN>10?' · TOP 10':' · 점수 산정 '+scoredN+'건');
   var rest=list.slice(Math.min(10,scoredN));
-  $('#lTbl').innerHTML=rest.length?'<thead><tr><th style="width:44px">순번</th><th>캠페인 · 주최</th><th style="width:170px">사회공헌 캠페인 PR 지수</th><th style="width:56px;text-align:right">지수</th></tr></thead><tbody>'+
+  $('#lCap').style.display=rest.length?'block':'none';
+  $('#lTbl').innerHTML=rest.length?'<thead><tr><th style="width:40px">순번</th><th style="width:31%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:220px">사회공헌 캠페인 PR 지수</th></tr></thead><tbody>'+
     rest.slice(0,shown).map(function(c,i){return rowHTML(c,i+10,null)}).join('')+'</tbody>':'';
   $('#lMore').style.display=rest.length>shown?'block':'none';
   $('#lMore').textContent='더보기 ('+(rest.length-shown)+'건 남음)';
@@ -457,7 +503,7 @@ function show(name){
   $('#cStrip').innerHTML=strip(peers,cs);
   $('#cStripCap').textContent='회색 점 = '+ind+' 다른 캠페인 '+pm.length+'건, 검은 점 = '+name+' 캠페인';
   var sorted=cs.slice();
-  $('#cTbl').innerHTML='<thead><tr><th style="width:44px">순번</th><th>캠페인</th><th style="width:170px">사회공헌 캠페인 PR 지수</th><th style="width:56px;text-align:right">지수</th></tr></thead><tbody>'+
+  $('#cTbl').innerHTML='<thead><tr><th style="width:40px">순번</th><th style="width:31%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:220px">사회공헌 캠페인 PR 지수</th></tr></thead><tbody>'+
     sorted.map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -507,7 +553,7 @@ function showCamp(i){
   if(others.length){
     $('#cpHostWrap').style.display='block';
     $('#cpHostT').textContent=c.host+'의 다른 캠페인 '+others.length+'건';
-    $('#hTbl').innerHTML='<thead><tr><th style="width:44px">순번</th><th>캠페인</th><th style="width:170px">사회공헌 캠페인 PR 지수</th><th style="width:56px;text-align:right">지수</th></tr></thead><tbody>'+
+    $('#hTbl').innerHTML='<thead><tr><th style="width:40px">순번</th><th style="width:31%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:220px">사회공헌 캠페인 PR 지수</th></tr></thead><tbody>'+
       others.slice().sort(function(a,b){return (b.s===null?-1:b.s)-(a.s===null?-1:a.s)}).map(function(x,i){return rowHTML(x,i,null)}).join('')+'</tbody>';
   } else { $('#cpHostWrap').style.display='none'; }
   $('#cpMail').href='mailto:business@fivescgroup.com?subject='+encodeURIComponent('캠페인 PR 지수 자료 확인 요청 · '+c.n);
