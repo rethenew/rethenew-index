@@ -184,6 +184,20 @@ tr.me td{background:var(--mint-05)}
 .tc.t3 .twk{background:#fff}
 .tw.flat .twk{background:var(--g05);color:var(--g60)}
 .tws{display:block;margin-top:4px;font-size:12px;color:var(--g80);font-weight:700}
+.sortbar{display:flex;align-items:center;gap:7px;margin:0 0 12px;flex-wrap:wrap}
+.lfind{position:relative;flex:0 1 300px;min-width:190px}
+.lfind input{width:100%;box-sizing:border-box;font:inherit;font-size:13px;padding:8px 30px 8px 13px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink)}
+.lfind input:focus{outline:none;border-color:var(--mint);box-shadow:0 0 0 3px var(--mint-10)}
+.lqx{position:absolute;right:4px;top:50%;transform:translateY(-50%);visibility:hidden;border:0;background:transparent;color:var(--g60);font-size:13px;cursor:pointer;padding:4px 7px;line-height:1}
+.lqx:hover{color:var(--ink)}
+.ltwrap{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;align-items:start}
+@media(max-width:860px){.ltwrap{grid-template-columns:1fr;gap:0}}
+.nofind{padding:26px 14px;text-align:center;color:var(--g60);font-size:13px;line-height:1.7}
+.sortlab{font-size:11.5px;font-weight:900;color:var(--g60);margin-right:2px}
+.sortb{font-size:12px;font-weight:700;color:var(--g80);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.sortb:hover{border-color:var(--mint)}
+.sortb.on{background:var(--mint);border-color:var(--mint);color:#fff}
+.sortn{margin-left:auto;font-size:11.5px;color:var(--g60);font-variant-numeric:tabular-nums}
 .tiecap{margin:0 0 12px;padding:11px 13px;border:1px solid var(--mint-20);background:var(--mint-05);border-radius:9px;font-size:12.5px;line-height:1.65;color:var(--g80)}
 .tc .tn{font-size:15.5px;font-weight:800;line-height:1.4;margin-top:12px;flex:1;overflow-wrap:anywhere}
 .tc .th{font-size:13px;font-weight:700;color:var(--g80);margin-top:8px}
@@ -340,9 +354,17 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 </div></div>
 <main class="board"><div class="wrap">
   <div class="topwrap"><h4 id="topTitle">TOP 10</h4><div id="chTop"></div></div>
-  <div class="restnote" id="lCap" style="display:none"><b>아래는 순위가 아닙니다.</b> 가나다순으로 늘어놓고, 점수 대신 그 일을 <b>얼마나 오래 해 왔는지</b>를 함께 적었습니다.<br>
-사회적 가치를 높이기 위해 애쓴 사업들이 더 널리 알려지기를 바랍니다. 이 지표는 캠페인의 가치를 평가하지 않습니다. 얼마나 알려지고 있는지를 보는 자료이며, 리더뉴도 생태계가 함께 자라도록 노력하겠습니다.</div>
-  <table id="lTbl"></table>
+  <div class="restnote" id="lCap" style="display:none"><b>여기부터는 순위를 매기지 않습니다.</b> 앞의 12건 외에는 서열을 두지 않고, 그 일을 <b>얼마나 오래 해 왔는지</b> 순으로 늘어놓았습니다.<br>
+오래 이어진 사업이 앞에 옵니다. 이 지표는 캠페인의 가치를 평가하지 않습니다. 얼마나 알려지고 있는지를 보는 자료이며, 여기 실린 모든 사업이 더 널리 알려지기를 바랍니다.</div>
+  <div class="sortbar" id="lSortWrap" style="display:none">
+    <div class="lfind"><input type="text" id="lQ" placeholder="이 목록에서 찾기 — 캠페인 · 주최" autocomplete="off" spellcheck="false"><button class="lqx" id="lQX" title="지우기">✕</button></div>
+    <button class="sortb on" data-sort="long">오래 해 온 순</button>
+    <button class="sortb" data-sort="new">최근 시작 순</button>
+    <button class="sortb" data-sort="host">주최명순</button>
+    <button class="sortb" data-sort="name">가나다순</button>
+    <span class="sortn" id="lCount"></span>
+  </div>
+  <div class="ltwrap"><table id="lTbl"></table><table id="lTbl2"></table></div>
   <button class="more" id="lMore"></button>
 </div></main>
 </div>
@@ -679,7 +701,32 @@ function topCards(list){
 function drawCharts(list){
   $('#chTop').innerHTML=topCards(list);
 }
-var LIMIT=50, shown=LIMIT;
+var LIMIT=100, shown=LIMIT, LQ='';
+/* 목록 내 찾기용 정규화 — 공백·가운뎃점·괄호를 지우고 소문자로 */
+function lnorm(s){ return String(s==null?'':s).toLowerCase().replace(/[\s·:()\[\]{}_\-–—,.]/g,''); }
+/* ---------- 13번째부터의 정렬 ----------
+   가나다순은 사실상 무작위다. 「ㄱ」으로 시작하는 캠페인이 앞에 온다는 데는 아무 뜻이 없다.
+   이름을 아는 사람은 위의 검색창을 쓰고, 둘러보러 온 사람은 필터를 쓴다.
+   그래서 기본은 「얼마나 오래 해 왔는가」로 둔다. 순위가 아니면서 읽는 사람에게 뜻이 있다.
+   시작연도를 모르는 건은 뒤로 보낸다. 모르는 것을 짧게 한 것처럼 보이면 안 된다. */
+var SORT='long';
+function startYearOf(c){
+  var y=parseInt(String(c.yr||'').replace(/[^0-9]/g,'').slice(0,4),10);
+  return (!y||y<1950||y>THISYEAR)?null:y;
+}
+function restSort(a,b){
+  var ya=startYearOf(a), yb=startYearOf(b);
+  if(SORT==='name') return String(a.n).localeCompare(String(b.n),'ko');
+  if(SORT==='host'){
+    var h=String(a.host||'').localeCompare(String(b.host||''),'ko');
+    return h || String(a.n).localeCompare(String(b.n),'ko');
+  }
+  if(ya===null&&yb===null) return String(a.n).localeCompare(String(b.n),'ko');
+  if(ya===null) return 1;      // 연도 모름은 항상 뒤
+  if(yb===null) return -1;
+  if(ya!==yb) return SORT==='long' ? (ya-yb) : (yb-ya);
+  return String(a.n).localeCompare(String(b.n),'ko');
+}
 function drawList(){
   var list=CAMP.filter(pass).slice().sort(function(a,b){return (b.s===null?-1:b.s)-(a.s===null?-1:a.s)});
   drawCharts(list);
@@ -687,12 +734,36 @@ function drawList(){
   var title=[F.ind,F.dom,F.ben,F.esg?('ESG '+F.esg):'',F.innov?INNOV_LABEL[F.innov]:'',F.sdg,F.gri?('GRI '+F.gri):''].filter(Boolean).join(' × ')||'전체';
   var scoredN=list.filter(function(c){return c.s!==null}).length;
   $('#topTitle').textContent=title+(scoredN>12?' · TOP 12':' · 점수 산정 '+scoredN+'건');
-  var rest=list.slice(Math.min(12,scoredN)).sort(function(a,b){return String(a.n).localeCompare(String(b.n),'ko')});
-  $('#lCap').style.display=rest.length?'block':'none';
-  $('#lTbl').innerHTML=rest.length?'<thead><tr><th style="width:34%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:118px">운영 기간</th></tr></thead><tbody>'+
-    rest.slice(0,shown).map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>':'';
+  var all=list.slice(Math.min(12,scoredN)).sort(restSort);
+  /* 목록 안에서 바로 걸러낸다. 위쪽 검색은 비슷한 과업을 찾아 주는 다른 기능이다. */
+  var rest = LQ ? all.filter(function(c){
+    return (lnorm(c.n).indexOf(LQ)>=0) || (lnorm(c.host).indexOf(LQ)>=0);
+  }) : all;
+
+  $('#lCap').style.display=all.length?'block':'none';
+  $('#lSortWrap').style.display=all.length?'flex':'none';
+  $('#lCount').textContent = LQ
+    ? (rest.length.toLocaleString()+'건 / '+all.length.toLocaleString()+'건')
+    : (all.length.toLocaleString()+'건');
+  $('#lQX').style.visibility = LQ ? 'visible' : 'hidden';
+
+  var THEAD='<thead><tr><th style="width:38%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:104px">운영 기간</th></tr></thead>';
+  var page=rest.slice(0,shown);
+  if(!page.length){
+    $('#lTbl').innerHTML = rest.length||!LQ ? '' :
+      '<tbody><tr><td class="nofind">「'+esc(LQ)+'」에 해당하는 캠페인이 이 목록에 없습니다. 위쪽 검색창에서 비슷한 과업을 찾아보십시오.</td></tr></tbody>';
+    $('#lTbl2').innerHTML='';
+  } else {
+    /* PC 는 두 줄로 나눠 담는다. 왼쪽을 다 읽고 오른쪽으로 넘어가는 신문식 배치다.
+       좁은 화면에서는 CSS 가 한 줄로 되돌리고, 두 표가 위아래로 이어진다. */
+    var TWO = window.matchMedia && window.matchMedia('(min-width:861px)').matches && page.length>6;
+    var half = TWO ? Math.ceil(page.length/2) : page.length;
+    $('#lTbl').innerHTML  = THEAD+'<tbody>'+page.slice(0,half).map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
+    $('#lTbl2').innerHTML = TWO ? (THEAD+'<tbody>'+page.slice(half).map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>') : '';
+    $('#lTbl2').style.display = TWO ? '' : 'none';
+  }
   $('#lMore').style.display=rest.length>shown?'block':'none';
-  $('#lMore').textContent='더보기 ('+(rest.length-shown)+'건 남음)';
+  $('#lMore').textContent='더보기 ('+(rest.length-shown).toLocaleString()+'건 남음)';
 }
 $('#lMore').onclick=function(){shown+=LIMIT;drawList()};
 
@@ -1070,6 +1141,31 @@ function drawSearch(){
 }
 $('#srMore').onclick=function(){ srShown+=SR_LIMIT; drawSearch(); };
 $('#srBack').onclick=function(){ home(); window.scrollTo({top:0}); };
+
+(function(){
+  var q=$('#lQ'), x=$('#lQX');
+  if(!q) return;
+  q.addEventListener('input', function(){          // 엔터도 클릭도 필요 없다
+    LQ=lnorm(q.value); shown=LIMIT; drawList();
+  });
+  q.addEventListener('keydown', function(e){ if(e.key==='Escape'){ q.value=''; LQ=''; shown=LIMIT; drawList(); } });
+  if(x) x.onclick=function(){ q.value=''; LQ=''; shown=LIMIT; drawList(); q.focus(); };
+})();
+/* 화면 폭이 바뀌면 한 줄/두 줄을 다시 잡는다 */
+(function(){
+  var t=null;
+  window.addEventListener('resize', function(){
+    clearTimeout(t); t=setTimeout(function(){ try{ drawList(); }catch(e){} }, 180);
+  });
+})();
+
+$$('#lSortWrap .sortb').forEach(function(b){
+  b.onclick=function(){
+    SORT=b.getAttribute('data-sort');
+    $$('#lSortWrap .sortb').forEach(function(x){ x.classList.toggle('on', x===b); });
+    shown=LIMIT; drawList();
+  };
+});
 
 /* ---------- 검색 ---------- */
 var SEARCH=[]; ALLNAMES.forEach(function(n){SEARCH.push({t:'h',n:n})}); CAMP.forEach(function(c){SEARCH.push({t:'c',n:c.n,i:c.i})});
