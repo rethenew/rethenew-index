@@ -354,14 +354,12 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 </div></div>
 <main class="board"><div class="wrap">
   <div class="topwrap"><h4 id="topTitle">TOP 10</h4><div id="chTop"></div></div>
-  <div class="restnote" id="lCap" style="display:none"><b>여기부터는 순위를 매기지 않습니다.</b> 앞의 12건 외에는 서열을 두지 않고, 그 일을 <b>얼마나 오래 해 왔는지</b> 순으로 늘어놓았습니다.<br>
-오래 이어진 사업이 앞에 옵니다. 이 지표는 캠페인의 가치를 평가하지 않습니다. 얼마나 알려지고 있는지를 보는 자료이며, 여기 실린 모든 사업이 더 널리 알려지기를 바랍니다.</div>
+  <div class="restnote" id="lCap" style="display:none"><b>여기부터는 순위를 매기지 않습니다.</b> 앞의 12건 외에는 서열을 두지 않고, <b>운영 기간이 긴 순</b>으로 늘어놓았습니다.<br>
+오래 이어온 사업이 앞에 옵니다. 이 지표는 캠페인의 가치를 평가하지 않습니다. 얼마나 알려지고 있는지를 보는 자료이며, 여기 실린 모든 사업이 더 널리 알려지기를 바랍니다.</div>
   <div class="sortbar" id="lSortWrap" style="display:none">
     <div class="lfind"><input type="text" id="lQ" placeholder="이 목록에서 찾기 — 캠페인 · 주최" autocomplete="off" spellcheck="false"><button class="lqx" id="lQX" title="지우기">✕</button></div>
-    <button class="sortb on" data-sort="long">오래 해 온 순</button>
+    <button class="sortb on" data-sort="long">운영 기간 긴 순</button>
     <button class="sortb" data-sort="new">최근 시작 순</button>
-    <button class="sortb" data-sort="host">주최명순</button>
-    <button class="sortb" data-sort="name">가나다순</button>
     <span class="sortn" id="lCount"></span>
   </div>
   <div class="ltwrap"><table id="lTbl"></table><table id="lTbl2"></table></div>
@@ -716,11 +714,6 @@ function startYearOf(c){
 }
 function restSort(a,b){
   var ya=startYearOf(a), yb=startYearOf(b);
-  if(SORT==='name') return String(a.n).localeCompare(String(b.n),'ko');
-  if(SORT==='host'){
-    var h=String(a.host||'').localeCompare(String(b.host||''),'ko');
-    return h || String(a.n).localeCompare(String(b.n),'ko');
-  }
   if(ya===null&&yb===null) return String(a.n).localeCompare(String(b.n),'ko');
   if(ya===null) return 1;      // 연도 모름은 항상 뒤
   if(yb===null) return -1;
@@ -1219,12 +1212,12 @@ drawFilters(); drawList();
    Apps Script 에서 최신 데이터를 받고, 느리거나 실패하면 내장본으로 그린다. */
 (function(){
   var booted=false, LIVE=false, WHY='';
-  /* ---------- 자료 캐시 ----------
-     아임웹 안의 iframe 은 뒤로가기·재진입 때마다 문서를 다시 읽는다.
-     그때마다 집계 서버를 다시 부르면 로딩 화면을 매번 보게 된다.
-     같은 방문 안에서는 받아둔 자료를 그대로 쓴다. 10분이 지나면 다시 받는다.
-     (탭을 닫으면 사라지므로 오래된 자료가 남지 않는다) */
-  var CK='rtnpr.v2', CTTL=6*60*60*1000;   // 탭을 닫으면 사라진다. 그 안에서는 다시 받지 않는다
+  /* ---------- 자료를 어디서 받는가 ----------
+     ① prdata.json — 이 페이지 옆에 놓인 정적 파일. GitHub CDN 이 바로 내준다.
+     ② 집계 서버(Apps Script) — ①이 없거나 실패할 때만.
+     ②는 요청마다 시트를 읽거나 캐시 조각을 잇느라 몇 초가 걸린다. 예비로만 쓴다.
+     받은 자료는 탭을 닫을 때까지 기억한다. */
+  var CK='rtnpr.v3', CTTL=6*60*60*1000;
   function cacheGet(){
     try{
       var raw=sessionStorage.getItem(CK); if(!raw) return null;
@@ -1234,9 +1227,7 @@ drawFilters(); drawList();
       return o.d;
     }catch(e){ return null; }
   }
-  function cacheSet(d){
-    try{ sessionStorage.setItem(CK, JSON.stringify({t:Date.now(),d:d})); }catch(e){}
-  }
+  function cacheSet(d){ try{ sessionStorage.setItem(CK, JSON.stringify({t:Date.now(),d:d})); }catch(e){} }
 
   function fail(){
     var m=document.getElementById('loadMask');
@@ -1244,7 +1235,7 @@ drawFilters(); drawList();
       m.innerHTML='<div class="loadin">'
         +'<div class="lmk">CSR CAMPAIGN PR INDEX</div>'
         +'<div class="lm1">지금은 자료를 불러올 수 없습니다</div>'
-        +'<div class="lm2">집계 서버에서 최신 자료를 받지 못했습니다.<br>'
+        +'<div class="lm2">최신 자료를 받지 못했습니다.<br>'
         +'잘못된 값을 보여드리지 않기 위해 화면을 비워 둡니다.<br>'
         +'잠시 후 새로고침해 주십시오.</div>'
         +'<div class="lmwhy">'+esc(WHY||'연결 실패')+'</div>'
@@ -1259,19 +1250,27 @@ drawFilters(); drawList();
     try { document.body.classList.add('ready'); } catch(e){}
     setTimeout(function(){ try{ window.__pingHeight(); }catch(e){} }, 300); }
 
-  /* 캐시가 있으면 기다리지 않고 바로 그린다 */
   var cd=cacheGet();
   if(cd){ D=cd; LIVE=true; go(); return; }
+  if(!window.fetch){ WHY='이 브라우저에서 자료를 받을 수 없습니다'; go(); return; }
 
-  if(!PRDASH_API || !window.fetch){ WHY='이 브라우저에서 자료를 받을 수 없습니다'; go(); return; }
-  var t=setTimeout(function(){ WHY='응답이 없습니다 (7초 초과)'; go(); }, 7000);
-  fetch(PRDASH_API, {cache:'no-store'})
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(j){
-      if(j && j.camp && j.camp.length){ D=j; LIVE=true; cacheSet(j); }
-      else WHY='받은 자료가 비어 있습니다';
+  function take(j){
+    if(j && j.camp && j.camp.length){ D=j; LIVE=true; cacheSet(j); return true; }
+    return false;
+  }
+  var t=setTimeout(function(){ WHY='응답이 없습니다'; go(); }, 12000);
+
+  fetch('prdata.json', {cache:'no-cache'})
+    .then(function(r){ if(!r.ok) throw new Error('no file'); return r.json(); })
+    .then(function(j){ if(!take(j)) throw new Error('empty'); })
+    .catch(function(){
+      /* 정적 파일이 없거나 비었으면 집계 서버로 간다 */
+      if(!PRDASH_API) { WHY='자료 파일이 없습니다'; return; }
+      return fetch(PRDASH_API, {cache:'no-store'})
+        .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+        .then(function(j){ if(!take(j)) WHY='받은 자료가 비어 있습니다'; })
+        .catch(function(e){ WHY=String((e&&e.message)||e||'연결 실패'); });
     })
-    .catch(function(e){ WHY=String((e&&e.message)||e||'연결 실패'); })
     .then(function(){ clearTimeout(t); go(); });
 })();
 
