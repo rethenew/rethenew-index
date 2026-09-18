@@ -48,8 +48,8 @@ button{font-family:inherit}
 .hsearch .ac{top:48px}
 .hquick{font-size:12px;color:rgba(255,255,255,.55);margin-top:10px}.hquick a{color:#fff;font-weight:700;cursor:pointer;margin-right:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
 @media(max-width:700px){.hero{padding:22px 0 18px}.hero h1{font-size:21px}.axlab{width:60px;font-size:12px}.tops{grid-template-columns:repeat(3,1fr)}}
-.tc,#lTbl tbody tr,#cTbl tbody tr,#hTbl tbody tr{cursor:pointer}
-.tc:hover{border-color:var(--mint)}#lTbl tbody tr:hover td,#cTbl tbody tr:hover td,#hTbl tbody tr:hover td{background:var(--mint-05)}
+.tc,#lTbl tbody tr,#lTbl2 tbody tr,#cTbl tbody tr,#hTbl tbody tr{cursor:pointer}
+.tc:hover{border-color:var(--mint)}#lTbl tbody tr:hover td,#lTbl2 tbody tr:hover td,#cTbl tbody tr:hover td,#hTbl tbody tr:hover td{background:var(--mint-05)}
 .cphead{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin:6px 0 22px}
 .cpscore{flex-shrink:0;width:176px;border:1px solid var(--mint);background:var(--mint-05);border-radius:12px;padding:16px 14px;text-align:center}
 .cpscore .n{font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--mint-d);font-variant-numeric:tabular-nums}
@@ -98,8 +98,13 @@ table{width:100%;border-collapse:collapse;font-size:14.5px}
 th{text-align:left;font-size:11.5px;font-weight:800;color:var(--g60);letter-spacing:.06em;text-transform:uppercase;padding:0 12px 10px;border-bottom:2px solid var(--mint)}
 td{padding:14px 12px;border-bottom:1px solid var(--g10);vertical-align:middle}
 td.rk{font-size:12px;font-weight:900;color:var(--g40);font-variant-numeric:tabular-nums}
-td.nm{font-weight:700;font-size:15px;line-height:1.35}
-td.meta{font-size:13px;font-weight:600;color:var(--g60);line-height:1.5}
+td.nm{font-weight:700;font-size:15px;line-height:1.38;word-break:keep-all;overflow-wrap:break-word;hyphens:none}
+td.meta .mh{display:block;font-weight:700;color:var(--g80);font-size:13px;line-height:1.4;word-break:keep-all;overflow-wrap:break-word}
+td.meta .mh.sm{font-size:12px}
+td.meta .mt{display:block;margin-top:2px;font-weight:600;color:var(--g60);font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td.meta .mt.top{margin-top:0}
+td.meta .mt.sm{font-size:11.5px}td.meta .mt.xs{font-size:10.5px;letter-spacing:-.02em}
+td.meta{font-size:13px;font-weight:600;color:var(--g60);line-height:1.5;max-width:0}
 td.meta b{font-weight:700;color:var(--g80)}
 td.yrs{text-align:right;white-space:nowrap}
 td.yrs .yv{display:block;font-size:14.5px;font-weight:900;font-variant-numeric:tabular-nums}
@@ -124,14 +129,14 @@ tr.me td{background:var(--mint-05)}
 .restnote{font-size:13px;line-height:1.7;color:var(--g80);background:var(--mint-05);
   border-left:3px solid var(--mint);border-radius:0 8px 8px 0;padding:13px 16px;margin:4px 0 16px;max-width:60em}
 @media(max-width:860px){
-  #lTbl thead,#cTbl thead,#hTbl thead{display:none}
-  #lTbl tr,#cTbl tr,#hTbl tr{display:block;padding:13px 2px;border-bottom:1px solid var(--g10)}
-  #lTbl td,#cTbl td,#hTbl td{display:block;border:0;padding:0}
-  #lTbl td.nm,#cTbl td.nm,#hTbl td.nm{font-size:15px}
-  #lTbl td.meta,#cTbl td.meta,#hTbl td.meta{font-size:12.5px;margin-top:2px}
-  #lTbl td.yrs,#cTbl td.yrs,#hTbl td.yrs{text-align:left;margin-top:6px}
-  #lTbl td.yrs .yv,#cTbl td.yrs .yv,#hTbl td.yrs .yv{display:inline;font-size:13px}
-  #lTbl td.yrs .yf,#cTbl td.yrs .yf,#hTbl td.yrs .yf{display:inline;margin-left:6px}
+  #lTbl thead,#lTbl2 thead,#cTbl thead,#hTbl thead{display:none}
+  #lTbl tr,#lTbl2 tr,#cTbl tr,#hTbl tr{display:block;padding:13px 2px;border-bottom:1px solid var(--g10)}
+  #lTbl td,#lTbl2 td,#cTbl td,#hTbl td{display:block;border:0;padding:0}
+  #lTbl td.nm,#lTbl2 td.nm,#cTbl td.nm,#hTbl td.nm{font-size:15px}
+  #lTbl td.meta,#lTbl2 td.meta,#cTbl td.meta,#hTbl td.meta{font-size:12.5px;margin-top:2px}
+  #lTbl td.yrs,#lTbl2 td.yrs,#cTbl td.yrs,#hTbl td.yrs{text-align:left;margin-top:6px}
+  #lTbl td.yrs .yv,#lTbl2 td.yrs .yv,#cTbl td.yrs .yv,#hTbl td.yrs .yv{display:inline;font-size:13px}
+  #lTbl td.yrs .yf,#lTbl2 td.yrs .yf,#cTbl td.yrs .yf,#hTbl td.yrs .yf{display:inline;margin-left:6px}
 }
 .more{display:block;width:100%;padding:12px;margin-top:10px;background:var(--paper);border:1px solid var(--ink);color:var(--ink);border-radius:9px;font-weight:800;font-size:14px;cursor:pointer}
 .more{border-color:var(--mint);color:var(--mint-d)}.more:hover{background:var(--mint);color:var(--paper);border-color:var(--mint)}
@@ -354,8 +359,9 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 </div></div>
 <main class="board"><div class="wrap">
   <div class="topwrap"><h4 id="topTitle">TOP 10</h4><div id="chTop"></div></div>
-  <div class="restnote" id="lCap" style="display:none"><b>여기부터는 순위를 매기지 않습니다.</b> 앞의 12건 외에는 서열을 두지 않고, <b>운영 기간이 긴 순</b>으로 늘어놓았습니다.<br>
-오래 이어온 사업이 앞에 옵니다. 이 지표는 캠페인의 가치를 평가하지 않습니다. 얼마나 알려지고 있는지를 보는 자료이며, 여기 실린 모든 사업이 더 널리 알려지기를 바랍니다.</div>
+  <div class="restnote" id="lCap" style="display:none"><b>여기에는 등수가 없습니다.</b> 오래 이어온 사업부터 차례로 놓았습니다.<br>
+누군가는 스무 해 넘게, 누군가는 이제 막 첫 해를 보내고 있습니다. 그 시간의 무게는 보도량으로 재지지 않습니다.<br>
+이 지표가 보는 것은 <b>얼마나 알려졌는가</b>일 뿐, 그 일이 얼마나 값진가가 아닙니다. 여기 실린 모든 사업이 더 많은 분께 가닿기를 바랍니다.</div>
   <div class="sortbar" id="lSortWrap" style="display:none">
     <div class="lfind"><input type="text" id="lQ" placeholder="이 목록에서 찾기 — 캠페인 · 주최" autocomplete="off" spellcheck="false"><button class="lqx" id="lQX" title="지우기">✕</button></div>
     <button class="sortb on" data-sort="long">운영 기간 긴 순</button>
@@ -577,8 +583,16 @@ document.addEventListener('click',function(e){
 });
 
 /* ---------- 캠페인 순위표 ---------- */
+/* 주최를 윗줄, 산업군·주제를 아랫줄로 나눈다.
+   아랫줄이 두 줄로 넘어가면 그 줄만 글자를 줄여 한 줄에 맞춘다.
+   칸을 넓히거나 말을 자르지 않는다. */
 function metaCell(c){
-  return '<b>'+esc(c.host)+'</b>'+(c.ind?' · '+esc(c.ind):'')+(c.dom?' · '+esc(c.dom):'');
+  var sub=[c.ind,c.dom].filter(Boolean).join(' · ');
+  var cls = sub.length>22 ? ' xs' : (sub.length>16 ? ' sm' : '');
+  var h=String(c.host||'').trim();
+  var hcls = h.length>18 ? ' sm' : '';
+  return (h?('<span class="mh'+hcls+'">'+esc(h)+'</span>'):'')
+       + (sub?('<span class="mt'+cls+(h?'':' top')+'">'+esc(sub)+'</span>'):'');
 }
 /* 13위부터는 순위도 점수도 싣지 않는다. 가나다순으로 늘어놓고
    대신 「얼마나 오래 해 왔는가」를 보여 준다 — 평가가 아니라 사실이고, 비교할 값이 있다. */
