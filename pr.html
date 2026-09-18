@@ -248,6 +248,13 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--g60);font-siz
 body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 .loadmask.err .loadbar{display:none}
 .lmwhy{margin-top:18px;font-size:12px;color:#9aa;letter-spacing:.02em}
+.evid .tk{display:flex;align-items:center;gap:8px}
+.evw{display:inline-block;min-width:26px;padding:2px 6px;border-radius:4px;background:var(--mint-10);color:var(--mint-d);font-size:11px;font-weight:700;text-align:center;letter-spacing:0}
+.evp{color:var(--mint-d);font-weight:700}
+.evn{display:block;margin-top:3px;font-size:11.5px;color:var(--g60)}
+.evn2{color:var(--g60);font-weight:400}
+.evq{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--g05);padding:2px 6px;border-radius:4px}
+.evfoot{padding:12px 14px;font-size:11.5px;line-height:1.7;color:var(--g60);border-top:1px solid var(--g10)}
 .loadin{text-align:center;padding:24px}
 .loadin .lmk{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--mint);margin-bottom:14px}
 .loadin .lm1{font-size:19px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px}
@@ -333,6 +340,7 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
   </div>
   <div class="sec">과업 정보</div>
   <div class="task" id="cpTask"></div>
+  <div id="cpEvidWrap"><div class="sec">이 지수의 근거</div><div class="task evid" id="cpEvid"></div></div>
   <div id="cpHostWrap"><div class="sec" id="cpHostT"></div><table id="hTbl"></table></div>
   <div class="cta"><p>이 캠페인의 집계에 쓴 검색 결과와 기준을 확인해 드립니다. 누락되거나 잘못 잡힌 기사가 있으면 알려주십시오. 자료 확인·정정은 서비스 구매 없이 이용할 수 있습니다.</p>
     <a id="cpMail" href="mailto:business@fivescgroup.com">자료 확인·문의</a></div>
@@ -377,9 +385,12 @@ function bandOf(s){return s>=75?'hi':(s>=25?'md':'lo')}
 var INDAVG={};
 
 /* ---------- 데이터 : 캠페인 [이름, 주최, 산업군, 점수|null, 주제, 대상[], ESG, 혁신유형] ---------- */
-var CAMP=D.camp.map(function(r){return {n:r[0],host:r[1],ind:r[2],s:(r[3]===null||r[3]===undefined||r[3]<0)?null:r[3],
+var CAMP=D.camp.map(function(r){return {n:r[0],host:r[1],ind:r[2],
+  s:(r[3]===null||r[3]===undefined||r[3]<0)?null:r[3],
   dom:r[4]||'',ben:r[5]||[],esg:r[6]||'',innov:r[7]||'',sdgs:r[8]||[],gri:r[9]||[],
-  act:r[10]||'',imp:r[11]||'',par:r[12]||'',yr:r[13]||'',href:r[14]||''}});
+  act:r[10]||'',imp:r[11]||'',par:r[12]||'',yr:r[13]||'',href:r[14]||'',
+  /* v42 — PR 산식 원값. 「왜 이 점수인가」를 화면에서 보여주기 위한 것이다. */
+  hit:r[15],med:r[16],tit:r[17],mon:r[18],led:r[19],qry:r[20]||'',bad:r[21]||''}});
 var MEAS=CAMP.filter(function(c){return c.s!==null});
 CAMP.forEach(function(c,i){c.i=i});
 (function(){var m={};CAMP.forEach(function(c){if(c.s===null)return;(m[c.ind]=m[c.ind]||[]).push(c.s)});
@@ -562,6 +573,7 @@ function show(name){
   var meas=cs.filter(function(c){return c.s!==null}), unm=cs.length-meas.length;
   var avg=mean(pm.map(function(c){return c.s})), above=meas.filter(function(c){return c.s>=avg}).length;
   $('#home').style.display='none'; $('#result').style.display='block'; $('#faq').style.display='none'; $('#cpage').style.display='none'; $('#srch').style.display='none';
+  pushNav({v:'host',h:name});
   $('#cName').textContent=name;
   $('#cLine').innerHTML='등재 캠페인 <b>'+cs.length+'개</b> 중 뉴스에서 확인된 것은 <b>'+meas.length+'개</b>'+(unm?', 확인되지 않은 것은 <b>'+unm+'개</b>':'')+'입니다.'+
     (meas.length?' 확인된 '+meas.length+'개 중 <b>'+above+'개</b>가 '+esc(ind)+' 캠페인 평균('+avg+') 이상입니다.':'');
@@ -572,10 +584,41 @@ function show(name){
     sorted.map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function home(){$('#result').style.display='none';$('#faq').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#home').style.display='block'}
+function home(){$('#result').style.display='none';$('#faq').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#home').style.display='block';pushNav({v:'home'})}
+function openFaq(){$('#home').style.display='none';$('#result').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#faq').style.display='block';pushNav({v:'faq'})}
 $('#backHome').onclick=function(){home();window.scrollTo({top:0})};
-$('#faqBtn').onclick=function(){$('#home').style.display='none';$('#result').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#faq').style.display='block';window.scrollTo({top:0})};
+$('#faqBtn').onclick=function(){openFaq();window.scrollTo({top:0})};
 $('#faqBack').onclick=function(){home();window.scrollTo({top:0})};
+
+/* ---------- 브라우저 뒤로가기 ----------
+   이 페이지는 아임웹 안의 iframe 으로 들어간다.
+   화면을 바꿀 때 기록을 남기지 않으면, 캠페인 페이지에서 뒤로가기를 눌렀을 때
+   목록이 아니라 아임웹 이전 페이지로 나가버린다. 실제로 그렇게 동작하고 있었다.
+   화면 전환마다 기록을 남기고, 뒤로가기가 오면 그 화면을 다시 그린다. */
+var NAV_SILENT=false;
+function pushNav(st){
+  if(NAV_SILENT) return;
+  try{
+    var cur=history.state&&history.state.rtn;
+    if(cur&&JSON.stringify(cur)===JSON.stringify(st)) return;   // 같은 화면 연속 기록 방지
+    history.pushState({rtn:st},'');
+  }catch(e){}
+}
+function applyNav(st){
+  NAV_SILENT=true;
+  try{
+    if(!st||st.v==='home') home();
+    else if(st.v==='camp')  showCamp(st.i);
+    else if(st.v==='host')  show(st.h);
+    else if(st.v==='srch')  showSearch(st.q);
+    else if(st.v==='faq')   openFaq();
+    else home();
+  }catch(e){ try{home()}catch(e2){} }
+  NAV_SILENT=false;
+  try{ window.scrollTo({top:0}); }catch(e){}
+}
+window.addEventListener('popstate',function(e){ applyNav(e.state&&e.state.rtn); });
+try{ history.replaceState({rtn:{v:'home'}},''); }catch(e){}
 
 /* ---------- 캠페인 페이지 ---------- */
 function splitList(v){
@@ -604,11 +647,50 @@ function taskTable(c){
 
 function rankIn(list,c){ var ms=list.filter(function(x){return x.s!==null}).sort(function(a,b){return b.s-a.s}); var r=-1; for(var i=0;i<ms.length;i++){if(ms[i]===c){r=i+1;break}} return {r:r,n:ms.length}; }
 function chip(lbl,val,lk){ return '<span class="chip'+(lk?' lk':'')+'"'+(lk?' data-f="'+lk+'"':'')+'><small>'+lbl+'</small>'+esc(val)+'</span>'; }
+/* ---------- 「왜 이 점수인가」 ----------
+   배점은 보도량 35 · 주목도 30 · 보도 지속 25 · 기사 고유도 10.
+   각 축을 전체 캠페인 분포 안의 백분위로 바꾼 뒤 배점을 곱하고,
+   그 합계를 다시 전체 백분위로 펴서 0~100 으로 만든다.
+   그래서 「유효건수 몇 건 = 몇 점」 이라는 고정 환산표는 없다.
+   여기서는 계산에 실제로 쓰인 원값을 그대로 보여준다. */
+function num_(x){ return (x===null||x===undefined||x==='')?null:Number(x); }
+function evidTable(c){
+  if(c.s===null) return '';
+  var hit=num_(c.hit), med=num_(c.med), tit=num_(c.tit), mon=num_(c.mon), led=num_(c.led);
+  if(hit===null && tit===null && mon===null) return '';   // 근거값 자체가 없으면 표를 만들지 않는다
+  function pc(a,b){ return (a!==null && b) ? ' <span class="evp">('+Math.round(a/b*100)+'%)</span>' : ''; }
+  function row(w,label,val,note){
+    return '<div class="tr"><div class="tk"><span class="evw">'+w+'</span>'+label+'</div>'
+         + '<div class="tv">'+val+(note?'<span class="evn">'+note+'</span>':'')+'</div></div>';
+  }
+  var h='';
+  h+=row('35','보도량',
+      hit===null?'—':('유효 보도 <b>'+hit.toLocaleString()+'건</b>'+(med!==null?' · 매체 '+med.toLocaleString()+'곳':'')),
+      '캠페인명으로 확인된 최근 12개월 기사');
+  h+=row('30','주목도',
+      (tit===null)?'—':('제목에 캠페인명이 들어간 기사 <b>'+tit.toLocaleString()+'건</b>'+pc(tit,hit)),
+      '기업 소식 끝의 한 줄이 아니라 기사 주제로 다뤄진 정도');
+  h+=row('25','보도 지속',
+      mon===null?'—':('12개월 중 <b>'+mon+'개월</b>에 보도'),
+      '한 달에 몰렸는지, 꾸준한지');
+  h+=row('10','기사 고유도',
+      led===null?'—':('서로 다른 도입부 <b>'+led.toLocaleString()+'건</b>'+pc(led,hit)
+        +(hit!==null&&hit<10?' <span class="evn2">· 10건 미만이라 반영 안 함</span>':'')),
+      '배포 원문을 그대로 실은 기사 비중');
+  if(c.qry) h+=row('','집계 검색어','<code class="evq">'+esc(c.qry)+'</code>','이 말로 찾은 결과입니다');
+  h+='<div class="evfoot">각 축은 전체 캠페인 분포 안의 백분위로 바꾼 뒤 배점을 곱합니다. '
+    +'그 합계를 다시 전체 백분위로 펴서 0~100 으로 만듭니다. '
+    +'따라서 <b>지수 '+c.s+' 은 「상위 '+Math.max(1,100-Number(c.s))+'%」 라는 뜻</b>이며, 절대 점수가 아닙니다.<br>'
+    +'누락되거나 잘못 잡힌 기사가 있으면 아래로 알려주십시오.</div>';
+  return h;
+}
+
 function showCamp(i){
   var c=CAMP[i]; if(!c) return;
   var peers=CAMP.filter(function(x){return x.ind===c.ind}), pm=peers.filter(function(x){return x.s!==null});
   var avg=mean(pm.map(function(x){return x.s})), rk=rankIn(peers,c);
   $('#home').style.display='none'; $('#result').style.display='none'; $('#faq').style.display='none'; $('#srch').style.display='none'; $('#cpage').style.display='block';
+  pushNav({v:'camp',i:i});
   $('#cpCrumb').innerHTML='<a class="backbtn" id="cpBack">← 전체 목록으로</a>'
     +'<span class="bsep">›</span><a id="cpInd">'+esc(c.ind)+'</a>'
     +'<span class="bsep">›</span><a id="cpHost">'+esc(c.host)+'</a>';
@@ -640,6 +722,9 @@ function showCamp(i){
   $('#cpChips').innerHTML=ch||'<span class="chip"><small>분류</small>미입력</span>';
   $('#cpChips').querySelectorAll('.chip.lk').forEach(function(el){el.onclick=function(){var f=el.getAttribute('data-f').split(':');F[f[0]]=f[1];home();drawFilters();drawList();window.scrollTo({top:0})}});
   $('#cpTask').innerHTML=taskTable(c);
+  var ev=evidTable(c);
+  if(ev){ $('#cpEvid').innerHTML=ev; $('#cpEvidWrap').style.display='block'; }
+  else  { $('#cpEvidWrap').style.display='none'; }
   var hs=HOSTS[c.host]||[], others=hs.filter(function(x){return x!==c});
   if(others.length){
     $('#cpHostWrap').style.display='block';
@@ -723,6 +808,7 @@ function showSearch(q){
   var hostN=Object.keys(hosts).length;
   $('#home').style.display='none'; $('#result').style.display='none';
   $('#faq').style.display='none'; $('#cpage').style.display='none'; $('#srch').style.display='block';
+  pushNav({v:'srch',q:q});
   $('#srTitle').textContent='「'+q+'」 검색 결과';
   $('#srLine').innerHTML= srRows.length
     ? '<b>'+srRows.length+'건</b>의 캠페인이 걸렸습니다. 주최 <b>'+hostN+'곳</b>입니다.'
