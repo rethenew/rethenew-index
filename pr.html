@@ -878,7 +878,7 @@ function evidTable(c){
   if(c.s===null) return '';
   var hit=num_(c.hit), tit=num_(c.tit), mon=num_(c.mon), led=num_(c.led), med=num_(c.med);
   var ex=c.ex||{};
-  var AXS=ex.ax||null, FULL=ex.full||null;
+  var AXS=ex.ax||null, FULL=[35,30,25,10];
   if(hit===null && tit===null && mon===null) return '';
 
   var tR=(hit&&tit!==null)?tit/hit:null;
@@ -945,10 +945,12 @@ function evidTable(c){
   /* 언제부터 언제까지 · 월별 흐름 */
   if(ex.m0){
     var bars='';
-    if(ex.ms&&ex.ms.length){
-      var mx=Math.max.apply(null, ex.ms.map(function(a){return a[1]}))||1;
-      bars='<div class="mbar">'+ex.ms.map(function(a){
-        return '<i style="height:'+Math.max(6,Math.round(a[1]/mx*44))+'px" title="'+esc(ymLabel(a[0]))+' '+a[1]+'건"></i>';
+    if(ex.mc&&ex.mc.length){
+      var y0=parseInt(String(ex.m0).slice(0,4),10), m0=parseInt(String(ex.m0).slice(5,7),10);
+      var mx=Math.max.apply(null, ex.mc)||1;
+      bars='<div class="mbar">'+ex.mc.map(function(v,k){
+        var mm=m0+k, yy=y0+Math.floor((mm-1)/12), m2=((mm-1)%12)+1;
+        return '<i style="height:'+Math.max(6,Math.round(v/mx*44))+'px" title="'+yy+'년 '+m2+'월 '+v+'건"></i>';
       }).join('')+'</div><div class="mbl"><span>'+esc(ymLabel(ex.m0))+'</span><span>'+esc(ymLabel(ex.m1))+'</span></div>';
     }
     h+='<div class="tr"><div class="tk">보도 기간</div><div class="tv">'
@@ -971,7 +973,7 @@ function evidTable(c){
     +'<div class="evmain">네이버 뉴스 검색' + (c.qry?(' · 검색어 <code class="evq">'+esc(c.qry)+'</code>'):'') + '</div>'
     +'<div class="axs">검색 결과에서 주최명이 함께 확인된 기사만 유효 보도로 셉니다. '
     +'같은 기사를 여러 매체가 전재한 경우도 각각 한 건으로 셉니다.'
-    +(ex.at?(' 최종 집계 '+esc(ex.at)+'.'):'')+'</div></div></div>';
+    +(D.asof?(' 최종 집계 '+esc(D.asof)+'.'):'')+'</div></div></div>';
 
   /* 정리 */
   var strong=[],weak=[];
@@ -1222,7 +1224,7 @@ drawFilters(); drawList();
      그때마다 집계 서버를 다시 부르면 로딩 화면을 매번 보게 된다.
      같은 방문 안에서는 받아둔 자료를 그대로 쓴다. 10분이 지나면 다시 받는다.
      (탭을 닫으면 사라지므로 오래된 자료가 남지 않는다) */
-  var CK='rtnpr.v1', CTTL=10*60*1000;
+  var CK='rtnpr.v2', CTTL=6*60*60*1000;   // 탭을 닫으면 사라진다. 그 안에서는 다시 받지 않는다
   function cacheGet(){
     try{
       var raw=sessionStorage.getItem(CK); if(!raw) return null;
