@@ -53,6 +53,9 @@ button{font-family:inherit}
 .cphead{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin:6px 0 22px}
 .cpscore{flex-shrink:0;width:176px;border:1px solid var(--mint);background:var(--mint-05);border-radius:12px;padding:16px 14px;text-align:center}
 .cpscore .n{font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--mint-d);font-variant-numeric:tabular-nums}
+.cpscore .n.bd{font-size:23px;letter-spacing:-.02em;line-height:1.25;padding:10px 0}
+.cpscore .n.bd.b1{color:var(--mint-d)}.cpscore .n.bd.b2{color:var(--mint-d)}
+.cpscore .n.bd.b3{color:var(--g80)}.cpscore .n.bd.b4{color:var(--g60)}
 .cpscore .n.na{font-size:20px;color:var(--g60);padding:14px 0}
 .cpscore .l{font-size:11px;font-weight:800;color:var(--g60);margin-top:8px;letter-spacing:.04em}
 .cpmain{flex:1;min-width:260px}
@@ -169,6 +172,9 @@ tr.me td{background:var(--mint-05)}
 .tc.t3{border-color:var(--mint);background:var(--mint-05)}
 .tc .tr{display:flex;justify-content:space-between;align-items:baseline}
 .tc .tk{font-size:11.5px;font-weight:900;color:var(--mint-d);background:var(--mint-10);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.tc .tk.big{font-size:17px;padding:7px 13px;border-radius:8px;letter-spacing:-.01em}
+.tc .tk.big.b3{background:var(--g05);color:var(--g80)}.tc .tk.big.b4{background:var(--g05);color:var(--g60)}
+.tc .tr{justify-content:flex-start}
 .tc.t3 .tk{background:var(--mint);color:#fff}
 .tc .ts{font-size:37px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
 .tc.t3 .ts{color:var(--mint-d)}
@@ -272,6 +278,9 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 .axb{background:#fff;padding:14px 15px}
 .axh{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
 .axn{font-size:13px;font-weight:900}
+.axw{display:inline-block;margin-left:6px;font-style:normal;font-size:11px;font-weight:700;color:var(--g60)}
+.axp.hi{color:var(--mint-d)}.axp.md{color:var(--g80)}.axp.lo{color:var(--g60);font-weight:400}
+.axsum>b.b3,.axsum>b.b4{color:var(--g80)}
 .axp{font-size:12.5px;color:var(--mint-d);font-weight:700;font-variant-numeric:tabular-nums}
 .axp b{font-size:17px}.axp.na{color:var(--g60);font-weight:400;font-size:12px}
 .axv{font-size:13.5px;line-height:1.6}
@@ -586,7 +595,32 @@ function groupAvg(list, pick, keys){
     return {k:k, v:m.length?mean(m.map(function(c){return c.s})):0, n:m.length}}).filter(function(r){return r.n>0}).sort(function(a,b){return b.v-a.v});
 }
 /* 지수 자체가 백분위다 — 지수 99 = 상위 1% */
-function topPct(sc){ var v=Math.max(1,100-Number(sc)); return '전체 상위 '+v+'%'; }
+/* ---------- 점수 대신 구간 ----------
+   87 과 86 을 나란히 놓으면 그 1점 차이가 의미 있는 것처럼 읽힌다.
+   실제로는 측정 오차 안이고, 기업 사이에 불필요한 서열을 만든다.
+   지수는 안에서 정렬에만 쓰고, 밖으로는 구간으로만 말한다. */
+var BANDS=[[95,'상위 5%'],[90,'상위 10%'],[80,'상위 20%'],[70,'상위 30%'],[50,'상위 50%']];
+function bandLabel(sc){
+  var n=Number(sc);
+  for(var i=0;i<BANDS.length;i++) if(n>=BANDS[i][0]) return BANDS[i][1];
+  return '상위 50% 밖';
+}
+function bandCls(sc){
+  var n=Number(sc);
+  return n>=90?'b1':(n>=80?'b2':(n>=50?'b3':'b4'));
+}
+/* 축별 순위도 같은 눈금으로 뭉갠다 */
+function pctBand(p){
+  if(p===null||p===undefined) return null;
+  if(p<=5) return '상위 5%'; if(p<=10) return '상위 10%';
+  if(p<=20) return '상위 20%'; if(p<=30) return '상위 30%';
+  if(p<=50) return '상위 50%'; return '상위 50% 밖';
+}
+function pctBandCls(p){
+  if(p===null||p===undefined) return 'lo';
+  return p<=10?'hi':(p<=30?'md':'lo');
+}
+function topPct(sc){ return '전체 '+bandLabel(sc); }
 /* ---------- 이 캠페인의 무엇이 두드러졌나 ----------
    네 축 가운데 전체 순위가 가장 앞선 것을 고른다.
    「보도가 많아서 1등」이 아니라 「무엇을 해서 여기 있는가」를 보여주기 위한 것이다.
@@ -625,8 +659,8 @@ function topCards(list){
   var topS=m[0].s, tie=all.filter(function(c){return c.s===topS}).length;
   var head='';
   if(tie>12){
-    head='<div class="tiecap">지수 <b>'+topS+'점</b>이 <b>'+tie.toLocaleString()+'건</b>입니다. '
-       + '순위를 매길 수 없어 <b>보도량이 많은 순</b>으로 12건을 보여드립니다. '
+    head='<div class="tiecap"><b>'+esc(bandLabel(topS))+'</b> 구간에 <b>'+tie.toLocaleString()+'건</b>이 함께 있습니다. '
+       + '이 구간 안에서는 굳이 순위를 매기지 않고, <b>보도량이 많은 순</b>으로 12건을 보여드립니다. '
        + '(같으면 보도 지속 → 주목도 → 가나다순)</div>';
   }
 
@@ -635,9 +669,9 @@ function topCards(list){
     /* 가장 앞선 축마저 중하위면 「이렇게 하면 된다」의 사례가 아니다.
        억지로 상위처럼 보이게 쓰지 않는다. 있는 그대로 적는다. */
     var why='';
-    if(w && w.p<=40) why='<div class="tw"><span class="twk">'+w.k+' 상위 '+w.p+'%</span><span class="tws">'+w.s+'</span></div>';
+    if(w && w.p<=30) why='<div class="tw"><span class="twk">'+w.k+' '+pctBand(w.p)+'</span><span class="tws">'+w.s+'</span></div>';
     else if(w)       why='<div class="tw flat"><span class="twk">네 축이 고르게</span><span class="tws">'+w.s+'</span></div>';
-    return '<div class="tc'+(i<3?' t3':'')+'" data-i="'+c.i+'"><div class="tr"><span class="tk">'+topPct(c.s)+'</span><span class="ts">'+c.s+'</span></div>'+
+    return '<div class="tc'+(i<3?' t3':'')+'" data-i="'+c.i+'"><div class="tr"><span class="tk big '+bandCls(c.s)+'">'+topPct(c.s)+'</span></div>'+
       '<div class="tn">'+esc(c.n)+'</div><div class="th">'+esc(c.host)+'</div>'+
       '<div class="tt">'+esc(c.ind)+(c.dom?' · '+esc(c.dom):'')+(c.ben&&c.ben.length?' · '+esc(c.ben[0]):'')+'</div>'+
       why+'</div>'}).join('')+'</div>';
@@ -783,21 +817,23 @@ function evidTable(c){
   var mHit=medOf(AX.hit), mTit=medOf(AX.tit), mMon=medOf(AX.mon);
 
   function rank(p){ if(p===null) return '';
-    return '<span class="rk '+(p<=10?'hi':(p<=40?'md':'lo'))+'">전체 상위 '+p+'%</span>'; }
+    return '<span class="rk '+pctBandCls(p)+'">전체 '+pctBand(p)+'</span>'; }
   function times(v,m){ if(v===null||!m) return '';
     var r=v/m;
     if(r>=1.15) return '<span class="cmp">중앙값의 '+(r>=10?Math.round(r):r.toFixed(1))+'배</span>';
     if(r<=0.85) return '<span class="cmp lo">중앙값의 '+(r<0.1?r.toFixed(2):r.toFixed(1))+'배</span>';
     return '<span class="cmp mid">중앙값 수준</span>'; }
-  function pts(n){
-    if(!AXS||AXS[n]===undefined||AXS[n]===null) return '<span class="axp na">점수 미전송</span>';
-    if(AXS[n]<0) return '<span class="axp na">제외</span>';
-    return '<span class="axp"><b>'+AXS[n]+'</b> / '+(FULL?FULL[n]:AXDEF[n].w)+'점</span>'; }
+  /* 축 점수도 숫자로 내보내지 않는다. 그 축이 배점의 몇 할을 채웠는지만 말한다. */
+  function pts(n,p){
+    if(AXS&&AXS[n]!==undefined&&AXS[n]!==null&&AXS[n]<0) return '<span class="axp na">제외</span>';
+    var b=pctBand(p);
+    if(!b) return '<span class="axp na">—</span>';
+    return '<span class="axp '+pctBandCls(p)+'">'+b+'</span>'; }
 
-  function block(n,main,sub){
+  function block(n,main,sub,p){
     var D=AXDEF[n];
     return '<div class="axb">'
-      +'<div class="axh"><span class="axn">'+D.k+'</span>'+pts(n)+'</div>'
+      +'<div class="axh"><span class="axn">'+D.k+'<i class="axw"> 배점 '+D.w+'</i></span>'+pts(n,p)+'</div>'
       +'<div class="axv">'+main+'</div>'
       +(sub?'<div class="axs">'+sub+'</div>':'')
       +'<div class="axd">'+D.d+'</div></div>';
@@ -805,31 +841,34 @@ function evidTable(c){
 
   var h='<div class="axwrap">';
   h+=block(0,
-      hit===null?'—':('유효 보도 <b>'+hit.toLocaleString()+'건</b> '+rank(pHit)+' '+times(hit,mHit)),
-      mHit!==null?('전체 중앙값 '+mHit+'건'):'');
+      hit===null?'—':('유효 보도 <b>'+hit.toLocaleString()+'건</b> '+times(hit,mHit)),
+      mHit!==null?('전체 중앙값 '+mHit+'건'):'', pHit);
   h+=block(1,
-      tR===null?'—':('제목 노출 <b>'+Math.round(tR*100)+'%</b> — '+hit.toLocaleString()+'건 중 '+tit.toLocaleString()+'건 '+rank(pTit)+' '+times(tR,mTit)),
-      mTit!==null?('전체 중앙값 '+Math.round(mTit*100)+'%'):'');
+      tR===null?'—':('제목 노출 <b>'+Math.round(tR*100)+'%</b> — '+hit.toLocaleString()+'건 중 '+tit.toLocaleString()+'건 '+times(tR,mTit)),
+      mTit!==null?('전체 중앙값 '+Math.round(mTit*100)+'%'):'', pTit);
   h+=block(2,
-      mon===null?'—':('12개월 중 <b>'+mon+'개월</b>에 보도 '+rank(pMon)+' '+times(mon,mMon)),
-      mMon!==null?('전체 중앙값 '+mMon+'개월'):'');
+      mon===null?'—':('12개월 중 <b>'+mon+'개월</b>에 보도 '+times(mon,mMon)),
+      mMon!==null?('전체 중앙값 '+mMon+'개월'):'', pMon);
   h+=block(3,
       lR===null?(hit!==null&&hit<10?'보도 10건 미만 — 이 축은 빼고 100점으로 환산합니다':'—')
-        :('서로 다른 도입부 <b>'+Math.round(lR*100)+'%</b> — '+hit.toLocaleString()+'건 중 '+led.toLocaleString()+'건 '+rank(pLed)),'');
+        :('서로 다른 도입부 <b>'+Math.round(lR*100)+'%</b> — '+hit.toLocaleString()+'건 중 '+led.toLocaleString()+'건'),'', pLed);
   h+='</div>';
 
-  /* 합계 */
+  /* 종합 — 숫자 대신 구간과 그 근거 */
   if(AXS){
     var got=0, fullS=0;
     AXS.forEach(function(x,n){ if(x>=0){ got+=x; fullS+=(FULL?FULL[n]:AXDEF[n].w); } });
     var pSum = fullS? topPctOf(AX.sum, got/fullS*100) : null;
-    h+='<div class="axsum"><span>축 점수 합계</span><b>'+got+' / '+fullS+'점</b>'
-      +(pSum!==null?('<span class="rk '+(pSum<=10?'hi':(pSum<=40?'md':'lo'))+'">전체 상위 '+pSum+'%</span>'):'')
-      +'<span class="axsn">'
-      +'이 합계가 산정 캠페인 '+(CAMP.filter(function(x){return x.s!==null}).length).toLocaleString()+'건 가운데 '
-      +(pSum!==null?('<b>상위 '+pSum+'%</b>'):'어디인지')+'라서 <b>지수 '+c.s+'</b>'+numJo(c.s)+' 됩니다. '
-      +'지수는 합계를 그대로 쓴 값이 아니라, 합계의 전체 순위를 0~100 으로 편 값입니다.'
-      +(ex.ip!==null&&ex.ip!==undefined?(' '+esc(c.ind)+' 안에서는 상위 '+ex.ip+'%.'):'')+'</span></div>';
+    var hiN=[pHit,pTit,pMon,pLed].filter(function(x){return x!==null&&x<=20}).length;
+    h+='<div class="axsum"><span>종합</span>'
+      +'<b class="'+bandCls(c.s)+'">전체 '+esc(bandLabel(c.s))+'</b>'
+      +'<span class="axsn">네 축의 배점은 보도량 35 · 주목도 30 · 보도 지속 25 · 기사 고유도 10입니다. '
+      +'각 축에서 전체 안의 위치를 배점만큼 환산해 더한 뒤, 그 값이 산정 캠페인 '
+      +(CAMP.filter(function(x){return x.s!==null}).length).toLocaleString()+'건 가운데 어디인지로 구간을 정합니다.'
+      +(hiN?(' 이 캠페인은 네 축 중 <b>'+hiN+'개</b>가 상위 20% 안에 듭니다.'):'')
+      +(ex.ip!==null&&ex.ip!==undefined?(' '+esc(c.ind)+' 안에서는 <b>'+pctBand(ex.ip)+'</b> 구간입니다.'):'')
+      +'<br>같은 구간 안에서는 순위를 나누지 않습니다. 점수 1~2점 차이는 측정 오차 안이기 때문입니다.'
+      +'</span></div>';
   }
 
   /* 언제부터 언제까지 · 월별 흐름 */
@@ -897,16 +936,16 @@ function showCamp(i){
   $('#cpName').textContent=c.n;
   var sc=$('#cpScore');
   if(c.s===null){ sc.textContent='미확인'; sc.className='n na'; }
-  else { sc.textContent=c.s; sc.className='n'; }
+  else { sc.textContent=bandLabel(c.s); sc.className='n bd '+bandCls(c.s); }
   var line;
   if(c.s===null){
     line='<b>'+esc(c.host)+'</b>의 캠페인입니다. 최근 12개월 네이버 뉴스 검색에서 이 캠페인명으로 확인된 보도가 없어 지수를 산정하지 않았습니다. 표기가 다른 이름으로 보도됐을 수 있으니 확인 요청을 주시면 다시 집계합니다.';
   } else {
     var indPct = rk.n>=20 ? Math.max(1,Math.round(rk.r/rk.n*100)) : 0;
-    line='<b>'+esc(c.host)+'</b>의 캠페인입니다. 전체 산정 캠페인 안에서 <b>'+topPct(c.s)+'</b>'
-      + (indPct?(', '+esc(c.ind)+' 캠페인 '+pm.length+'건 안에서 <b>상위 '+indPct+'%</b>'):'')
-      + '에 해당합니다. '+esc(c.ind)+' 평균 '+avg+'점 대비 <b>'+(c.s>=avg?'+':'')+(c.s-avg)+'점</b>'+(c.s>=avg?' 높습니다.':' 낮습니다.')
-      + ' 이 값은 캠페인 하나의 검색 결과로 계산한 것이며 기업 전체 점수가 아닙니다.';
+    line='<b>'+esc(c.host)+'</b>의 캠페인입니다. 산정 캠페인 전체에서 <b>'+topPct(c.s)+'</b>'
+      + (indPct?(', '+esc(c.ind)+' 캠페인 '+pm.length+'건 안에서 <b>'+pctBand(indPct)+'</b>'):'')
+      + ' 구간입니다. 이 구간은 캠페인 하나의 뉴스 검색 결과로 매긴 것이며, 기업 전체에 대한 평가가 아닙니다.'
+      + ' 같은 구간 안에서는 순위를 나누지 않습니다.';
   }
   $('#cpLine').innerHTML=line;
   var ch='';
