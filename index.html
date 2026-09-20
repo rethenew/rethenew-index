@@ -922,10 +922,13 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
        그래서 화면이 비었을 때 이유를 알 방법이 없었다.
        성공했을 때는 조용히 두고, 실패했을 때만 로딩판에 한 줄 남긴다. */
     try{
-      if(/실패|없음|초과|미설정/.test(String(msg||''))){
+      if(/실패|없음|초과|미설정|못했|못한|읽지/.test(String(msg||''))){
+        window.__INDEX_WHY=msg;
         var w=document.getElementById('lmWhy');
         if(w){ w.textContent=msg; }
-        window.__INDEX_WHY=msg;
+        /* v81 — 화면이 이미 그려진 뒤에 불려도 그 자리에 적는다 */
+        var e2=document.getElementById('bootWhy');
+        if(e2){ e2.textContent=msg; }
       }
     }catch(e){}
     return;
@@ -958,14 +961,17 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
       boot();
       note('최신 '+(o.updated||'')+' · '+o.count+'건 ('+via+')');
     } else {
+      /* v81 — note 를 boot 보다 먼저 부른다.
+         boot() 가 화면을 그리면서 원인을 읽는데, 그때 아직 기록 전이면 빈칸이 된다. */
+      note('서버 응답에 데이터 없음 ('+via+') — 받은 항목 '
+           + (o? Object.keys(o).join(',') : '없음'));
       boot();
-      note('서버 응답에 데이터 없음 ('+via+')');
     }
   }
   // 외부 호스팅(GitHub Pages) — 데이터는 Apps Script에서 fetch로 받아온다
   // ② 외부 호스팅 — fetch
   if(!window.INDEX_API){ boot(); note('API 미설정 — 내장본'); return; }
-  var done2=false, t2=setTimeout(function(){ if(!done2){done2=true;boot();note('요청 시간초과 — 내장본');} }, 25000);
+  var done2=false, t2=setTimeout(function(){ if(!done2){done2=true;note('요청 시간초과 — 25초 안에 응답이 오지 않았습니다');boot();} }, 25000);
   fetch(window.INDEX_API, {cache:'no-store'})
     .then(function(r){ return r.text(); })
     .then(function(txt){
@@ -974,11 +980,11 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
       catch(e){
         /* v79 — 여기서 조용히 boot() 만 하면 화면이 빈 채로 끝난다.
            받은 것이 JSON 이 아니었다는 사실과 앞부분을 남긴다. */
+        note('받은 자료를 읽지 못했습니다 — ' + String(txt||'').slice(0,80).replace(/\s+/g,' '));
         boot();
-        note('받은 자료를 읽지 못했습니다 — ' + String(txt||'').slice(0,60).replace(/\s+/g,' '));
       }
     })
-    .catch(function(e){ if(done2) return; done2=true; clearTimeout(t2); boot(); note('요청 실패: '+e.message); });
+    .catch(function(e){ if(done2) return; done2=true; clearTimeout(t2); note('요청 실패: '+e.message); boot(); });
 })();
 </script>
 <script id="mainjs" type="text/plain">
@@ -1112,7 +1118,8 @@ if(!DATA.length){
     /* v80 — 원인을 같이 적는다. 로딩판은 boot() 뒤에 숨겨지므로 거기 적으면 안 보인다. */
     var why=''; try{ why=String(window.__INDEX_WHY||''); }catch(e){}
     d.innerHTML='데이터를 불러오지 못했습니다.<br>잠시 후 새로고침해 주십시오.'
-      + (why?('<br><span style="display:inline-block;margin-top:10px;font-size:12px;color:#aab">'+why.replace(/[<>&]/g,'')+'</span>'):'');
+      + '<br><span id="bootWhy" style="display:inline-block;margin-top:12px;font-size:12px;color:#99a;'
+      + 'max-width:640px;line-height:1.6;word-break:break-all">'+why.replace(/[<>&]/g,'')+'</span>';
     w.insertBefore(d,w.firstChild);
   }catch(e){}
 }
