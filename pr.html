@@ -384,6 +384,10 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 @keyframes lmove{0%{left:-40%}100%{left:100%}}
 @media(max-width:620px){.loadin .lm1{font-size:17px}.loadin .lm2{font-size:12.5px}}
 </style></head><body>
+<!-- v62 — 맨 위로 보내기 위한 붙박이 앵커.
+     header.top 은 position:sticky 라 스크롤을 따라다녀서 기준으로 쓸 수 없다.
+     그것을 기준으로 삼았더니 오히려 푸터로 내려갔다. -->
+<div id="topAnchor" style="position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none"></div>
 <div class="loadmask" id="loadMask" aria-hidden="true"><div class="loadin">
   <div class="lmk">SUSTAINABILITY INDEX</div>
   <div class="lm1">리더뉴 지속가능 INDEX를 불러오는 중입니다</div>
@@ -997,21 +1001,28 @@ function show(name){
    요소를 scrollIntoView 하면 브라우저가 바깥 프레임까지 함께 올려 준다.
    바깥 페이지가 높이 메시지를 이미 받고 있으므로 스크롤 요청도 함께 보낸다. */
 function toTop(smooth){
-  try{ window.scrollTo({top:0, behavior: smooth?'smooth':'auto'}); }catch(e){ try{ window.scrollTo(0,0); }catch(e2){} }
-  try{
-    var el=document.querySelector('header.top') || document.body.firstElementChild;
-    if(el && el.scrollIntoView) el.scrollIntoView({block:'start', behavior: smooth?'smooth':'auto'});
-  }catch(e){}
+  /* 이 문서에 스크롤이 있으면 그것부터 */
+  try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ try{ window.scrollTo(0,0); }catch(e2){} }
+
+  function go(){
+    try{
+      var a=document.getElementById('topAnchor');
+      if(a && a.scrollIntoView) a.scrollIntoView({block:'start', behavior:'auto'});
+    }catch(e){}
+  }
+  go();
+
+  /* 화면이 바뀌면 높이가 달라진다. 바깥 페이지에 새 높이를 먼저 알리고
+     그 다음 한 번 더 올린다. 높이가 줄어드는 사이에 올리면 아래로 밀린다. */
+  try{ window.__pingHeight && window.__pingHeight(); }catch(e){}
+  setTimeout(go, 80);
+  setTimeout(function(){ try{ window.__pingHeight && window.__pingHeight(); }catch(e){} go(); }, 260);
+
   try{
     var msg={type:'rtn-scrolltop'};
     if(window.top && window.top!==window) window.top.postMessage(msg,'*');
     if(window.parent && window.parent!==window) window.parent.postMessage(msg,'*');
   }catch(e){}
-  /* 화면이 다 그려진 뒤 한 번 더 — 높이가 바뀌면 위치가 밀린다 */
-  try{ setTimeout(function(){ try{
-    var el2=document.querySelector('header.top')||document.body.firstElementChild;
-    if(el2&&el2.scrollIntoView) el2.scrollIntoView({block:'start'});
-  }catch(e){} }, 60); }catch(e){}
 }
 function home(){$('#result').style.display='none';$('#faq').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#home').style.display='block';pushNav({v:'home'})}
 function openFaq(){$('#home').style.display='none';$('#result').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#faq').style.display='block';pushNav({v:'faq'})}
