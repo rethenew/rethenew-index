@@ -794,8 +794,8 @@
   <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="drawer">
     <span class="bars"><i></i><i></i><i></i></span>필터<span class="fcnt" id="fcnt">0</span>
   </button>
-  <div class="logo">리더뉴 지속가능 사회공헌 <span class="idx">INDEX</span></div>
-  <button class="topbtn prswitch" id="prSwitch" title="캠페인 PR 지수">캠페인 PR 지수 →</button>
+  <div class="logo">리더뉴 지속가능 프로젝트 <span class="idx">아카이브</span></div>
+  <button class="topbtn prswitch" id="prSwitch" title="리더뉴 지속가능 INDEX">리더뉴 INDEX →</button>
   <div class="topsearch"><input id="q" placeholder="검색어를 입력해주세요." aria-label="검색"></div>
   <button class="topbtn label" id="reqBtn" title="정보 반영 요청">정보 반영 요청</button>
   <button class="topbtn label" id="noticeBtn" title="안내사항">안내사항</button>
@@ -1109,7 +1109,10 @@ if(!DATA.length){
     var w=document.getElementById('wrap')||document.body;
     var d=document.createElement('div');
     d.style.cssText='padding:40px 20px;text-align:center;color:#888;font-size:15px;line-height:1.7';
-    d.innerHTML='데이터를 불러오지 못했습니다.<br>잠시 후 새로고침해 주십시오.';
+    /* v80 — 원인을 같이 적는다. 로딩판은 boot() 뒤에 숨겨지므로 거기 적으면 안 보인다. */
+    var why=''; try{ why=String(window.__INDEX_WHY||''); }catch(e){}
+    d.innerHTML='데이터를 불러오지 못했습니다.<br>잠시 후 새로고침해 주십시오.'
+      + (why?('<br><span style="display:inline-block;margin-top:10px;font-size:12px;color:#aab">'+why.replace(/[<>&]/g,'')+'</span>'):'');
     w.insertBefore(d,w.firstChild);
   }catch(e){}
 }
