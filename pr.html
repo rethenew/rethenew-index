@@ -409,8 +409,8 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 <div id="home">
 <section class="hero"><div class="wrap">
   <div class="kick">SUSTAINABILITY INDEX</div>
-  <h1>지속가능 프로젝트는 지금 <em>어디에 몰려 있나</em> <span class="tst">(현재 테스트 중 입니다)</span></h1>
-  <p>산업군별 보도자료로 찾아 정리한 지속가능 프로젝트 5,000여 건의 집계입니다. 아래 필터를 누르면 그 범위의 구조가 바뀝니다. 개별 캠페인의 점수나 순위는 내지 않습니다.</p>
+  <h1>다른 곳에서는 <em>어떤 지속가능 프로젝트</em>를 하고 있을까요?</h1>
+  <p>지속가능 사회공헌 프로젝트별 보도자료로 찾아 정리한 5,000여 건의 집계입니다. 매주 AI 기반 자동으로 데이터가 증가합니다. 아래 필터를 누르시면 산업군, 대상, 주제 등 구조가 바뀝니다.</p>
   <div class="hsearch"><input id="hq" placeholder="" autocomplete="off"><button id="hgo">조회</button><div class="ac" id="hac"></div></div>
 </div></section>
 <div class="dstrip"><div class="wrap">
@@ -479,7 +479,7 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
   <p style="font-size:13.5px;color:var(--g80);margin-bottom:16px;max-width:60em">리더뉴 지속가능 INDEX는 산업군별 보도자료로 찾아 정리한 지속가능 프로젝트 5,000여 건의 집계입니다. <b>개별 캠페인에는 점수나 등수를 매기지 않습니다.</b> 여러 건을 모아 「무엇을 하고 있는가」의 구조를 보여드립니다.</p>
   <div class="notes">
     <div class="note"><h4>왜 개별 점수를 내지 않습니까</h4><p>전에는 캠페인마다 보도 집계로 점수를 내고 구간을 표시했습니다. 그런데 집계의 근거가 되는 기사를 전수 검증한 결과, 그 캠페인의 기사가 아닌 것이 섞여 있었습니다. 캠페인 이름이 일반적인 표현일수록 다른 기사가 함께 잡혔습니다. <b>틀릴 수 있는 근거로 매긴 등수는 공개하지 않는 것이 맞다고 판단했습니다.</b> 개별 점수는 내리고, 집계만 남겼습니다.</p></div>
-    <div class="note"><h4>그러면 보도 자료는 어떻게 씁니까</h4><p>여러 건을 모은 <b>중앙값</b>으로만 씁니다. 한 건의 오차는 그 카드에 치명적이지만, 수백 건의 중앙값에는 거의 영향을 주지 않습니다. 화면의 「주제별 보도 건수 중앙값」이 그것이며, 20건 이상 모인 주제만 비교합니다. 개별 캠페인의 보도 건수는 표시하지 않습니다.</p></div>
+    <div class="note"><h4>그러면 보도 자료는 어떻게 씁니까</h4><p>여러 건을 모은 <b>평균</b>으로만 씁니다. 한 건의 오차는 그 카드에 치명적이지만, 수백 건의 평균에는 거의 영향을 주지 않습니다. 화면의 「주제별 보도 건수 평균」이 그것이며, 20건 이상 모인 주제만 비교합니다. 개별 캠페인의 보도 건수는 표시하지 않습니다.</p></div>
     <div class="note"><h4>분류 자료는 어디서 왔습니까</h4><p>기사 본문에서 활동·주최·협력·성과·대상을 읽어 정리하고, 주제·혁신유형·SDGs·GRI로 분류했습니다. <b>분류는 검색 집계와 별개</b>이므로 위의 오차와 무관합니다. 집계에 쓰는 것도 이 분류 자료입니다.</p></div>
     <div class="note"><h4>혁신 유형은 무엇입니까</h4><p>① 지원중심형은 자원을 제공하는 방식, ② 참여확산형은 이해관계자의 참여를 끌어내는 방식, ③ 구조개입형은 문제가 생기는 구조 자체에 개입하는 방식입니다. 우열이 아니라 접근 방식의 구분입니다.</p></div>
     <div class="note"><h4>측정 범위는 네이버 뉴스 검색 결과입니다</h4><p>2025년 1월 1일 이후 네이버 뉴스에 보도된 활동을 등재하고, 점수는 측정일 기준 최근 12개월 보도를 대상으로 산정합니다. SNS·유튜브·사보·오프라인은 포함되지 않습니다.</p></div>
@@ -766,7 +766,8 @@ function aggPanel(list){
     });
     return Object.keys(m).map(function(k){return {k:k,v:m[k]}}).sort(function(a,b){return b.v-a.v});
   }
-  function med(a){ if(!a.length) return null; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.floor(b.length/2)]; }
+  /* v59 — 중앙값 대신 평균값을 쓴다. */
+  function avg(a){ if(!a.length) return null; var t=0; a.forEach(function(x){t+=x}); return Math.round(t/a.length); }
 
   /* 막대 한 덩이 — 라벨 · 막대 · 수치 */
   function bars(rows,total,unit){
@@ -817,9 +818,20 @@ function aggPanel(list){
   });
   var domN=tally(function(c){return c.dom}).length;
 
+  /* v59 — 혁신유형 필터를 걸면 다른 유형은 0건이 된다.
+     그 상태에서 「지원중심형 0%」를 띄우면 뜻 없는 숫자가 눈에 먼저 들어온다.
+     유형이 한 가지로 좁혀졌을 때는 그 칸을 「가장 많은 주제」로 바꾼다. */
+  var oneType = invRaw.length<=1;
+  var domTop = tally(function(c){return c.dom})[0];
+  var tile1 = oneType
+    ? ('<div class="agt"><div class="k">가장 많은 주제</div><div class="v">'
+        + (domTop?pct(domTop.v,N):0)+'<small>%</small></div>'
+        + '<div class="d">'+(domTop?esc(domTop.k)+' '+domTop.v.toLocaleString()+'건':'해당 없음')+' / '+N.toLocaleString()+'건</div></div>')
+    : ('<div class="agt"><div class="k">지원중심형(기부 성격)</div><div class="v">'+pct(inv1,N)+'<small>%</small></div>'
+        + '<div class="d">'+inv1.toLocaleString()+'건 / '+N.toLocaleString()+'건</div></div>');
+
   var h='<div class="agg">'
-    + '<div class="agt"><div class="k">지원중심형(기부 성격)</div><div class="v">'+pct(inv1,N)+'<small>%</small></div>'
-      + '<div class="d">'+inv1.toLocaleString()+'건 / '+N.toLocaleString()+'건</div></div>'
+    + tile1
     + '<div class="agt"><div class="k">성과를 숫자로 공개</div><div class="v">'+pct(impQ,N)+'<small>%</small></div>'
       + '<div class="d">'+impQ.toLocaleString()+'건 · 성과 기재 '+impN.toLocaleString()+'건 중 '+pct(impQ,impN)+'%</div></div>'
     + '<div class="agt"><div class="k">둘 이상과 협력</div><div class="v">'+pct(parMulti,N)+'<small>%</small></div>'
@@ -830,7 +842,7 @@ function aggPanel(list){
 
   /* ── 2 × 2 판 ── */
   var cells=[];
-  if(invTot) cells.push({t:'혁신 유형', sub:'지원중심형은 자원을 주는 방식, 뒤로 갈수록 구조에 개입합니다',
+  if(invTot && !oneType) cells.push({t:'혁신 유형', sub:'지원중심형은 자원을 주는 방식, 뒤로 갈수록 구조에 개입합니다',
                          b:donut(invRows,invTot)});
 
   var dom=tally(function(c){return c.dom}).slice(0,8);
@@ -846,9 +858,9 @@ function aggPanel(list){
   });
   var dk=Object.keys(byDom).filter(function(k){return byDom[k].length>=20});
   if(dk.length>=2){
-    var rows=dk.map(function(k){return {k:k, v:med(byDom[k])}}).sort(function(a,b){return b.v-a.v});
-    cells.push({t:'주제별 보도 건수 중앙값',
-      sub:'20건 이상 모인 주제만. 개별 보도 건수는 오차가 있어 내보내지 않고 중앙값으로만 비교합니다',
+    var rows=dk.map(function(k){return {k:k, v:avg(byDom[k])}}).sort(function(a,b){return b.v-a.v});
+    cells.push({t:'주제별 보도 건수 평균',
+      sub:'20건 이상 모인 주제만. 개별 보도 건수는 오차가 있어 내보내지 않고 평균으로만 비교합니다',
       b:bars(rows,0)});
   }
 
@@ -859,7 +871,7 @@ function aggPanel(list){
 
   h+='<div class="agnote">집계 대상 <b>'+N.toLocaleString()+'건</b>. '
    + '네이버 뉴스 검색으로 찾아 정리한 자료이며, 사업의 가치·성과·우열을 평가하지 않습니다. '
-   + '개별 캠페인에는 점수나 등수를 매기지 않습니다. 누락되거나 잘못 분류된 건이 있으면 아래로 알려 주십시오.</div>';
+   + '개별 캠페인에는 점수나 등수를 매기지 않습니다. 누락되거나 잘못 분류된 건이 있으면 페이지 하단의 이메일 주소로 알려 주십시오.</div>';
   return h;
 }
 function drawCharts(list){
@@ -1126,10 +1138,8 @@ function evidTable(c){
 
   if(!rows.length) return '';
   return rows.join('')
-    + '<div class="evfoot">여기 적은 것은 <b>등재된 분류 자료를 센 결과</b>입니다. '
-    + '개별 캠페인의 보도 건수나 순위는 오차가 있어 내보내지 않습니다.<br>'
-    + '이 INDEX는 사업의 가치·성과·우열을 평가하지 않으며, 기업이나 사업을 서열화하려는 것이 아닙니다.<br>'
-    + '분류가 잘못됐거나 누락된 것이 있으면 아래로 알려 주십시오. 확인 즉시 반영합니다.</div>';
+    + '<div class="evfoot">이 INDEX는 사업의 가치·성과·우열을 평가하지 않으며, '
+    + '지속가능 프로젝트 분류가 잘못됐거나 누락된 것이 있으면 아래로 알려 주십시오. 확인 즉시 반영하겠습니다.</div>';
 }
 
 function showCamp(i){
