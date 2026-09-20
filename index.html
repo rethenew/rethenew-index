@@ -985,7 +985,12 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
       catch(e){
         /* v79 — 여기서 조용히 boot() 만 하면 화면이 빈 채로 끝난다.
            받은 것이 JSON 이 아니었다는 사실과 앞부분을 남긴다. */
-        note('받은 자료를 읽지 못했습니다 — ' + String(txt||'').slice(0,80).replace(/\s+/g,' '));
+        /* v83 — 앞부분이 멀쩡한 JSON 인데 parse 가 실패했다면 잘린 것이다.
+           길이와 끝 40자를 함께 남긴다. 끝이 } 나 ] 가 아니면 잘림이 확정된다. */
+        var T=String(txt||'');
+        note('받은 자료를 읽지 못했습니다 — 길이 ' + T.length.toLocaleString() + '자'
+           + ' · 끝 [' + T.slice(-40).replace(/\s+/g,' ') + ']'
+           + ' · 앞 [' + T.slice(0,40).replace(/\s+/g,' ') + ']');
         boot();
       }
     })
