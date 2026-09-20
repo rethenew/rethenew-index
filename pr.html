@@ -207,8 +207,24 @@ tr.me td{background:var(--mint-05)}
 .agt .v{font-size:27px;font-weight:900;letter-spacing:-.03em;color:var(--mint-d);margin-top:6px;line-height:1;font-variant-numeric:tabular-nums}
 .agt .v small{font-size:14px;font-weight:800;margin-left:2px}
 .agt .d{font-size:11.5px;color:var(--g60);margin-top:6px;line-height:1.5}
-.agsec{margin:18px 0 8px;font-size:13px;font-weight:900;color:var(--ink)}
-.agsec span{font-weight:600;color:var(--g60);font-size:12px;margin-left:6px}
+/* v58 — 네 덩이를 세로로 쌓으니 화면이 너무 길어졌다. 2×2 로 놓는다. */
+.ag2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+@media(max-width:860px){.ag2{grid-template-columns:1fr}}
+.agc{border:1px solid var(--g10);border-radius:11px;padding:13px 14px 11px;background:#fff;min-width:0}
+.agct{font-size:12.5px;font-weight:900;color:var(--g80);margin-bottom:10px;letter-spacing:-.01em}
+/* 도넛 */
+.dnwrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:relative}
+.dn{width:126px;height:126px;flex-shrink:0}
+.dnc{position:absolute;left:0;top:0;width:126px;height:126px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none}
+.dnc b{font-size:23px;font-weight:900;color:var(--mint-d);letter-spacing:-.03em;line-height:1}
+.dnc span{font-size:10.5px;color:var(--g60);font-weight:700;margin-top:3px;text-align:center;line-height:1.2;max-width:84px}
+.dnlg{flex:1;min-width:0}
+.dnl{display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:7px;line-height:1.3}
+.dnl i{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dnl .dnn{flex:1;min-width:0;color:var(--g80);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dnl b{font-weight:800;color:var(--g60);font-size:11.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:700px){.dn{width:108px;height:108px}.dnc{width:108px;height:108px}.dnc b{font-size:20px}}
 .agrow{display:flex;align-items:center;gap:9px;margin-bottom:6px}
 .agrow .rk2{flex-shrink:0;width:118px;font-size:12.5px;font-weight:700;color:var(--g80);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -408,9 +424,6 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 </div></div>
 <main class="board"><div class="wrap">
   <div class="topwrap"><h4 id="topTitle">전체</h4><div id="chTop"></div></div>
-  <div class="restnote" id="lCap" style="display:none"><b>여기에는 등수가 없습니다.</b> 오래 이어온 사업부터 차례로 놓았습니다.<br>
-누군가는 스무 해 넘게, 누군가는 이제 막 첫 해를 보내고 있습니다. 그 시간의 무게는 보도량으로 재지지 않습니다.<br>
-개별 캠페인에는 점수를 매기지 않습니다. 위의 집계는 여러 건을 모아 본 것이고, 이 목록은 그 안에 무엇이 있는지 보여드리는 것입니다.</div>
   <div class="sortbar" id="lSortWrap" style="display:none">
     <div class="lfind"><input type="text" id="lQ" placeholder="이 목록에서 찾기 — 캠페인 · 주최" autocomplete="off" spellcheck="false"><button class="lqx" id="lQX" title="지우기">✕</button></div>
     <button class="sortb on" data-sort="long">운영 기간 긴 순</button>
@@ -745,28 +758,52 @@ function aggPanel(list){
   if(!N) return '<div class="none">해당하는 프로젝트가 없습니다.</div>';
 
   function pct(a,b){ return b? Math.round(a/b*100) : 0; }
-  function bar(rows,total,note){
-    var mx=Math.max.apply(null,rows.map(function(r){return r.v}).concat([1]));
-    return rows.map(function(r){
-      return '<div class="agrow"><div class="rk2">'+esc(r.k)+'</div>'+
-        '<div class="rb"><i class="'+(r.v/mx<.45?'lo':'')+'" style="width:'+Math.max(2,Math.round(r.v/mx*100))+'%"></i></div>'+
-        '<div class="rn">'+r.v.toLocaleString()+'건 '+pct(r.v,total)+'%</div></div>';
-    }).join('')+(note?('<div class="agnote">'+note+'</div>'):'');
-  }
   function tally(f){
     var m={};
     list.forEach(function(c){
       var v=f(c);
       (Array.isArray(v)?v:[v]).forEach(function(x){ if(x) m[x]=(m[x]||0)+1; });
     });
-    return Object.keys(m).map(function(k){return {k:k,v:m[k]}})
-      .sort(function(a,b){return b.v-a.v});
+    return Object.keys(m).map(function(k){return {k:k,v:m[k]}}).sort(function(a,b){return b.v-a.v});
   }
   function med(a){ if(!a.length) return null; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.floor(b.length/2)]; }
 
+  /* 막대 한 덩이 — 라벨 · 막대 · 수치 */
+  function bars(rows,total,unit){
+    var mx=Math.max.apply(null,rows.map(function(r){return r.v}).concat([1]));
+    return rows.map(function(r){
+      return '<div class="agrow"><div class="rk2" title="'+esc(r.k)+'">'+esc(r.k)+'</div>'+
+        '<div class="rb"><i class="'+(r.v/mx<.45?'lo':'')+'" style="width:'+Math.max(2,Math.round(r.v/mx*100))+'%"></i></div>'+
+        '<div class="rn">'+r.v.toLocaleString()+(unit||'건')+(total?(' '+pct(r.v,total)+'%'):'')+'</div></div>';
+    }).join('');
+  }
+
+  /* 도넛 — 조각이 셋뿐이라 원이 읽기 쉽다 */
+  function donut(rows,total){
+    var R=52, C=2*Math.PI*R, off=0;
+    var cols=['var(--mint-d)','var(--mint)','var(--mint-l)'];
+    var segs=rows.map(function(r,k){
+      var f=r.v/total, len=C*f;
+      var el='<circle class="dsg" r="'+R+'" cx="70" cy="70" fill="none" stroke="'+(cols[k]||'var(--g20)')+'" stroke-width="22"'
+        + ' stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"></circle>';
+      off+=len; return el;
+    }).join('');
+    var top=rows[0];
+    return '<div class="dnwrap"><svg class="dn" viewBox="0 0 140 140" role="img" aria-label="혁신 유형 구성">'
+      + '<circle r="52" cx="70" cy="70" fill="none" stroke="var(--g05)" stroke-width="22"></circle>'
+      + '<g transform="rotate(-90 70 70)">'+segs+'</g></svg>'
+      + '<div class="dnc"><b>'+pct(top.v,total)+'%</b><span>'+esc(String(top.k).replace(/^[①②③]\s*/,''))+'</span></div>'
+      + '<div class="dnlg">'+rows.map(function(r,k){
+          return '<div class="dnl"><i style="background:'+(cols[k]||'var(--g20)')+'"></i>'
+            + '<span class="dnn">'+esc(r.k)+'</span><b>'+r.v.toLocaleString()+'건 '+pct(r.v,total)+'%</b></div>';
+        }).join('')+'</div></div>';
+  }
+
   /* ── 타일 넷 ── */
-  var inv=tally(function(c){return c.innov?String(c.innov).charAt(0):''});
-  var inv1=0; inv.forEach(function(r){ if(r.k==='1'||r.k==='①') inv1=r.v; });
+  var invRaw=tally(function(c){return c.innov?String(c.innov).charAt(0):''});
+  var invRows=invRaw.map(function(r){ return {k:(INNOV_LABEL[r.k]||r.k), v:r.v}; });
+  var invTot=invRaw.reduce(function(a,b){return a+b.v},0);
+  var inv1=0; invRaw.forEach(function(r){ if(r.k==='①') inv1=r.v; });
 
   var impN=0, impQ=0;
   var QRE=/\d[\d,]*\s*(명|건|개|톤|kg|시간|회|차|억|천만|만원|원|%|가구|마리|그루|권|대|곳|팀|세대|개교)/;
@@ -778,7 +815,6 @@ function aggPanel(list){
     if(L.length) parAny++;
     if(L.length>=2) parMulti++;
   });
-
   var domN=tally(function(c){return c.dom}).length;
 
   var h='<div class="agg">'
@@ -792,46 +828,38 @@ function aggPanel(list){
       + '<div class="d">전체 '+N.toLocaleString()+'건 기준</div></div>'
     + '</div>';
 
-  /* ── 혁신 단계 ── */
-  var INVN={'1':'① 지원중심형','2':'② 참여확산형','3':'③ 구조개입형'};
-  if(inv.length){
-    h+='<div class="agsec">어떻게 하는가 <span>혁신 유형</span></div>'
-     + bar(inv.map(function(r){ return {k:(INVN[r.k]||r.k), v:r.v}; }), N,
-           '지원중심형은 자원을 주는 방식, 뒤로 갈수록 구조에 개입합니다.');
-  }
+  /* ── 2 × 2 판 ── */
+  var cells=[];
+  if(invTot) cells.push({t:'혁신 유형', sub:'지원중심형은 자원을 주는 방식, 뒤로 갈수록 구조에 개입합니다',
+                         b:donut(invRows,invTot)});
 
-  /* ── 주제 ── */
   var dom=tally(function(c){return c.dom}).slice(0,8);
-  if(dom.length>1) h+='<div class="agsec">무엇을 하는가 <span>주제</span></div>'+bar(dom,N,'');
+  if(dom.length>1) cells.push({t:'주제', sub:'', b:bars(dom,N)});
 
-  /* ── 대상 ── */
   var ben=tally(function(c){return c.ben}).slice(0,8);
-  if(ben.length>1) h+='<div class="agsec">누구를 위한 것인가 <span>대상</span></div>'+bar(ben,N,'');
+  if(ben.length>1) cells.push({t:'대상', sub:'', b:bars(ben,N)});
 
-  /* ── 노출 격차 — 개별 수치가 아니라 주제별 중앙값만 ── */
   var byDom={};
   list.forEach(function(c){
-    var hh=num_(c.hit); if(c.dom===undefined||c.dom===''||hh===null||hh<=0) return;
+    var hh=num_(c.hit); if(!c.dom||hh===null||hh<=0) return;
     (byDom[c.dom]=byDom[c.dom]||[]).push(hh);
   });
   var dk=Object.keys(byDom).filter(function(k){return byDom[k].length>=20});
   if(dk.length>=2){
-    var rows=dk.map(function(k){return {k:k, v:med(byDom[k]), n:byDom[k].length}})
-               .sort(function(a,b){return b.v-a.v});
-    var mx=Math.max.apply(null,rows.map(function(r){return r.v}));
-    h+='<div class="agsec">어떻게 알려지는가 <span>주제별 보도 건수 중앙값</span></div>'
-     + rows.map(function(r){
-         return '<div class="agrow"><div class="rk2">'+esc(r.k)+'</div>'+
-           '<div class="rb"><i class="'+(r.v/mx<.45?'lo':'')+'" style="width:'+Math.max(2,Math.round(r.v/mx*100))+'%"></i></div>'+
-           '<div class="rn">'+r.v+'건</div></div>';
-       }).join('')
-     + '<div class="agnote">20건 이상 모인 주제만 보여드립니다. 개별 캠페인의 보도 건수는 오차가 있어 내보내지 않고, '
-     + '여러 건을 모은 <b>중앙값</b>으로만 비교합니다. 같은 일을 해도 주제에 따라 알려지는 정도가 다릅니다.</div>';
+    var rows=dk.map(function(k){return {k:k, v:med(byDom[k])}}).sort(function(a,b){return b.v-a.v});
+    cells.push({t:'주제별 보도 건수 중앙값',
+      sub:'20건 이상 모인 주제만. 개별 보도 건수는 오차가 있어 내보내지 않고 중앙값으로만 비교합니다',
+      b:bars(rows,0)});
   }
+
+  h+='<div class="ag2">'+cells.map(function(c){
+    return '<div class="agc"><div class="agct">'+esc(c.t)+'</div>'+c.b
+         + (c.sub?('<div class="agnote">'+c.sub+'</div>'):'')+'</div>';
+  }).join('')+'</div>';
 
   h+='<div class="agnote">집계 대상 <b>'+N.toLocaleString()+'건</b>. '
    + '네이버 뉴스 검색으로 찾아 정리한 자료이며, 사업의 가치·성과·우열을 평가하지 않습니다. '
-   + '누락되거나 잘못 분류된 건이 있으면 아래로 알려 주십시오.</div>';
+   + '개별 캠페인에는 점수나 등수를 매기지 않습니다. 누락되거나 잘못 분류된 건이 있으면 아래로 알려 주십시오.</div>';
   return h;
 }
 function drawCharts(list){
@@ -872,7 +900,6 @@ function drawList(){
     return (lnorm(c.n).indexOf(LQ)>=0) || (lnorm(c.host).indexOf(LQ)>=0);
   }) : all;
 
-  $('#lCap').style.display=all.length?'block':'none';
   $('#lSortWrap').style.display=all.length?'flex':'none';
   $('#lCount').textContent = LQ
     ? (rest.length.toLocaleString()+'건 / '+all.length.toLocaleString()+'건')
@@ -890,9 +917,13 @@ function drawList(){
        좁은 화면에서는 CSS 가 한 줄로 되돌리고, 두 표가 위아래로 이어진다. */
     /* 결과가 적어도 왼쪽에만 몰지 않는다. 두 건이면 한 건씩 나눠 담는다. */
     var TWO = window.matchMedia && window.matchMedia('(min-width:861px)').matches && page.length>1;
-    var half = TWO ? Math.ceil(page.length/2) : page.length;
-    $('#lTbl').innerHTML  = THEAD+'<tbody>'+page.slice(0,half).map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
-    $('#lTbl2').innerHTML = TWO ? (THEAD+'<tbody>'+page.slice(half).map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>') : '';
+    /* v58 — 두 칸으로 나눌 때 왼쪽을 다 채우고 오른쪽으로 넘어가면
+       읽는 사람은 1·2·3…을 세로로 따라가다가 맨 아래에서 다시 위로 올라와야 한다.
+       왼쪽 1, 오른쪽 2, 그 아래 왼쪽 3, 오른쪽 4 순으로 가로로 읽히게 바꾼다. */
+    var L=[], R=[];
+    page.forEach(function(c,i){ (TWO && i%2 ? R : L).push(c); });
+    $('#lTbl').innerHTML  = THEAD+'<tbody>'+L.map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
+    $('#lTbl2').innerHTML = TWO ? (THEAD+'<tbody>'+R.map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>') : '';
     $('#lTbl2').style.display = TWO ? '' : 'none';
   }
   $('#lMore').style.display=rest.length>shown?'block':'none';
