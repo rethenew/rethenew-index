@@ -988,13 +988,36 @@ function show(name){
   var sorted=cs.slice().sort(restSort);
   $('#cTbl').innerHTML='<thead><tr><th style="width:34%">캠페인</th><th>주최 · 산업군 · 주제</th><th style="width:118px">운영 기간</th></tr></thead><tbody>'+
     sorted.map(function(c,i){return rowHTML(c,i,null)}).join('')+'</tbody>';
-  window.scrollTo({top:0,behavior:'smooth'});
+  toTop(true);
+}
+/* v61 — 아임웹 iframe 안에서는 이 문서에 스크롤이 없다.
+   높이를 콘텐츠만큼 늘려 놓았기 때문에 실제 스크롤은 바깥 페이지가 갖고 있다.
+   그래서 window.scrollTo 를 불러도 화면이 움직이지 않고,
+   목록에서 카드를 누르면 상세 화면의 한가운데가 보인다.
+   요소를 scrollIntoView 하면 브라우저가 바깥 프레임까지 함께 올려 준다.
+   바깥 페이지가 높이 메시지를 이미 받고 있으므로 스크롤 요청도 함께 보낸다. */
+function toTop(smooth){
+  try{ window.scrollTo({top:0, behavior: smooth?'smooth':'auto'}); }catch(e){ try{ window.scrollTo(0,0); }catch(e2){} }
+  try{
+    var el=document.querySelector('header.top') || document.body.firstElementChild;
+    if(el && el.scrollIntoView) el.scrollIntoView({block:'start', behavior: smooth?'smooth':'auto'});
+  }catch(e){}
+  try{
+    var msg={type:'rtn-scrolltop'};
+    if(window.top && window.top!==window) window.top.postMessage(msg,'*');
+    if(window.parent && window.parent!==window) window.parent.postMessage(msg,'*');
+  }catch(e){}
+  /* 화면이 다 그려진 뒤 한 번 더 — 높이가 바뀌면 위치가 밀린다 */
+  try{ setTimeout(function(){ try{
+    var el2=document.querySelector('header.top')||document.body.firstElementChild;
+    if(el2&&el2.scrollIntoView) el2.scrollIntoView({block:'start'});
+  }catch(e){} }, 60); }catch(e){}
 }
 function home(){$('#result').style.display='none';$('#faq').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#home').style.display='block';pushNav({v:'home'})}
 function openFaq(){$('#home').style.display='none';$('#result').style.display='none';$('#cpage').style.display='none';$('#srch').style.display='none';$('#faq').style.display='block';pushNav({v:'faq'})}
-$('#backHome').onclick=function(){home();window.scrollTo({top:0})};
-$('#faqBtn').onclick=function(){openFaq();window.scrollTo({top:0})};
-$('#faqBack').onclick=function(){home();window.scrollTo({top:0})};
+$('#backHome').onclick=function(){home();toTop()};
+$('#faqBtn').onclick=function(){openFaq();toTop()};
+$('#faqBack').onclick=function(){home();toTop()};
 
 /* ---------- 브라우저 뒤로가기 ----------
    이 페이지는 아임웹 안의 iframe 으로 들어간다.
@@ -1021,7 +1044,7 @@ function applyNav(st){
     else home();
   }catch(e){ try{home()}catch(e2){} }
   NAV_SILENT=false;
-  try{ window.scrollTo({top:0}); }catch(e){}
+  try{ toTop(); }catch(e){}
 }
 window.addEventListener('popstate',function(e){ applyNav(e.state&&e.state.rtn); });
 try{ history.replaceState({rtn:{v:'home'}},''); }catch(e){}
@@ -1144,8 +1167,8 @@ function showCamp(i){
   $('#cpCrumb').innerHTML='<a class="backbtn" id="cpBack">← 전체 목록으로</a>'
     +'<span class="bsep">›</span><a id="cpInd">'+esc(c.ind)+'</a>'
     +'<span class="bsep">›</span><a id="cpHost">'+esc(c.host)+'</a>';
-  $('#cpBack').onclick=function(){home();window.scrollTo({top:0})};
-  $('#cpInd').onclick=function(){F.ind=c.ind;home();drawFilters();drawList();window.scrollTo({top:0})};
+  $('#cpBack').onclick=function(){home();toTop()};
+  $('#cpInd').onclick=function(){F.ind=c.ind;home();drawFilters();drawList();toTop()};
   $('#cpHost').onclick=function(){show(c.host)};
   $('#cpName').textContent=c.n;
   /* v57 — 점수·구간을 더 이상 쓰지 않는다.
@@ -1170,7 +1193,7 @@ function showCamp(i){
   (c.sdgs||[]).forEach(function(v){ch+=chip('SDG',v,'sdg:'+v)});
   (c.gri||[]).forEach(function(v){ch+=chip('GRI',v,'gri:'+v)});
   $('#cpChips').innerHTML=ch||'<span class="chip"><small>분류</small>미입력</span>';
-  $('#cpChips').querySelectorAll('.chip.lk').forEach(function(el){el.onclick=function(){var f=el.getAttribute('data-f').split(':');F[f[0]]=f[1];home();drawFilters();drawList();window.scrollTo({top:0})}});
+  $('#cpChips').querySelectorAll('.chip.lk').forEach(function(el){el.onclick=function(){var f=el.getAttribute('data-f').split(':');F[f[0]]=f[1];home();drawFilters();drawList();toTop()}});
   $('#cpTask').innerHTML=taskTable(c);
   var ev=evidTable(c);
   if(ev){ $('#cpEvid').innerHTML=ev; $('#cpEvidWrap').style.display='block'; }
@@ -1183,7 +1206,7 @@ function showCamp(i){
       others.slice().sort(function(a,b){return (b.s===null?-1:b.s)-(a.s===null?-1:a.s)}).map(function(x,i){return rowHTML(x,i,null)}).join('')+'</tbody>';
   } else { $('#cpHostWrap').style.display='none'; }
   $('#cpMail').href='mailto:business@fivescgroup.com?subject='+encodeURIComponent('리더뉴 지속가능 INDEX 자료 확인 요청 · '+c.n);
-  window.scrollTo({top:0,behavior:'smooth'});
+  toTop(true);
 }
 document.addEventListener('click',function(e){
   if(DRAG.moved) return;
@@ -1270,7 +1293,7 @@ function showSearch(q){
     : '';
   $('#srSyn').style.display = extra.length?'block':'none';
   drawSearch();
-  window.scrollTo({top:0,behavior:'smooth'});
+  toTop(true);
 }
 function drawSearch(){
   var view=srRows.slice(0,srShown);
@@ -1283,7 +1306,7 @@ function drawSearch(){
   else m.style.display='none';
 }
 $('#srMore').onclick=function(){ srShown+=SR_LIMIT; drawSearch(); };
-$('#srBack').onclick=function(){ home(); window.scrollTo({top:0}); };
+$('#srBack').onclick=function(){ home(); toTop(); };
 
 (function(){
   var q=$('#lQ'), x=$('#lQX');
