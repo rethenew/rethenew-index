@@ -923,6 +923,11 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
        성공했을 때는 조용히 두고, 실패했을 때만 로딩판에 한 줄 남긴다. */
     try{
       if(/실패|없음|초과|미설정|못했|못한|읽지/.test(String(msg||''))){
+        /* v82 — 뒤에 오는 「초기화 실패」가 진짜 원인을 덮어쓰고 있었다.
+           첫 원인을 남기고, 다른 내용이면 뒤에 이어 붙인다. */
+        var prev='';
+        try{ prev=String(window.__INDEX_WHY||''); }catch(e){}
+        msg = prev ? (prev + (prev.indexOf(msg)>=0 ? '' : ('  ·  '+msg))) : msg;
         window.__INDEX_WHY=msg;
         var w=document.getElementById('lmWhy');
         if(w){ w.textContent=msg; }
@@ -1269,7 +1274,11 @@ $('benStrip').addEventListener('click',e=>{
 });
 
 /* ── 위젯 ── */
-function rankHTML(arr,field,max){const mx=arr[0][1];return arr.slice(0,max).map(([k,v],i)=>
+function rankHTML(arr,field,max){
+  /* v82 — 자료를 못 받으면 arr 가 빈 배열이고 arr[0] 이 undefined 라
+     여기서 화면 전체가 멈췄다. 비면 조용히 아무것도 그리지 않는다. */
+  if(!arr||!arr.length||!arr[0]) return '';
+  const mx=arr[0][1];return arr.slice(0,max).map(([k,v],i)=>
   '<button class="rankrow" data-field="'+esc(field)+'" data-val="'+esc(k)+'"><span class="rk">'+(i+1)+
   '</span><span class="rn">'+esc(k)+'</span><span class="rtrack"><i style="width:'+Math.round(v/mx*100)+
   '%"></i></span><span class="rv">'+v+'</span></button>').join('');}
