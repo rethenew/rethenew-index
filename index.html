@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>리더뉴 지속가능 사회공헌 INDEX</title>
+<title>리더뉴 지속가능 프로젝트 아카이브</title>
 <style>
   :root{
     --ink:#000; --paper:#fff; --g05:#f7f7f7; --g10:#ededed; --g20:#d6d6d6;
@@ -206,7 +206,7 @@
        ③ 비교창·카드 상세에 제안 표기 한 줄
      GRI 는 본래 조직 단위 공시 기준이라 개별 캠페인과 1:1 대응하지 않는다.
      확정처럼 적으면 표준의 성격을 잘못 쓰는 것이고, 기업 공시와 충돌하면 우리가 틀린 게 된다.
-     v82 — 타이틀을 「리더뉴 지속가능 사회공헌 INDEX」로 변경 (v80 기반, v81 성과표기는 미포함·보류)
+     v82 — 타이틀을 「리더뉴 지속가능 프로젝트 아카이브」로 변경 (v80 기반, v81 성과표기는 미포함·보류)
      v80 — TOP 위젯이 시장 점유율로 읽히지 않게 범위를 밝힌다 */
   .asidenote{font-size:10.5px;line-height:1.65;color:var(--g40);padding:2px 4px 0;word-break:keep-all}
   .widget h3{font-size:10px;font-weight:800;color:var(--g60);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
@@ -644,12 +644,18 @@
   @media(max-width:620px){ .loadmask{padding-top:calc(var(--maskTop,56px) + 50px)} }
   body.ready .loadmask{display:none}
   body{position:relative}
-  .loadin{text-align:center}
-  .loadmask .ld1{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
-  .loadmask .ld2{margin:0;font-size:14px;font-weight:500;color:var(--g60)}
+  .loadin{text-align:center;padding:24px}
+  .loadin .lmk{font-size:11px;font-weight:900;letter-spacing:.14em;color:#00A98F;margin-bottom:14px}
+  .loadin .lm1{font-size:19px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px;color:var(--ink)}
+  .loadin .lm2{font-size:13.5px;color:var(--g60);line-height:1.6;margin:0}
+  .loadbar{width:180px;height:3px;border-radius:2px;background:rgba(0,0,0,.08);margin:22px auto 0;overflow:hidden;position:relative}
+  .loadbar i{position:absolute;top:0;bottom:0;width:40%;background:#00A98F;border-radius:2px;
+    animation:lmove 1.15s cubic-bezier(.45,.05,.55,.95) infinite}
+  @keyframes lmove{0%{left:-40%}100%{left:100%}}
+  .lmwhy{margin-top:18px;font-size:11.5px;color:#9aa;letter-spacing:.02em;line-height:1.6}
   @media(max-width:620px){
-    .loadmask .ld1{font-size:14px}
-    .loadmask .ld2{font-size:13px}
+    .loadin .lm1{font-size:17px}
+    .loadin .lm2{font-size:12.5px}
   }
   @media print{.loadmask{display:none}}
 
@@ -820,7 +826,7 @@
 </div></div>
 
 <main class="board"><div class="wrap">
-  <div class="printhead"><h1>리더뉴 지속가능 사회공헌 INDEX · 보고서</h1><div class="pmeta" id="pmeta"></div></div>
+  <div class="printhead"><h1>리더뉴 지속가능 프로젝트 아카이브 · 보고서</h1><div class="pmeta" id="pmeta"></div></div>
   <div class="layout">
     <div class="main">
       <span id="listAnchor" aria-hidden="true"></span>
@@ -835,7 +841,7 @@
       <div class="widget"><h3>산업군 TOP</h3><div id="indrank"></div></div>
       <div class="widget"><h3>주제 TOP</h3><div id="domrank"></div></div>
       <div class="widget"><h3>대상별 TOP</h3><div id="benrank"></div></div>
-      <p class="asidenote">위 지표는 리더뉴 지속가능 사회공헌 INDEX에 수집된 자료를 기준으로 한 것이며,
+      <p class="asidenote">위 지표는 리더뉴 지속가능 프로젝트 아카이브에 수집된 자료를 기준으로 한 것이며,
         전체 시장 분포를 나타내지 않습니다. 수집은 주 1회 진행되며 수집 환경에 따라 수치가 달라질 수 있습니다.</p>
     </aside>
   </div>
@@ -912,7 +918,17 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
     else fn();
   }
   function note(msg){
-    return;   // 상태 문구는 표시하지 않는다
+    /* v79 — 예전에는 여기서 바로 return 해서 어떤 문구도 남지 않았다.
+       그래서 화면이 비었을 때 이유를 알 방법이 없었다.
+       성공했을 때는 조용히 두고, 실패했을 때만 로딩판에 한 줄 남긴다. */
+    try{
+      if(/실패|없음|초과|미설정/.test(String(msg||''))){
+        var w=document.getElementById('lmWhy');
+        if(w){ w.textContent=msg; }
+        window.__INDEX_WHY=msg;
+      }
+    }catch(e){}
+    return;
     ready(function(){
       var el=document.getElementById('updStamp');
       if(el){ el.textContent=msg; el.style.opacity='1'; }
@@ -949,13 +965,18 @@ window.INDEX_API = 'https://script.google.com/macros/s/AKfycbx56c6K_pMmyKZG5223y
   // 외부 호스팅(GitHub Pages) — 데이터는 Apps Script에서 fetch로 받아온다
   // ② 외부 호스팅 — fetch
   if(!window.INDEX_API){ boot(); note('API 미설정 — 내장본'); return; }
-  var done2=false, t2=setTimeout(function(){ if(!done2){done2=true;boot();note('요청 시간초과 — 내장본');} }, 45000);
+  var done2=false, t2=setTimeout(function(){ if(!done2){done2=true;boot();note('요청 시간초과 — 내장본');} }, 25000);
   fetch(window.INDEX_API, {cache:'no-store'})
     .then(function(r){ return r.text(); })
     .then(function(txt){
       if(done2) return; done2=true; clearTimeout(t2);
       try{ apply(JSON.parse(txt),'fetch'); }
-      catch(e){ boot(); }
+      catch(e){
+        /* v79 — 여기서 조용히 boot() 만 하면 화면이 빈 채로 끝난다.
+           받은 것이 JSON 이 아니었다는 사실과 앞부분을 남긴다. */
+        boot();
+        note('받은 자료를 읽지 못했습니다 — ' + String(txt||'').slice(0,60).replace(/\s+/g,' '));
+      }
     })
     .catch(function(e){ if(done2) return; done2=true; clearTimeout(t2); boot(); note('요청 실패: '+e.message); });
 })();
@@ -2243,14 +2264,14 @@ function expWord(){
   }).join('');
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" '
     +'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
-    +'<head><meta charset="utf-8"><title>리더뉴 지속가능 사회공헌 INDEX</title>'
+    +'<head><meta charset="utf-8"><title>리더뉴 지속가능 프로젝트 아카이브</title>'
     +'<style>@page{size:A4 landscape;margin:1.5cm}'
     +'body{font-family:"맑은 고딕",sans-serif;font-size:9pt}'
     +'h1{font-size:15pt;margin:0 0 4pt}p.meta{font-size:8.5pt;color:#555;margin:0 0 10pt}'
     +'table{border-collapse:collapse;width:100%}'
     +'th,td{border:1px solid #999;padding:4pt 5pt;vertical-align:top}'
     +'th{background:#eee;font-weight:bold}</style></head><body>'
-    +'<h1>리더뉴 지속가능 사회공헌 INDEX</h1>'
+    +'<h1>리더뉴 지속가능 프로젝트 아카이브</h1>'
     +'<p class="meta">조건: '+esc(curCond())+' | '+out.length+'건 | 기준일 '+today()+'</p>'
     +'<table><tr><th>캠페인명</th><th>주최</th><th>산업군</th><th>주제</th><th>대상</th>'
     +'<th>혁신유형</th><th>활동</th><th>성과</th><th>시작</th><th>SDGs</th><th>GRI</th></tr>'
@@ -2274,7 +2295,7 @@ function expPpt(){
     const out=curRows();
     const pptx=new PptxGenJS(); pptx.layout='LAYOUT_16x9';
     const t=pptx.addSlide();
-    t.addText('리더뉴 지속가능 사회공헌 INDEX',{x:0.6,y:2.1,w:8.8,fontSize:32,bold:true});
+    t.addText('리더뉴 지속가능 프로젝트 아카이브',{x:0.6,y:2.1,w:8.8,fontSize:32,bold:true});
     t.addText('조건: '+curCond()+'  |  '+out.length+'건  |  기준일 '+today(),
       {x:0.6,y:3.1,w:8.8,fontSize:13,color:'666666'});
     const PER=12;
@@ -2415,9 +2436,9 @@ function dgRender(){
       '모름으로 표시한 항목이 있다면 내부 현황부터 확인해 보시길 권합니다.</div></div>';
   }
 
-  html+='<div class="disc"><b>본 진단은 리더뉴 지속가능 사회공헌 INDEX 등재 사례를 기준으로 한 참고 자료이며, '+
+  html+='<div class="disc"><b>본 진단은 리더뉴 지속가능 프로젝트 아카이브 등재 사례를 기준으로 한 참고 자료이며, '+
     '공시 적합성이나 ESG 성과에 대한 평가가 아닙니다.</b> 등재 사례는 공개 자료 기준으로 수집·검증된 것으로 '+
-    '해당 산업 전체를 대표하지 않습니다. 기준일 2026-08-07 · 리더뉴 지속가능 사회공헌 INDEX</div>';
+    '해당 산업 전체를 대표하지 않습니다. 기준일 2026-08-07 · 리더뉴 지속가능 프로젝트 아카이브</div>';
   B.innerHTML=html;
 }
 /* ===== 지속가능 자가진단 모듈 끝 ===== */
@@ -2463,7 +2484,7 @@ $('reqSend').addEventListener('click',()=>{
 <div class="ntmodal" id="ntModal" aria-hidden="true">
   <div class="ntbox">
     <button type="button" class="ntclose" id="ntClose" aria-label="닫기">✕</button>
-    <h2>리더뉴 지속가능 사회공헌 INDEX 안내</h2>
+    <h2>리더뉴 지속가능 프로젝트 아카이브 안내</h2>
     <p class="ntq">“다른 곳은 어떻게 하고 있나요?”</p>
     <p>지난 5년간 파이브세컨즈와 매거진 리더뉴가 가장 자주 받은 질문입니다.</p>
     <p>매일 매시간, 많은 조직이 저마다의 자리에서 더 나은 사회를 위한 일을 이어가고 있습니다. 저희도 그 질문에 답하기 위해 각 조직의 이야기를 한곳에 모아 리더뉴 INDEX로 살펴보고 있습니다. 그러던 와중 이 정보를 함께 나누는 자리가 있다면 어떤 연결과 협력이 이어질까 하는 마음에 이 페이지를 공개하게 되었습니다. 특히, 조직과 담당자의 진정성을 담은 프로그램을 더 알리고 기록하는 것이 정말 중요하다고 생각했습니다.</p>
@@ -2478,8 +2499,11 @@ $('reqSend').addEventListener('click',()=>{
 </div>
 <div class="loadmask" id="loadMask" aria-hidden="true">
   <div class="loadin">
-    <p class="ld1">리더뉴 지속가능 사회공헌 INDEX 불러오는 중</p>
-    <p class="ld2">잠시만 기다려주세요.</p>
+    <div class="lmk">SUSTAINABILITY ARCHIVE</div>
+    <div class="lm1">지속가능 프로젝트 아카이브를 불러오는 중입니다</div>
+    <p class="lm2">산업군별로 정리한 5,000여 건을 준비하고 있습니다.<br>잠시만 기다려 주십시오.</p>
+    <div class="loadbar"><i></i></div>
+    <div class="lmwhy" id="lmWhy"></div>
   </div>
 </div>
 </body></html>
