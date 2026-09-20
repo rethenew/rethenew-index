@@ -1197,8 +1197,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('re
 /* ── 필터 구성 ── */
 function buildGroups(){ return [
   {grp:'ESG',field:'esg',opts:[['E','E · 환경'],['S','S · 사회']]},
-  {grp:'캠페인 PR 지수',sub:'네이버 뉴스 최근 12개월 · INDEX 등재 캠페인 내 백분위 · 기업 점수 아님',field:'prband',
-   opts:(AGG.prband||[]).map(([k,v])=>[k,(PRBAND_LABEL[k]||k)+' '+v])},
   {grp:'혁신 유형',field:'innov',opts:(AGG.innov||[]).filter(([k])=>k&&k!=='미분류').map(([k,v])=>[k,k+' '+v])},
   {grp:'산업군',field:'ind',opts:AGG.ind_filter.slice().sort(function(a,b){if(a[0]==='기타')return 1; if(b[0]==='기타')return -1;return String(a[0]).localeCompare(String(b[0]),'ko');}).map(([k,v])=>[k,k+' '+v])},
   {grp:'SDGs 연계',field:'sdgs',opts:AGG.sdg.map(([k])=>[k,k])},
@@ -1487,13 +1485,13 @@ function fixUrl(u){
 }
 /* ── 캠페인 PR 지수 표시 ── */
 const PR_AXNAME={'보도량':'확인된 관련 기사 수','주목도':'제목 내 이름 포함률','보도 지속':'보도 확인 월수','기사 고유도':'검색 요약문 비중복률'};
-function prBadge_(x){
-  const b=prBand_(x);
-  if(!b) return '';
-  if(b==='na') return '<span class="mb prna" title="현재 검색·판정 조건에서 관련 기사를 확인하지 못했습니다">PR 미확인</span>';
-  return '<span class="mb pr" title="캠페인 PR 지수 · 백분위">PR '+x.prc+'</span>';
-}
-function prRow_(x){
+/* v84 — 개별 PR 점수를 화면에서 내린다.
+   근거 기사 전수 판정에서 21%가 그 캠페인 기사가 아니었다.
+   틀릴 수 있는 근거로 매긴 점수를 카드마다 붙일 수 없다.
+   집계(리더뉴 INDEX)에서는 여러 건을 모은 평균으로만 쓴다. */
+function prBadge_(x){ return ''; }
+function prRow_(x){ return '';   /* v84 — 개별 PR 점수 비공개 */ }
+function prRow_unused_(x){
   const b=prBand_(x);
   if(!b) return '';
   const w=x.prw||{};
@@ -1695,10 +1693,6 @@ const CMPROWS=[
   ['수혜 대상', x=>esc(x.benef)],
   ['혁신 유형', x=>esc(x.innov)],
   ['시작연도', x=>x.year?esc(x.year)+'~':'—'],
-  ['PR 지수', x=>{const b=prBand_(x); if(!b) return '—';
-     if(b==='na') return '미확인 · 검토 중';
-     const w=x.prw||{}; const ax=(w.ax||[]).filter(a=>a&&a[2]>=0).map(a=>(PR_AXNAME[a[0]]||a[0])+' '+String(a[1]||'').split(' — ')[0].split(' / ')[0]);
-     return '<b>'+x.prc+'</b> <span style="color:#999;font-size:11px">백분위</span>'+(ax.length?'<ul class="bul">'+ax.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'');}],
   ['활동 내용', x=>bulletize(x.action)],
   ['공개 성과', x=>bulletize(x.impact)],
   ['SDGs 연계', x=>(x.sdgs||[]).join(' · ')||'—'],
