@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head>
-<!-- 리더뉴 기후행동 INDEX v21 · 2026-10-01 -->
+<!-- 리더뉴 기후행동 INDEX v22 · 2026-10-01 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>리더뉴 기후행동 INDEX</title>
@@ -123,7 +123,7 @@ td.yrs .yv{display:block;font-size:14px;font-weight:900;font-variant-numeric:tab
 td.yrs .yf{display:block;font-size:11.5px;color:var(--g40);font-weight:600;margin-top:1px}
 col.c1{width:44%}col.c2{width:36%}col.c3{width:20%}
 @media(max-width:860px){
- .lt thead{display:none}.lt col{width:auto}
+ .lt,.lt tbody{display:block;width:100%}.lt thead,.lt colgroup{display:none}.lt col{width:auto}
  .lt tr{display:block;padding:13px 2px;border-bottom:1px solid var(--g10)}
  .lt td{display:block;border:0;padding:0}
  .lt td.meta{margin-top:3px}.lt td.meta .mt{white-space:normal}
@@ -204,14 +204,15 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;font-size:12px;color
 .ntop button:hover{border-color:var(--mint)}
 .nbox{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start;gap:14px;border:1px solid var(--g10);border-radius:12px;padding:14px}
 @media(max-width:860px){.nbox{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){svg.ng text{font-size:23px}svg.ng text.c{font-size:24px}}
 svg.map rect.inset{fill:none;stroke:var(--g20);stroke-dasharray:3 2;stroke-width:.8}svg.map text.isl{font-size:7.5px;font-weight:700;fill:var(--g60)}
 svg.ng{width:100%;max-width:900px;height:auto;display:block;margin:0 auto}
 .nbox>div:first-child>.hint2{text-align:center}
 
 svg.ng line{stroke:var(--g20);stroke-width:1}
 svg.ng circle.h{fill:var(--mint-d)}svg.ng circle.i{fill:var(--mint-l)}svg.ng circle.c{fill:var(--ink)}
-svg.ng text{font-size:14px;font-weight:700;fill:var(--g80);paint-order:stroke;stroke:#fff;stroke-width:3px}
-svg.ng text.c{font-size:17px;font-weight:900;fill:var(--ink)}
+svg.ng text{font-size:15.5px;font-weight:700;fill:var(--g80);paint-order:stroke;stroke:#fff;stroke-width:3px}
+svg.ng text.c{font-size:18px;font-weight:900;fill:var(--ink)}
 svg.ng g.nd{cursor:pointer}svg.ng g.nd:hover text{fill:var(--mint-d)}
 .nlist h5{font-size:12px;font-weight:900;color:var(--g60);margin:4px 0 6px}
 .nlist .grp{margin-bottom:12px}
@@ -232,7 +233,7 @@ svg.ng g.nd{cursor:pointer}svg.ng g.nd:hover text{fill:var(--mint-d)}
 <section class="hero"><div class="wrap">
   <div class="kick">CLIMATE ACTION INDEX</div>
   <h1><em>리더뉴 기후행동 INDEX</em> <span class="tst">기후행동 프로젝트 <span id="heroN"></span>건 · 출처 확인</span></h1>
-  <p>국내에서는 각계에서 기후행동에 함께하고 있습니다. 기업·기관·지자체·단체·학계·종교계가 추진한<br class="pc">기후 관련 사업, 제도·프로그램, 행사, 캠페인, 계획·정책, 연구를 모았습니다.<br class="pc">출처 문서 또는 공식 목록의 제목·요약에서 사업명과 주체를 확인했습니다.<br class="pc">수정이 필요하신 부분은 <a href="mailto:business@fivescgroup.com" style="color:inherit">business@fivescgroup.com</a>으로 연락주시면 반영하겠습니다.</p>
+  <p>국내에서는 각계에서 기후행동에 함께하고 있습니다. 기업·기관·지자체·단체·학계·종교계가 추진한 <br class="pc">기후 관련 사업, 제도·프로그램, 행사, 캠페인, 계획·정책, 연구를 모았습니다. <br class="pc">출처 문서 또는 공식 목록의 제목·요약에서 사업명과 주체를 확인했습니다. <br class="pc">수정이 필요하신 부분은 <a href="mailto:business@fivescgroup.com" style="color:inherit">business@fivescgroup.com</a>으로 연락주시면 반영하겠습니다.</p>
   <form class="hsearch" id="hform" role="search">
     <input id="q" type="search" placeholder="사업명·주체·내용 검색 (예: 탄소중립포인트, 블루카본)" aria-label="검색" autocomplete="off">
     <button type="submit">조회</button>
@@ -301,7 +302,7 @@ const AX={
  year:{lab:'연도',all:'전체 연도',vals:['2026년','2025년','2024년','2023년 이전','게시일 미표기'],get:x=>{const y=(x.source_date||'').slice(0,4);return [!y?'게시일 미표기':y<'2024'?'2023년 이전':y+'년']}},
  type:{lab:'주체',all:'전체 주체',vals:['기업','기관','지자체','단체','학계','종교계'],get:x=>[x.actor_type]},
  kind:{lab:'유형',all:'전체 유형',vals:['사업','제도·프로그램','행사','캠페인','계획·정책','연구'],get:x=>[x.kind]},
- sector:{lab:'행동 영역',all:'전체 영역',vals:['감축','흡수·제거','GX(녹색전환)','적응·회복력','순환경제','자연·생물다양성','공정전환·기후정의','참여·행동변화','교육·문화','금융·투자','정책·거버넌스','측정·공시'],get:x=>x.gx&&!x.sector.includes('GX(녹색전환)')?[...x.sector,'GX(녹색전환)']:x.sector},
+ sector:{lab:'영역',all:'전체 영역',vals:['감축','흡수·제거','GX(녹색전환)','적응·회복력','순환경제','자연·생물다양성','공정전환·기후정의','참여·행동변화','교육·문화','금융·투자','정책·거버넌스','측정·공시'],get:x=>x.gx&&!x.sector.includes('GX(녹색전환)')?[...x.sector,'GX(녹색전환)']:x.sector},
  tech:{lab:'녹색기술 10대 분야',all:'전체 기술분야',vals:['신·재생에너지','탄소저감','첨단수자원','그린IT','그린차량·선박·수송기계','첨단그린건축·도시','신소재','청정생산','친환경 농수산식품 및 시스템','환경보호 및 보전'],get:x=>x.tech10||[]},
  taxo:{lab:'K-택소노미 목표',all:'전체 목표',vals:['온실가스 감축','기후변화 적응','물의 지속가능한 보전','자원순환','오염 방지 및 관리','생물다양성 보전'],get:x=>x.taxo||[]},
  method:{lab:'방식',all:'전체 방식',vals:['설비·기술','제도·규제','금융','교육','인식·정보','참여','행동유도','연구'],get:x=>x.method||[]},
