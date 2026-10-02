@@ -996,14 +996,13 @@ function bootJN(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -1508,14 +1507,13 @@ function bootJB(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -2019,14 +2017,13 @@ function bootGN(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -2528,14 +2525,13 @@ function bootGW(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -3036,14 +3032,13 @@ function bootCB(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -3548,14 +3543,13 @@ function bootCN(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -4060,14 +4054,13 @@ function bootGB(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -4570,14 +4563,13 @@ function bootGG(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -5071,14 +5063,13 @@ function bootBS(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -5579,14 +5570,13 @@ function bootDG(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -6086,14 +6076,13 @@ function bootIC(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -6591,14 +6580,13 @@ function bootDJ(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -7095,14 +7083,13 @@ function bootUS(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -7602,14 +7589,13 @@ function bootJJ(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -8107,14 +8093,13 @@ function bootSE(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -8610,14 +8595,13 @@ function bootSJ(){
     var S=sections(n);
     h+='<div class="ptabs mini">'+[['trend','추세'],['brief','해석'],['tbl','지표 표'],['docs','문서·이력'],['ev','근거 목록'],['refs','사례·예산']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+[['p-brief','광역 요약'],['p-ev','전체 근거'],['p-fund','기금 안내'],['p-scope','용역 범위']].map(function(t){return '<button type="button" data-pk="'+t[0]+'" aria-selected="'+(t[0]===PT)+'">'+t[1]+'</button>';}).join('')+'</div>';
     h+='<div id="pbody">'+(PT.indexOf('p-')===0?'':(S[PT]||S.trend))+'</div>';
-    h+='<div class="cta2"><button type="button" class="bpri" id="openRep">전체 화면 · 인쇄</button><a class="bsec" href="#inq">사업 설계 문의</a></div>';
     rp.innerHTML=h;
     var _tr=rp.querySelector('.ptabs.mini'); if(_tr&&window.__TSL) _tr.scrollLeft=window.__TSL;
     if(_tr) _tr.addEventListener('scroll',function(){window.__TSL=_tr.scrollLeft;});
     rp.querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){var tr2=rp.querySelector('.ptabs.mini'); if(tr2) window.__TSL=tr2.scrollLeft; window.__PT=b.dataset.pk;panel();};});
     if(PT.indexOf('p-')===0){['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2){p2.hidden=(('p-'+x)!==PT); if(p2.parentNode&&p2.parentNode.id==='pbody'&&p2.hidden){document.getElementById('provpanes').appendChild(p2);}}});var src=document.getElementById('bp-'+PT.slice(2));var tgt=document.getElementById('pbody');if(src&&tgt){src.hidden=false;tgt.appendChild(src);}}
     else {['brief','ev','fund','scope'].forEach(function(x){var p2=document.getElementById('bp-'+x);if(p2&&p2.parentNode&&p2.parentNode.id==='pbody'){p2.hidden=true;document.getElementById('provpanes').appendChild(p2);}});}
-    document.getElementById('openRep').onclick=function(){report(n);};
+    var _or=document.getElementById('openRep'); if(_or) _or.onclick=function(){report(n);};
   }
   function brief(n,f){
     var g=grpOf(n);
@@ -8912,9 +8896,11 @@ try{history.replaceState({p:fromHash()},'',location.href);}catch(e){}
   };
   document.addEventListener('click',function(e){
     var a=e.target.closest('a[href="#inq"], [data-inq]');
-    if(!a) return; e.preventDefault();
-    var card=document.querySelector('#rpanel .rname');
-    open(card?card.textContent.trim():'');
+    if(!a) return; e.preventDefault(); e.stopPropagation();
+    var U='https://rethenew.com/INDEX-ASK';
+    var emb=document.documentElement.classList.contains('rtn-emb');
+    if(emb){ try{ window.top.location.href=U; return; }catch(x){} }
+    var w=window.open(U,'_blank','noopener'); if(!w){ try{ window.top.location.href=U; }catch(x){ location.href=U; } }
   },true);
 })();
 
