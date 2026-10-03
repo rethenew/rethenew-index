@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>농가 직거래 INDEX</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
 <style>
@@ -349,11 +353,12 @@ addEventListener('resize',()=>{if(map&&!$('#v-map').hidden)map.setSize(new naver
 hstats();render();go((location.hash||'#map').slice(1));
 </script>
 <script>
+/* 아임웹 삽입코드(기후행동 INDEX v26과 같은 규약): rtn-height 로 높이 알림, rtn-view {h,top} 받아 지도 높이 결정 */
 (function(){var E=window.parent!==window;if(!E)return;document.documentElement.classList.add('emb');
-var last=0;function h(){var v=Math.ceil(document.documentElement.getBoundingClientRect().height);if(Math.abs(v-last)>2){last=v;parent.postMessage({type:'rtn-farm-h',h:v},'*')}}
-addEventListener('message',function(e){var m=e.data||{};if(m.type==='rtn-farm-vh'&&m.h>200){document.documentElement.style.setProperty('--pvh',m.h+'px');h()}});
+var last=0,pvh=0;function h(){var v=Math.ceil(document.documentElement.getBoundingClientRect().height);if(Math.abs(v-last)>2){last=v;parent.postMessage({type:'rtn-height',height:v},'*')}}
+addEventListener('message',function(e){var m=e.data||{};if(m.type==='rtn-view'&&m.h>200&&Math.abs(m.h-pvh)>80){pvh=m.h;document.documentElement.style.setProperty('--pvh',m.h+'px');h()}});
 addEventListener('load',h);setInterval(h,700);if(window.ResizeObserver)new ResizeObserver(h).observe(document.documentElement);
-var so=window.scrollTo;window.scrollTo=function(x,y){if(y===0){parent.postMessage({type:'rtn-farm-top'},'*')}else so.apply(window,arguments)};
-parent.postMessage({type:'rtn-farm-ready'},'*')})();
+var so=window.scrollTo;window.scrollTo=function(x,y){if(y===0){parent.postMessage({type:'rtn-top'},'*')}else so.apply(window,arguments)};
+h()})();
 </script>
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=el8jn8vzbs&submodules=geocoder&callback=initMap"></script>
