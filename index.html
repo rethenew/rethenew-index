@@ -637,7 +637,9 @@
   /* iframe 안에서 fixed는 iframe 전체 높이 기준이라 가운데 정렬하면 글씨가 화면 밖으로 간다.
      위쪽에 붙여 어떤 높이에서도 보이게 한다. */
   /* iframe 안에서는 fixed 기준이 어긋난다. 문서 흐름 안에 두고 화면을 덮는다. */
-  .loadmask{visibility:hidden}body.slowload .loadmask{visibility:visible}
+  /* v106 — 로딩 화면 제거. 데이터는 같은 폴더 data.json 에서 바로 온다.
+   실패하면 화면 안에 사유가 그대로 표시되므로 덮는 막이 필요 없다. */
+.loadmask{display:none!important}
   .loadmask{position:absolute;left:0;right:0;top:0;min-height:100%;z-index:200;
     background:var(--paper);display:block;text-align:center;
     padding:calc(var(--maskTop,56px) + 70px) 16px 40px;
@@ -2594,7 +2596,6 @@ $('reqSend').addEventListener('click',()=>{
     <p class="ntsign">매거진 리더뉴 드림</p>
   </div>
 </div>
-<script>setTimeout(function(){try{if(!document.body.classList.contains('ready'))document.body.classList.add('slowload');}catch(e){}},1200);</script>
 <div class="loadmask" id="loadMask" aria-hidden="true">
   <div class="loadin">
     <div class="lmk">SUSTAINABILITY ARCHIVE</div>
