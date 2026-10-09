@@ -1,0 +1,42 @@
+# 리덱스 자동 반영 (공개 페이지) — 2026-10-09 단장님 결정
+# room-<id> 브랜치에 페이지를 올리면: 자기 방 파일만·main과 겹침 없음·금지 문자열·줄바꿈 유지·용량 급감·스크립트 문법 검사 → 통과 시 main 합치기
+# 결과: auto/<브랜치>.md (main). 공개 data/ 는 rethenew-data 자동 반영이 만든다(여기서 올린 data/ 는 무시)
+name: 자동 반영
+on:
+  push:
+    branches: ['room-*']
+concurrency:
+  group: rethenew-auto-index
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    env:
+      RESULT: ${{ runner.temp }}/result.md
+      BR: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.INDEX_PUSH_TOKEN }}
+      - name: 준비
+        run: |
+          git config user.name "rethenew-auto"
+          git config user.email "auto@users.noreply.github.com"
+      - name: 검사·합치기
+        run: python3 .github/scripts/room_merge.py index "$BR"
+      - name: main 올리기
+        run: |
+          git commit -q -m "[auto] $BR 반영 · $(git log -1 --format=%s "origin/$BR" | cut -c1-80)"
+          for i in 1 2 3; do git push -q origin HEAD:main && break; git pull -q --rebase origin main; done
+      - name: 결과 기록
+        if: always()
+        run: |
+          [ -f "$RESULT" ] || echo "# index · $BR" > "$RESULT"
+          echo "- 상태: ${{ job.status }} · $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST · 실행 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$RESULT"
+          cat "$RESULT" >> "$GITHUB_STEP_SUMMARY"
+          git fetch -q origin main && git checkout -q -f -B rec origin/main
+          mkdir -p auto && cp "$RESULT" "auto/$BR.md"
+          git add auto && git commit -q -m "[auto] 결과 $BR: ${{ job.status }}" && for i in 1 2 3; do git push -q origin HEAD:main && break; git pull -q --rebase origin main; done || true
