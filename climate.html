@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head>
-<!-- 리더뉴 기후행동 INDEX v29 · 2026-10-08 -->
+<!-- 리더뉴 기후행동 INDEX v30 · 2026-10-09 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>리더뉴 기후행동 INDEX</title>
@@ -293,10 +293,10 @@ svg.ng g.nd{cursor:pointer}svg.ng g.nd:hover text{fill:var(--mint-d)}
   <div class="prog-wrap" id="prog" hidden></div></section>
   <section class="advsec" aria-labelledby="advT"><div class="listhead"><h3 id="advT">전문 통계</h3><span class="hint2">녹색기술 · K-택소노미 · 주체 · 사업유형 · 출처 · 추진방식 · 참여구조 분포</span></div>
   <div class="advgrid"><div class="agc"><div class="agct">녹색기술 10대 분야<span>녹색인증 분류 · 기술·사업 성격 항목만</span></div><div class="bars2" id="bTech"></div></div><div class="agc"><div class="agct">K-택소노미 환경목표<span>6대 목표 대응</span></div><div class="bars2" id="bTaxo"></div></div><div class="agc"><div class="agct">주체</div><div class="bars2" id="bType"></div></div><div class="agc"><div class="agct">사업유형</div><div class="bars2" id="bKind"></div></div><div class="agc"><div class="agct">출처<span>정책브리핑은 보도자료 제목 기준 수록</span></div><div class="bars2" id="bSrc"></div></div><div class="agc"><div class="agct">추진방식<span>설비·제도·금융·교육 등 어떤 수단으로 추진했는지 · 한 건에 최대 2개</span></div><div class="bars2" id="bMethod"></div></div><div class="agc"><div class="agct">참여구조<span>단독 추진인지, 협약·공동개최·컨소시엄 등으로 다른 기관과 함께했는지</span></div><div class="bars2" id="bStruct"></div></div></div></section>
-  <div class="ctabox"><p>우리 기관에 맞는 기후·지속가능사업이 궁금하시면 문의해 주십시오.</p><a href="mailto:business@fivescgroup.com?subject=%EA%B8%B0%ED%9B%84%C2%B7%EC%A7%80%EC%86%8D%EA%B0%80%EB%8A%A5%EC%82%AC%EC%97%85%20%EB%AC%B8%EC%9D%98">기후·지속가능사업 문의 →</a></div>
+  <div class="ctabox"><p>우리 기관에 맞는 기후·지속가능사업이 궁금하시면 문의해 주십시오.</p><a href="https://rethenew.com/index-ask?from=climate" target="_top" rel="noopener">기후·지속가능사업 문의 →</a></div>
 </div></main>
 
-<footer><div class="wrap">편집 ㈜파이브세컨즈 · 확인일 <span id="chk"></span> · 수록 내용은 각 출처 원문의 표기를 따릅니다. 수정·추가가 필요한 항목은 <a href="mailto:business@fivescgroup.com">business@fivescgroup.com</a>으로 알려 주세요.</div></footer>
+<footer><div class="wrap">편집 ㈜파이브세컨즈 · 확인일 <span id="chk"></span> · 수록 내용은 각 출처 원문의 표기를 따릅니다. 수정·추가가 필요한 항목은 <a href="https://rethenew.com/index-ask?from=climate" target="_top" rel="noopener">문의하기</a>로 알려 주세요(business@fivescgroup.com).</div></footer>
 
 <div class="dlg" id="dlg" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="dTitle"><button class="x" id="dx" type="button" aria-label="닫기">×</button><div id="dBody"></div></div></div>
 
@@ -338,6 +338,7 @@ const checked=[...new Set(D.map(x=>x.checked))].sort().pop();
 $('asof').textContent=`확인일 ${checked} · 수록 ${D.length}건`;$('chk').textContent=checked;$('heroN').textContent=D.length.toLocaleString();
 {const _n=v=>String(v).replace(/\s|\(주\)|㈜|주식회사/g,'');$('heroA').textContent=new Set(D.flatMap(x=>(x.actors||[x.actor]).map(_n))).size.toLocaleString();$('heroR').textContent=['서울','부산','대구','인천','대전','울산','세종','경기','강원','충북','충남','전북','전남광주','경북','경남','제주'].filter(r=>D.some(x=>x.region===r)).length;$('heroS').textContent=12;}
 
+const ASK='https://rethenew.com/index-ask?from=climate';
 const DID={};D.forEach(x=>DID[x.id]=x);
 const PROF=JSON.parse(document.getElementById('profdata').textContent||'{}');
 const PG=JSON.parse(document.getElementById('progdata').textContent);
@@ -490,7 +491,7 @@ function openCard(id){
   $('dBody').innerHTML=`<div class="cid">${x.id} · ${esc(x.kind)}</div><h2 id="dTitle">${esc(x.name)}</h2>
   <div class="chips">${x.sector.map(s=>`<span class="chip acc"><small>행동영역</small>${esc(s)}</span>`).join('')}${x.gx&&!x.sector.includes('GX(녹색전환)')?'<span class="chip acc"><small>GX</small>녹색전환</span>':''}<span class="chip"><small>유형</small>${esc(x.kind)}</span><span class="chip"><small>지역</small>${esc(rl(x.region||'미특정'))}${x.region_orig?` (통합 전: ${esc(x.region_orig)})`:''}${x.region_basis==='본사 소재지'?' (본사 소재지 기준)':x.region_basis==='중앙부처 발표(지명 없음)'?' (중앙부처 발표)':''}</span></div>
   <div class="task">${row('주체',esc(x.actor)+` <span class="em">${esc(x.actor_type)}${x.actor_sub?' · '+esc(x.actor_sub):''}</span>`+(x.actor_orig?` <span class="em">(발표 당시 표기: ${esc(x.actor_orig)})</span>`:''))}${row('사업 내용',esc(x.summary))}${x.partners?row('참여기관',partnersHTML(x)):''}${(x.method&&x.method.length)?row('추진방식',esc(x.method.join(' · '))+(x.structure?` <span class="em">· 참여구조 ${esc(x.structure)}</span>`:'')):''}${row('세부 주제',esc((x.subtopic||[]).join(' / ')))}${(x.tech10&&x.tech10.length)||(x.taxo&&x.taxo.length)||(x.ndc&&x.ndc.length)||(x.promise&&x.promise.length)?row('연결 분류',[(x.tech10&&x.tech10.length)?'녹색기술 '+esc(x.tech10.join(' · ')):'',(x.taxo&&x.taxo.length)?'K-택소노미 '+esc(x.taxo.join(' · ')):'',(x.ndc&&x.ndc.length)?'NDC '+esc(x.ndc.join(' · ')):'',(x.promise&&x.promise.length)?'기후시민 약속 '+esc(x.promise.map(p=>PL[p]).join(' · ')):''].filter(Boolean).join('<br>')):''}${row('장소',x.place?esc(x.place):none)}${row('기간',x.period?esc(x.period):none)}
-  ${row('출처',x.source_url?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener">${esc(x.source_publisher||'원문 보기')}${x.source_title?' — '+esc(x.source_title):''} ↗</a>`:esc(x.source_publisher||'')+' 수록 항목')}${row('게시일',x.source_date?esc(x.source_date):none)}${row('확인일',esc(x.checked))}${x.verify&&VF[x.verify]?row('출처 확인',`${VF[x.verify][0]} <span class="em">· ${VF[x.verify][1]}</span>`):''}</div>${PG.filter(p=>p.relSet.has(x.id)).map(p=>`<button type="button" class="cardbtn" data-prog="${p.id}">${esc(p.name)} 참여 현황 보기</button>`).join('')}`;
+  ${row('출처',x.source_url?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener">${esc(x.source_publisher||'원문 보기')}${x.source_title?' — '+esc(x.source_title):''} ↗</a>`:esc(x.source_publisher||'')+' 수록 항목')}${row('게시일',x.source_date?esc(x.source_date):none)}${row('확인일',esc(x.checked))}${row('정정·제보',`<a href="${ASK}&org=${encodeURIComponent(x.actor)}&item=${encodeURIComponent(x.name)}${x.region&&!['전국','해외','미특정'].includes(x.region)?'&region='+encodeURIComponent(x.region):''}" target="_top" rel="noopener">이 항목 정정·제보 →</a>`)}${x.verify&&VF[x.verify]?row('출처 확인',`${VF[x.verify][0]} <span class="em">· ${VF[x.verify][1]}</span>`):''}</div>${PG.filter(p=>p.relSet.has(x.id)).map(p=>`<button type="button" class="cardbtn" data-prog="${p.id}">${esc(p.name)} 참여 현황 보기</button>`).join('')}`;
   $('dlg').hidden=false;$('dx').focus();
 }
 function closeCard(){$('dlg').hidden=true;if(lastFocus)lastFocus.focus()}
