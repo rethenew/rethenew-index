@@ -14,7 +14,6 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     env:
-      RESULT: ${{ runner.temp }}/result.md
       BR: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +22,7 @@ jobs:
           token: ${{ secrets.INDEX_PUSH_TOKEN }}
       - name: 준비
         run: |
+          echo "RESULT=$RUNNER_TEMP/result.md" >> "$GITHUB_ENV"
           git config user.name "rethenew-auto"
           git config user.email "auto@users.noreply.github.com"
       - name: 검사·합치기
