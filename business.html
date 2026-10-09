@@ -171,24 +171,53 @@ footer{margin-top:44px;border-top:1px solid var(--line);padding-block:16px 28px;
 
 <footer><div class="wrap">
   <b>리더뉴 지속가능사업 INDEX</b> · (주)파이브세컨즈<br>
-  기업과 기관을 평가하거나 등급을 매기지 않습니다. 수치는 각 보고서와 공시 원문 그대로 옮기며, 출처가 확인된 정보만 싣습니다. · v2
+  기업과 기관을 평가하거나 등급을 매기지 않습니다. 수치는 각 보고서와 공시 원문 그대로 옮기며, 출처가 확인된 정보만 싣습니다. · v3
 </div></footer>
 
 
 <script>
+/* ── 아임웹 삽입 연동 · 리덱스 표준 브리지 v1 (climate·map·pr과 같은 방식) ──
+   ① 부모(아임웹)에 콘텐츠 높이를 알린다: {type:'rtn-height', height}
+      scrollHeight·100vh는 iframe 높이를 따라 커져 높이가 끝없이 늘어난다 → body 자식의 실제 바닥을 잰다.
+   ② 부모가 보내는 실제 창 높이·스크롤 위치를 받아 둔다: {type:'rtn-view', h, top} (팝업용)
+   직접 열었을 때는 아무것도 하지 않는다. */
 (function(){
   if(window.parent===window) return;
   document.documentElement.classList.add('emb');
-  var last=0;
-  function send(){
-    var h=Math.ceil(document.documentElement.scrollHeight);
-    if(Math.abs(h-last)<2) return; last=h;
-    try{ window.parent.postMessage({type:'rtn-height',height:h},'*'); }catch(e){}
+  var last=0, timer=null;
+  window.__rtnView=null;
+  window.addEventListener('message',function(e){
+    var d=e&&e.data; if(!d||d.type!=='rtn-view') return;
+    var h=Number(d.h); if(!h||h<200) return;
+    window.__rtnView={h:h, top:Math.max(0,Number(d.top)||0)};
+  });
+  function contentHeight(){
+    var max=0, kids=document.body.children;
+    for(var i=0;i<kids.length;i++){
+      var el=kids[i], cs;
+      try{ cs=getComputedStyle(el); }catch(e){ continue; }
+      if(cs.display==='none'||cs.position==='fixed'||cs.position==='absolute') continue;
+      var r=el.getBoundingClientRect();
+      if(r.height===0&&r.width===0) continue;
+      var b=r.bottom+(window.scrollY||window.pageYOffset||0);
+      if(b>max) max=b;
+    }
+    return Math.ceil(max)+8;
   }
-  window.addEventListener('load',send);
-  window.addEventListener('resize',send);
-  if(window.ResizeObserver){ new ResizeObserver(send).observe(document.body); }
-  setTimeout(send,300); setTimeout(send,1200);
+  function send(){
+    var v=contentHeight();
+    if(!v||v<300) return;
+    if(Math.abs(v-last)<40) return;
+    last=v;
+    try{ window.parent.postMessage({type:'rtn-height', height:v},'*'); }catch(e){}
+  }
+  function ping(){ clearTimeout(timer); timer=setTimeout(send,150); }
+  window.__pingHeight=function(){ last=0; ping(); };
+  window.addEventListener('load',ping);
+  window.addEventListener('resize',ping);
+  ['click','keyup','change','toggle'].forEach(function(ev){ document.addEventListener(ev,ping,true); });
+  setInterval(send,2500);
+  ping();
 })();
 </script>
 
