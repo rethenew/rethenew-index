@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>리더뉴 지속가능사업 INDEX</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<style>
+/* 관문 페이지: 리더뉴 지속가능 INDEX 디자인 계승 — 잉크 상단·히어로, 민트 포인트, 흰 본문. 기업/공공기관 두 갈래 선택이 첫 화면의 전부. 자매 페이지와 같은 단일 라이트 테마 */
+:root{
+  --ink:#0E1A17;--paper:#fff;--mint:#00A98F;--mint-d:#00806D;--mint-l:#5CCFBB;--mint-05:#F0FBF8;--mint-10:#DCF4EE;
+  --g05:#f6f7f7;--g10:#eceeed;--g20:#d5d9d7;--g60:#5f6663;--g80:#2f3533;--line:#e1e4e2;
+  --on-ink:#fff;--on-ink-2:rgba(255,255,255,.72);--on-ink-3:rgba(255,255,255,.55);--ink-rule:rgba(255,255,255,.16);
+  --f-body:'Freesentation','Pretendard','Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);background:var(--paper);color:var(--ink);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+
+.top{background:var(--ink);color:var(--on-ink);position:sticky;top:env(safe-area-inset-top,0px);z-index:10}
+html.emb .top{position:static}
+.topin{display:flex;align-items:center;gap:12px;min-height:58px;flex-wrap:wrap;padding-block:8px}
+.logo{font-size:18px;font-weight:900;white-space:nowrap}.logo span{font-weight:400;opacity:.7}
+.toplink{margin-left:auto;font-size:13px;font-weight:700;color:var(--on-ink-2);text-decoration:none;border:1px solid var(--ink-rule);border-radius:8px;padding:6px 11px;white-space:nowrap}
+.toplink:hover{color:var(--on-ink);border-color:var(--mint-l)}
+
+.hero{background:var(--ink);color:var(--on-ink);padding-block:34px 40px;border-top:1px solid var(--ink-rule)}
+.kick{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--mint-l);margin-bottom:10px}
+.hero h1{font-size:clamp(23px,4.2vw,32px);font-weight:900;letter-spacing:-.02em;line-height:1.32;text-wrap:balance;max-width:22em}
+.hero h1 em{font-style:normal;color:var(--mint-l)}
+.hero p{font-size:15.5px;color:var(--on-ink-2);margin-top:12px;max-width:44em;line-height:1.7}
+
+.pick{margin-top:-22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.pick{grid-template-columns:1fr}}
+.door{display:flex;flex-direction:column;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px;text-decoration:none;color:var(--ink);box-shadow:0 10px 30px rgba(14,26,23,.08);min-width:0;transition:border-color .15s,transform .15s}
+.door:hover{border-color:var(--mint);transform:translateY(-2px)}
+.dh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dh h2{font-size:24px;font-weight:900;letter-spacing:-.02em}
+.st{font-size:11.5px;font-weight:800;color:var(--g80);background:var(--g05);border:1px solid var(--g20);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.big{display:flex;align-items:baseline;gap:6px}
+.big b{font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--mint-d)}
+.big span{font-size:14px;font-weight:700;color:var(--g60)}
+.door p{font-size:14.5px;color:var(--g80);line-height:1.7}
+.door ul{list-style:none;display:grid;gap:6px;border-top:1px dashed var(--g20);padding-top:12px}
+.door li{position:relative;padding-left:14px;font-size:13.5px;color:var(--g80)}
+.door li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:2px;background:var(--mint)}
+.go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--on-ink);font-weight:800;font-size:14.5px;padding:11px 18px;border-radius:9px}
+.door:hover .go{background:var(--mint-d)}
+
+.sec{font-size:12.5px;font-weight:900;letter-spacing:.08em;color:var(--g60);margin:40px 0 12px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
+@media(max-width:760px){.how{grid-template-columns:1fr}}
+.how div{padding:14px 16px 16px 0;border-bottom:1px solid var(--line);min-width:0}
+@media(min-width:761px){.how div+div{padding-left:16px;border-left:1px solid var(--line)}}
+.how b{display:block;font-size:15px;font-weight:900;margin-bottom:4px}
+.how span{font-size:13.5px;color:var(--g80);line-height:1.65}
+
+.src{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:10px}
+@media(max-width:760px){.src{grid-template-columns:1fr 1fr}}
+.src div{padding:12px 14px;border-left:1px solid var(--line)}
+.src div:first-child{border-left:0}
+@media(max-width:760px){.src div:nth-child(3){border-left:0}.src div:nth-child(n+3){border-top:1px solid var(--line)}}
+.src b{display:block;font-size:22px;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.src span{font-size:12px;font-weight:700;color:var(--g60)}
+.subs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:900px){.subs{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.subs{grid-template-columns:1fr}}
+.sub{display:flex;flex-direction:column;gap:5px;border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;text-decoration:none;color:var(--ink);background:var(--paper);min-width:0}
+.sub:hover{border-color:var(--ink)}
+.sub .sk{font-size:11px;font-weight:900;letter-spacing:.06em;color:var(--mint-d)}
+.sub b{font-size:15.5px;font-weight:900;line-height:1.35}
+.sub .sn{font-size:12.5px;font-weight:700;color:var(--g60)}.sub .sn em{font-style:normal;font-size:18px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:2px}
+.sub .sd{font-size:13px;color:var(--g80);line-height:1.6}
+.sub .sg{margin-top:auto;padding-top:6px;font-size:13px;font-weight:800;color:var(--ink)}
+.sub:hover .sg{text-decoration:underline}
+.note{font-size:12.5px;color:var(--g60);margin-top:8px}
+
+.cta{margin-top:36px;border:1px solid var(--mint);background:var(--mint-05);border-radius:12px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.cta p{font-size:14.5px;color:var(--g80);max-width:40em;line-height:1.65}.cta p b{color:var(--ink)}
+.mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mail code{font-family:inherit;font-weight:800;font-size:15px;user-select:all;background:var(--paper);border:1px solid var(--mint-10);border-radius:8px;padding:9px 12px}
+.ask{display:inline-flex;align-items:center;background:var(--ink);color:var(--on-ink);font-weight:800;font-size:15px;padding:12px 20px;border-radius:9px;text-decoration:none;white-space:nowrap}
+.ask:hover{background:var(--mint-d)}
+.copy{font:inherit;font-size:13px;font-weight:800;border:0;background:var(--mint);color:var(--on-ink);border-radius:8px;padding:10px 14px;cursor:pointer}
+.copy:hover{background:var(--mint-d)}
+
+footer{margin-top:44px;border-top:1px solid var(--line);padding-block:16px 28px;color:var(--g60);font-size:12px;line-height:1.75}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap"><div class="topin">
+  <div class="logo">리더뉴 지속가능사업 <span>INDEX</span></div>
+</div></div></header>
+
+<section class="hero"><div class="wrap">
+  <div class="kick">SUSTAINABLE BUSINESS INDEX</div>
+  <h1>기업과 공공기관의 <em>다음 지속가능사업</em>을 공개 데이터로 찾습니다</h1>
+  <p>지속가능경영보고서, 공공기관 공시, 지역의 공식 문제, 리더뉴 INDEX의 실행 사례를 한곳에 모았습니다. 담당하시는 조직 유형을 고르세요.</p>
+</div></section>
+
+<main class="wrap">
+  <div class="pick">
+    <a class="door" href="https://claude.ai/artifact/NdsfkH7SN9yCmTHm6rMkNQ" target="_blank" rel="noopener">
+      <div class="dh"><h2>기업</h2><span class="st">1차 자동 대조</span></div>
+      <div class="big"><b>252</b><span>개 기업 지속가능경영보고서</span></div>
+      <p>ESG 포털에 공시된 최근 3년 지속가능경영보고서를 원문 수치 그대로 정리했습니다. 핵심 지표와 목표부터 협력사, 이중중대성, 기후전략, 사회공헌까지 담았습니다.</p>
+      <ul>
+        <li>산업군별로 찾고 같은 업종끼리 나란히 비교</li>
+        <li>온실가스·에너지·용수 등 연도별 지표와 GRI·KSSB·ESRS 공시 매핑</li>
+        <li>보고서 원문 쪽 번호 표기, 최근 발간 보고서 게시판</li>
+      </ul>
+      <span class="go">기업 INDEX 보기 →</span>
+    </a>
+    <a class="door" href="https://claude.ai/artifact/DD2t18gN6ug6vSGmF9njtx" target="_blank" rel="noopener">
+      <div class="dh"><h2>공공기관</h2><span class="st">검수 중 초안</span></div>
+      <div class="big"><b>355</b><span>개 공공기관</span></div>
+      <p>사업장이 있는 지역의 공식 지역문제와 기관이 이미 하고 있는 사업, 리더뉴 INDEX의 실행 선례를 연결해 사업기회를 보여드립니다.</p>
+      <ul>
+        <li>기관명으로 검색, 사업장 지역·주무부처로 필터</li>
+        <li>기존 사업을 지역문제에 맞춰 넓히는 방향 제시</li>
+        <li>모든 지역문제에 공식 원문 출처 표기</li>
+      </ul>
+      <span class="go">공공기관 INDEX 보기 →</span>
+    </a>
+  </div>
+
+
+  <h2 class="sec">지속가능 INDEX로 사업 기획하기</h2>
+  <div class="subs">
+    <a class="sub" href="https://rethenew.com/csr" target="_top" rel="noopener">
+      <span class="sk">사회공헌</span>
+      <b>리더뉴 지속가능 프로젝트 아카이브</b>
+      <span class="sn"><em>5,004</em>건 현행 사례</span>
+      <span class="sd">기업·기관의 사회공헌·지속가능 프로젝트를 주제·대상·산업군별로 분류하고, 기업·공공기관별로도 찾을 수 있는 사례 데이터베이스</span>
+      <span class="sg">열기 →</span>
+    </a>
+    <a class="sub" href="https://rethenew.com/climate" target="_top" rel="noopener">
+      <span class="sk">기후행동</span>
+      <b>리더뉴 기후행동 INDEX</b>
+      <span class="sn"><em>5,793</em>건 사례</span>
+      <span class="sd">기업·기관·지자체·단체의 기후 프로젝트와 제도를 누가·어디서·무엇을 기준으로 탐색</span>
+      <span class="sg">열기 →</span>
+    </a>
+    <a class="sub" href="https://rethenew.com/LOCALMAP" target="_top" rel="noopener">
+      <span class="sk">지역문제 해결</span>
+      <b>리더뉴 지역문제 해결 MAP</b>
+      <span class="sn">전국 광역 단위</span>
+      <span class="sd">시도·시군구별 공식 지역문제를 원문 출처와 함께 지도에서 확인하고, 그 지역의 기업·공공기관 활동까지 함께 보기</span>
+      <span class="sg">열기 →</span>
+    </a>
+    <a class="sub" href="https://rethenew.com/localmarket" target="_top" rel="noopener">
+      <span class="sk">직거래 활성화</span>
+      <b>리더뉴 농산물 판로 INDEX</b>
+      <span class="sn">오프라인·온라인 판로</span>
+      <span class="sd">로컬푸드 직매장·직거래장터·생협과 온라인 판로, 농가 지원 사업을 지역별로 탐색</span>
+      <span class="sg">열기 →</span>
+    </a>
+  </div>
+  <p class="note">사례 건수: 아카이브는 2026년 10월 2일 데이터, 기후행동은 2026년 10월 8일 공개본 기준입니다.</p>
+
+  <div class="cta">
+    <p><b>우리 조직의 정보 정정이나 사업 상담이 필요하시면</b> 문의 페이지로 남겨 주십시오.</p>
+    <a class="ask" href="https://rethenew.com/index-ask?from=business" target="_top" rel="noopener">문의하기 →</a>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <b>리더뉴 지속가능사업 INDEX</b> · (주)파이브세컨즈<br>
+  기업과 기관을 평가하거나 등급을 매기지 않습니다. 수치는 각 보고서와 공시 원문 그대로 옮기며, 출처가 확인된 정보만 싣습니다. · v2
+</div></footer>
+
+
+<script>
+(function(){
+  if(window.parent===window) return;
+  document.documentElement.classList.add('emb');
+  var last=0;
+  function send(){
+    var h=Math.ceil(document.documentElement.scrollHeight);
+    if(Math.abs(h-last)<2) return; last=h;
+    try{ window.parent.postMessage({type:'rtn-height',height:h},'*'); }catch(e){}
+  }
+  window.addEventListener('load',send);
+  window.addEventListener('resize',send);
+  if(window.ResizeObserver){ new ResizeObserver(send).observe(document.body); }
+  setTimeout(send,300); setTimeout(send,1200);
+})();
+</script>
+
+</body>
+</html>
