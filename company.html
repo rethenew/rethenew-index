@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- 리더뉴 지속가능사업 INDEX · 기업 v1 -->
+<!-- 리더뉴 지속가능사업 INDEX · 기업 v2 -->
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
@@ -431,6 +431,7 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--g60);font-siz
 .lp{cursor:pointer}.lp:hover .cx-gi{text-decoration:underline}
 .seg{display:inline-flex;border:1px solid rgba(255,255,255,.3);border-radius:8px;overflow:hidden;margin-left:4px}.segb{font-size:13px;font-weight:800;padding:5px 12px;color:rgba(255,255,255,.75);text-decoration:none}.segb.on{background:var(--mint);color:#fff}.topbtn.idx{display:none}
 .hero h1 em{font-style:normal;color:var(--mint-l)}.hquick{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.hq2{font:inherit;font-size:12.5px;font-weight:700;color:#fff;background:none;border:0;border-bottom:1px solid rgba(255,255,255,.35);padding:0;cursor:pointer}
+.hsearch{position:relative}.hsug{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1px solid var(--g20);border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:50;overflow:hidden;text-align:left}.hsug.on{display:block}.hsi{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font-size:14.5px;color:var(--ink);cursor:pointer}.hsi small{color:var(--g60);font-size:12px;white-space:nowrap}.hsi.on,.hsi:hover{background:var(--g10)}.hsn{color:var(--g60);cursor:default}#hqk{display:inline-flex;flex-wrap:wrap;gap:6px 12px;transition:opacity .25s}.hscope{margin:16px 0 0;padding:12px 14px;border:1px solid var(--g20);border-radius:9px;font-size:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hscope .hclr{margin-left:auto}
 .hsearch input#hhq{width:100%;padding:14px 16px;border:1px solid rgba(255,255,255,.35);border-radius:9px;font-size:16px;background:#fff;color:var(--ink);font-family:inherit}
 .hacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.hact{font:inherit;font-size:14px;font-weight:800;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:8px;padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}.hact:hover{background:rgba(255,255,255,.08)}
 .hc{cursor:pointer}.hc:hover{border-color:var(--ink)}.hc:hover .hcn{text-decoration:underline}
@@ -463,7 +464,7 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--g60);font-siz
 <body>
 <header class="top"><div class="wrap"><div class="topin">
   <div class="logo">리더뉴 지속가능사업 <span class="idx">INDEX</span></div><div class="seg" role="group" aria-label="대상"><a class="segb on" aria-current="true" href="https://rethenew.com/company" target="_top">기업</a><a class="segb" href="https://rethenew.com/public" target="_top">공공기관</a></div>
-  <a class="topbtn idx" href="https://rethenew.com/index" target="_top">리더뉴 지속가능 INDEX →</a>
+  
   
   <span class="asof" id="asof"></span>
 </div></div></header>
@@ -547,17 +548,28 @@ function allCos(){return Object.keys(CX.ind||{}).sort((a,b)=>a.localeCompare(b,'
 function latestRep(c){const r=(CX.reps||[]).filter(x=>x[0]===c).sort((a,b)=>b[1].localeCompare(a[1]));return r[0]}
 const FLT=[['s3','Scope 3 공시',c=>CX.rows.some(r=>r[0]===c&&r[1]==='s3')],['nz','넷제로·탄소중립 목표',c=>CX.g.some(r=>r[0]===c&&NZ(r))],['re','재생에너지 목표',c=>CX.g.some(r=>r[0]===c&&/재생에너지|RE100/i.test(r[1]+r[2]))],['cs','사회공헌 지출 공시',c=>CX.rows.some(r=>r[0]===c&&r[1]==='csr_spend')],['pg','사회공헌 프로그램',c=>CX.p.some(r=>r[0]===c&&r[1]!=='전체')]];
 const FLTC={};function fl(k,c){const key=k+'|'+c;if(!(key in FLTC))FLTC[key]=FLT.find(f=>f[0]===k)[2](c);return FLTC[key]}
-function hList(){const q=HS.q.trim();return allCos().filter(c=>(!HS.ind||CX.ind[c][0]===HS.ind)&&(!HS.cho||cho1(c)===HS.cho)&&Object.keys(HS.flt).filter(k=>HS.flt[k]).every(k=>fl(k,c))&&(!q||c.toLowerCase().includes(q.toLowerCase())||CX.ind[c][0].includes(q)||CX.p.some(r=>r[0]===c&&(r[2].includes(q)))||CX.g.some(r=>r[0]===c&&r[2].includes(q))))}
+const CHOF='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+function choAll(s){let o='';for(const ch of s){const c=ch.charCodeAt(0);o+=c>=0xAC00&&c<=0xD7A3?CHOF[Math.floor((c-0xAC00)/588)]:ch.toLowerCase()}return o}
+function nameHit(c,q){q=q.toLowerCase().replace(/\s+/g,'');const n=c.toLowerCase().replace(/\s+/g,'');if(n.includes(q))return true;if(/^[ㄱ-ㅎ]+$/.test(q))return choAll(n).includes(q);
+ const m=q.match(/^(.*?)([ㄱ-ㅎ])$/);if(m&&m[1]){const cn=choAll(n);for(let i=0;i<=n.length-m[1].length-1;i++){if(n.substr(i,m[1].length)===m[1]&&cn[i+m[1].length]===m[2])return true}}return false}
+function hList(){const q=HS.q.trim();return allCos().filter(c=>(!HS.ind||CX.ind[c][0]===HS.ind)&&(!HS.cho||cho1(c)===HS.cho)&&Object.keys(HS.flt).filter(k=>HS.flt[k]).every(k=>fl(k,c))&&(!q||nameHit(c,q)||CX.ind[c][0].includes(q)||CX.p.some(r=>r[0]===c&&(r[2].includes(q)))||CX.g.some(r=>r[0]===c&&r[2].includes(q))))}
 function hCard(c){const d=CX.ind[c],r=latestRep(c),full=CXFULL[c];
  return `<div class="hc" data-go="${full||'X:'+esc(c)}" role="link" tabindex="0"><span class="hcn">${esc(c)}${full?' <span class="hbd">상세</span>':''}</span><div class="hci">${esc(d[0])}${d[1]?' · 주력 '+esc(d[1]):''}</div>${r?`<div class="hcr">최신 보고서 ${r[1].slice(0,4)}.${r[1].slice(4,6)}.${r[1].slice(6)} <a href="${KIND(r[2])}" target="_blank" rel="noopener">원문 보기 ↗</a></div>`:''}</div>`}
 function vHome(){const cos=allCos();const cnt={};cos.forEach(c=>{const k=CX.ind[c][0];cnt[k]=(cnt[k]||0)+1});const inds=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
  const pills=`<button data-hi="" aria-pressed="${!HS.ind}">전체 <span>${cos.length}</span></button>`+inds.map(k=>`<button data-hi="${esc(k)}" aria-pressed="${HS.ind===k}">${esc(k)} <span>${cnt[k]}</span></button>`).join('');
  const chos=['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','A-Z'].map(x=>`<button data-hc="${x}" aria-pressed="${HS.cho===x}">${x}</button>`).join('');
  const fls=FLT.map(([k,l])=>`<button data-hf="${k}" aria-pressed="${!!HS.flt[k]}">${l}</button>`).join('');
- const active=HS.q.trim()||HS.ind||HS.cho||Object.values(HS.flt).some(Boolean);
+ const active=HS.q.trim()||HS.cho||Object.values(HS.flt).some(Boolean);
  const head=`<div class="hf"><div class="hfl">산업군</div><div class="hp" id="hpi">${pills}</div></div><div class="hf"><div class="hfl">가나다</div><div class="hp hp2" id="hpc">${chos}</div></div><div class="hf"><div class="hfl">공시 확인</div><div class="hp" id="hpf">${fls}</div></div>`;
- if(active){const L=hList();return head+`<div class="sec" style="margin-top:18px">기업 ${L.length}곳 ${active?'<button class="hclr" id="hclr">필터 지우기</button>':''}</div><div class="hgrid" id="hgrid">${L.map(hCard).join('')||'<p class="mcap">조건에 맞는 기업이 없습니다.</p>'}</div><p class="cx-note">'공시 확인'은 이 INDEX에 수록된 값(1차 자동 대조 통과분) 기준입니다. 표시되지 않은 기업이 해당 항목을 공시하지 않았다는 뜻은 아닙니다.</p>`}
+ if(active){const L=hList();return head+`<div class="sec" style="margin-top:18px">${HS.q.trim()?`'${esc(HS.q.trim())}' 검색 · `:''}${HS.ind?esc(HS.ind)+' · ':''}기업 ${L.length}곳 ${active?'<button class="hclr" id="hclr">필터 지우기</button>':''}</div><div class="hgrid" id="hgrid">${L.map(hCard).join('')||'<p class="mcap">조건에 맞는 기업이 없습니다.</p>'}</div><p class="cx-note">'공시 확인'은 이 INDEX에 수록된 값(1차 자동 대조 통과분) 기준입니다. 표시되지 않은 기업이 해당 항목을 공시하지 않았다는 뜻은 아닙니다.</p>`}
+ if(HS.ind){const cs=cos.filter(c=>CX.ind[c][0]===HS.ind);
+  return head+`<div class="hscope"><b>${esc(HS.ind)}</b> 산업군 ${cs.length}개사 기준으로 대시보드를 보고 있습니다 <button class="hclr" data-hi="">전체 산업군으로</button></div>`+scopeCX(cs,()=>hDash(cs,[HS.ind],{[HS.ind]:cs.length}))+`<div class="sec" style="margin-top:26px">${esc(HS.ind)} 기업 ${cs.length}곳</div><div class="hgrid">${cs.map(hCard).join('')}</div>`}
  return head+hDash(cos,inds,cnt)}
+function scopeCX(cs,fn){const set=new Set(cs),keep={};const sub=(k,f)=>{if(CX[k]!=null){keep[k]=CX[k];CX[k]=f(CX[k])}};
+ const A=a=>a.filter(r=>set.has(r[0])),O=o=>Object.fromEntries(Object.entries(o).filter(([c])=>set.has(c)));
+ ['rows','g','p','dp','reps','loc'].forEach(k=>sub(k,A));['map','tr'].forEach(k=>sub(k,O));sub('ce',c=>({com:A(c.com||[]),edu:A(c.edu||[]),mat:O(c.mat||{})}));
+ const P=keep.p;let h;try{h=fn()}finally{Object.assign(CX,keep)}
+ const SP=A(P);return h.replace(/data-lp="(\d+)"/g,(m,i)=>`data-lp="${P.indexOf(SP[+i])}"`)}
 function hDash(cos,inds,cnt){const nrep=(CX.reps||[]).length;
  const bars=inds.map(k=>`<div class="hb"><button data-hi="${esc(k)}" class="hbl">${esc(k)}</button><span class="hbb"><i style="width:${cnt[k]/cnt[inds[0]]*100}%"></i></span><span class="hbv">${cnt[k]}</span></div>`).join('');
  const T=FLT.map(([k,l])=>[k,l]);
@@ -566,14 +578,14 @@ function hDash(cos,inds,cnt){const nrep=(CX.reps||[]).length;
  const yb=Object.keys(yrs).sort().map(y=>`<div class="hb"><span class="hbl">${y}년</span><span class="hbb"><i style="width:${yrs[y].length/Math.max(...Object.values(yrs).map(v=>v.length))*100}%"></i></span><span class="hbv">${yrs[y].length}</span></div>`).join('');
  const recent=(CX.reps||[]).slice().sort((a,b)=>b[1].localeCompare(a[1])).slice(0,8).map(r=>`<div class="hrr"><span class="hrd">${r[1].slice(0,4)}.${r[1].slice(4,6)}.${r[1].slice(6)}</span><button class="hbl" data-go="${CXFULL[r[0]]||'X:'+esc(r[0])}">${esc(r[0])}</button><a href="${KIND(r[2])}" target="_blank" rel="noopener">원문 ↗</a></div>`).join('');
  return `<div class="tops" style="margin-top:18px"><div class="tc"><span class="tk">수록 기업</span><span class="ts">${cos.length}<small>개사</small></span><span class="tt">ESG 포털 공시 기업</span></div><div class="tc"><span class="tk">수록 보고서</span><span class="ts">${nrep}<small>건</small></span><span class="tt">최근 3년 공시</span></div><div class="tc"><span class="tk">목표·실적</span><span class="ts">${CX.g.length}<small>건</small></span><span class="tt">${new Set(CX.g.map(r=>r[0])).size}개사</span></div><div class="tc"><span class="tk">사회공헌 프로그램</span><span class="ts">${CX.p.filter(r=>r[1]!=='전체').length}<small>건</small></span><span class="tt">${new Set(CX.p.map(r=>r[0])).size}개사</span></div></div>
- <p class="cx-note">위 필터로 산업군·가나다·공시 항목을 고르거나 검색하면 해당 기업 목록이 나옵니다. 기업 간 비교는 '데이터 비교' 탭, 보고서 원문은 '보고서 게시판'에서 볼 수 있습니다.</p>`+hReport(cos,inds,cnt)+hStd()+hDeep()+hCe()+'<p class="cx-note">산업군 리포트의 목표·프로그램은 1차 자동 대조를 통과한 보고서 원문 그대로입니다. 프로그램을 누르면 상세가 열립니다.</p>'}
+ <p class="cx-note">산업군을 고르면 대시보드 전체가 그 산업군 기준으로 바뀝니다. 가나다·공시 항목을 고르거나 검색하면 기업 목록이 나옵니다. 기업 간 비교는 '데이터 비교' 탭, 보고서 원문은 '보고서 게시판'에서 볼 수 있습니다.</p>`+hReport(cos,inds,cnt)+hStd()+hDeep()+hCe()+'<p class="cx-note">산업군 리포트의 목표·프로그램은 1차 자동 대조를 통과한 보고서 원문 그대로입니다. 프로그램을 누르면 상세가 열립니다.</p>'}
 function vBoard(){const q=HS.bq.trim();const R=(CX.reps||[]).slice().sort((a,b)=>b[1].localeCompare(a[1])||a[0].localeCompare(b[0],'ko')).filter(r=>(!HS.bind||(CX.ind[r[0]]||[''])[0]===HS.bind)&&(!q||r[0].includes(q)||r[3].includes(q)));
  const inds=[...new Set(Object.values(CX.ind).map(d=>d[0]))].sort((a,b)=>a.localeCompare(b,'ko'));
  return `<div class="sec">지속가능경영보고서 게시판 · ESG 포털 공시 ${(CX.reps||[]).length}건</div><div class="cx-top"><input id="hbq" placeholder="회사·보고서명 검색" value="${esc(HS.bq)}"><select id="hbi" style="font:inherit;font-size:14px;border:1px solid var(--g20);border-radius:8px;padding:7px 10px;background:var(--paper)"><option value="">전체 산업군</option>${inds.map(k=>`<option${HS.bind===k?' selected':''}>${esc(k)}</option>`).join('')}</select><span style="font-size:12.5px;color:var(--g60)">${R.length}건</span></div>
  <div class="cx-wrap"><table class="cxt"><thead><tr><th>공시일</th><th>회사</th><th>산업군</th><th>보고서</th><th>원문</th></tr></thead><tbody id="hbb">${R.map(r=>`<tr><td style="white-space:nowrap">${r[1].slice(0,4)}.${r[1].slice(4,6)}.${r[1].slice(6)}</td><td class="co"><button class="hbl" data-go="${CXFULL[r[0]]||'X:'+esc(r[0])}">${esc(r[0])}</button></td><td style="font-size:13px;color:var(--g80)">${esc((CX.ind[r[0]]||[''])[0])}</td><td style="font-size:13px">${esc((r[3]||'지속가능경영보고서').replace(/\.pdf$/i,''))}${r[4]?' <span class="hbd">정정</span>':''}</td><td><a href="${KIND(r[2])}" target="_blank" rel="noopener">KIND 공시 ↗</a></td></tr>`).join('')}</tbody></table></div>
  <p class="cx-note">원문 링크는 한국거래소 KIND 공시 화면으로 연결되며, 첨부 문서에서 보고서 PDF를 내려받을 수 있습니다. 보고서 파일 자체는 이 INDEX에 올리지 않습니다.</p>`}
 function homeBind(){const b=$('#board');
- b.onclick=e=>{if(e.target.closest('a'))return;const t=e.target.closest('[data-go],[data-hi],[data-hc],[data-hf],#hclr,[data-view],[data-ri],[data-gc],[data-rs]');if(!t)return;if(t.dataset.rs){HD.seed+=101;render();return}if(t.dataset.ri){HD.ri=t.dataset.ri;render();return}if(t.dataset.gc){HD.gc=t.dataset.gc;render();return}
+ b.onclick=e=>{if(e.target.closest('a'))return;const t=e.target.closest('[data-go],[data-hi],[data-hc],[data-hf],#hclr,[data-view],[data-ri],[data-gc],[data-rs]');if(!t)return;if(t.dataset.rs){HD.seed+=101;render();return}if(t.dataset.ri){HS.ind=t.dataset.ri;render();return}if(t.dataset.gc){HD.gc=t.dataset.gc;render();return}
   if(t.dataset.go){S.co=t.dataset.go;setCo(S.co);S.view='easy';render();scrollTo(0,0);return}
   if(t.dataset.view){S.view=t.dataset.view;render();scrollTo(0,0);return}
   if(t.id==='hclr'){HS.ind='';HS.cho='';HS.flt={};HS.q='';const i=$('#hhq');if(i)i.value='';render();return}
@@ -585,13 +597,43 @@ function homeBind(){const b=$('#board');
 function homeHdr(){const w=$('#cosw');w.onclick=null;w.classList.toggle('home',S.co==='HOME');const hp=$('#hp');
  if(S.co==='HOME'){document.querySelector('.hero .kick').textContent='SUSTAINABLE BUSINESS INDEX · 기업 · 1차 자동 대조';$('#h1').innerHTML=`${allCos().length}개 기업의 지속가능경영보고서를 <em>원문 그대로</em> 비교합니다`;
   hp.innerHTML='ESG 포털에 공시된 최근 3년 지속가능경영보고서에서 핵심 지표·목표·사회공헌 프로그램을 원문 수치로 정리했습니다.<br>산업군과 기업별로 찾고, 같은 업종끼리 나란히 비교해 보세요.';hp.hidden=false;document.querySelector('.hsearch').hidden=true;
-  if(!$('#hhq')){w.innerHTML=`<div class="hsearch" style="display:block;max-width:560px;width:100%"><label for="hhq" class="kick" style="display:block;color:rgba(255,255,255,.6)">기업명 · 산업군 · 프로그램</label><input id="hhq" placeholder="예: 롯데케미칼, 화학, 장학, 재생에너지" autocomplete="off"></div><div class="hquick"><span>바로 보기</span>${Object.entries(CXFULL).map(([n,c])=>`<button class="hq2" data-qgo="${c}">${esc(n)}</button>`).join('')}</div>`;
-   $('#hhq').oninput=e=>{HS.q=e.target.value;S.view='home';render()};w.querySelectorAll('[data-qgo]').forEach(x=>x.onclick=()=>{S.co=x.dataset.qgo;setCo(S.co);S.view='easy';render();scrollTo(0,0)})}
-  $('#hhq').value=HS.q;return}
+  if(!$('#hhq')){w.innerHTML=`<div class="hsearch" style="display:block;max-width:560px;width:100%"><label for="hhq" class="kick" style="display:block;color:rgba(255,255,255,.6)">기업명 · 산업군 · 프로그램</label><input id="hhq" placeholder="예: 롯데케미칼, ㄹㄷ, 화학, 장학, 재생에너지" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hsug"><div class="hsug" id="hsug" role="listbox"></div></div><div class="hquick"><span>바로 보기</span><span id="hqk"></span></div>`;
+   hSearchBind();quickFill();w.querySelector('.hquick').onclick=e=>{const x=e.target.closest('[data-qgo]');if(x){S.co=x.dataset.qgo;setCo(S.co);S.view='easy';render();scrollTo(0,0)}}}
+  const hi=$('#hhq');if(document.activeElement!==hi&&hi.value!==HS.q)hi.value=HS.q;return}
  const n=S.co.startsWith('X:')?S.co.slice(2):C.name;const d=(CX.ind||{})[n];const r=latestRep(n);
  if(LITE){document.querySelector('.hero .kick').textContent=`${d?d[0]:''}${r?' · 최신 보고서 '+r[1].slice(0,4)+'.'+r[1].slice(4,6)+'.'+r[1].slice(6):''} · 1차 자동 대조`;$('#h1').innerHTML=esc(n);hp.innerHTML='지속가능경영보고서 리뷰 — 핵심 지표·목표·사회공헌 프로그램을 원문 수치로 정리했습니다.';hp.hidden=false}
  w.innerHTML=`<div class="hacts"><button id="hback" class="hact">← 전체 기업</button>${r?`<a class="hact" href="${KIND(r[2])}" target="_blank" rel="noopener">최신 보고서 원문 보기 ↗</a>`:''}</div>`;
  $('#hback').onclick=()=>{S.co='HOME';S.view='home';render();scrollTo(0,0)}}
+
+/* v68: 검색 제안(한글 입력 중 화면을 다시 그리지 않음) · 바로 보기 무작위 순환 */
+const HQ={i:-1,items:[],t:null,hold:false};
+function hSugItems(q){q=q.trim();if(!q)return[];const out=[];const cos=allCos();
+ cos.filter(c=>nameHit(c,q)).slice(0,7).forEach(c=>out.push({k:'co',c,l:c,s:CX.ind[c][0]}));
+ const inds=[...new Set(cos.map(c=>CX.ind[c][0]))].filter(k=>k.includes(q)||(/^[ㄱ-ㅎ]+$/.test(q)&&choAll(k).includes(q)));inds.slice(0,3).forEach(k=>out.push({k:'ind',v:k,l:k,s:'산업군 대시보드'}));
+ if(!/^[ㄱ-ㅎ]+$/.test(q)){const n=cos.filter(c=>!nameHit(c,q)&&(CX.p.some(r=>r[0]===c&&r[2].includes(q))||CX.g.some(r=>r[0]===c&&r[2].includes(q)))).length;if(n)out.push({k:'q',v:q,l:`'${q}' 프로그램·목표가 있는 기업`,s:n+'곳'})}
+ return out}
+function hSugShow(){const box=$('#hsug'),inp=$('#hhq');if(!box)return;const it=HQ.items;
+ box.innerHTML=it.length?it.map((x,i)=>`<div class="hsi${i===HQ.i?' on':''}" role="option" data-si="${i}"><span>${esc(x.l)}</span><small>${esc(x.s)}</small></div>`).join(''):(inp.value.trim()?'<div class="hsi hsn">일치하는 기업이 없습니다</div>':'');
+ box.classList.toggle('on',!!inp.value.trim());inp.setAttribute('aria-expanded',inp.value.trim()?'true':'false')}
+function hSugPick(x){const box=$('#hsug');if(box)box.classList.remove('on');const inp=$('#hhq');
+ if(!x){const q=inp.value.trim();if(!q)return;x={k:'q',v:q}}
+ if(x.k==='co'){inp.value='';HS.q='';S.co=CXFULL[x.c]||'X:'+x.c;setCo(S.co);S.view='easy';render();scrollTo(0,0);return}
+ if(x.k==='ind'){inp.value='';HS.q='';HS.ind=x.v;S.view='home';render();return}
+ HS.q=x.v;S.view='home';render()}
+function hSearchBind(){const inp=$('#hhq'),box=$('#hsug');
+ inp.addEventListener('input',()=>{HQ.items=hSugItems(inp.value);HQ.i=-1;hSugShow();if(!inp.value.trim()&&HS.q){HS.q='';render()}});
+ inp.addEventListener('keydown',e=>{if(e.isComposing||e.keyCode===229)return;const n=HQ.items.length;
+  if(e.key==='ArrowDown'&&n){e.preventDefault();HQ.i=(HQ.i+1)%n;hSugShow()}
+  else if(e.key==='ArrowUp'&&n){e.preventDefault();HQ.i=(HQ.i-1+n)%n;hSugShow()}
+  else if(e.key==='Enter'){e.preventDefault();hSugPick(HQ.i>=0?HQ.items[HQ.i]:(HQ.items.length===1&&HQ.items[0].k==='co'?HQ.items[0]:null))}
+  else if(e.key==='Escape'){box.classList.remove('on')}});
+ inp.addEventListener('focus',()=>{if(inp.value.trim()){HQ.items=hSugItems(inp.value);hSugShow()}});
+ box.addEventListener('mousedown',e=>{const d=e.target.closest('[data-si]');if(!d)return;e.preventDefault();hSugPick(HQ.items[+d.dataset.si])});
+ document.addEventListener('click',e=>{if(!e.target.closest('.hsearch'))box.classList.remove('on')})}
+function quickFill(){const el=$('#hqk');if(!el)return;const cos=allCos();const pick=[];const used=new Set();
+ while(pick.length<5&&pick.length<cos.length){const c=cos[Math.floor(Math.random()*cos.length)];if(!used.has(c)){used.add(c);pick.push(c)}}
+ el.style.opacity=0;setTimeout(()=>{el.innerHTML=pick.map(n=>`<button class="hq2" data-qgo="${CXFULL[n]||'X:'+esc(n)}">${esc(n)}</button>`).join('');el.style.opacity=1},el.innerHTML?250:0)}
+setInterval(()=>{const q=document.querySelector('.hquick');if(q&&!q.matches(':hover')&&!q.contains(document.activeElement)&&!document.hidden)quickFill()},7000);
 
 const GRI={s1:'GRI 305-1',s2:'GRI 305-2',s2_location:'GRI 305-2',s2_market:'GRI 305-2',s12:'GRI 305-1·2',s12_location:'GRI 305-1·2',s12_market:'GRI 305-1·2',s3:'GRI 305-3',energy:'GRI 302-1',water_withdrawal:'GRI 303-3',waste:'GRI 306-3',employees:'GRI 2-7',csr_spend:'GRI 201-1'};
 const SDGK={s1:'SDG 13',s2:'SDG 13',s2_location:'SDG 13',s2_market:'SDG 13',s12:'SDG 13',s12_location:'SDG 13',s12_market:'SDG 13',s3:'SDG 13',energy:'SDG 7',water_withdrawal:'SDG 6',waste:'SDG 12',employees:'SDG 8',csr_spend:'SDG 17'};
@@ -817,6 +859,28 @@ function hCe(){const C=CE();if(!C.com.length)return '';const bc={};C.com.forEach
  return `<div class="sec" style="margin-top:22px">지역사회 연계 · 교육 · 2026년 발행 보고서</div><div class="hr2"><div><div class="csub">지역사회 연계 방식 (프로그램 수)</div>${BAS.filter(b=>bc[b]).map(b=>bar(b,bc[b],mb)).join('')}</div>
  <div><div class="csub">교육 대상별 기재 기업 수</div>${AUD.filter(a=>ac[a]).map(a=>bar(a,ac[a].size,ma)).join('')}</div></div>`}
 
+/* v68: 산업군 리포트 = 선택 산업군(없으면 전체) · 입력 중 화면 갱신 지연 · 뒤로 가기 = 앞 단계 */
+(function(){const _hr=hReport;hReport=function(cos,inds,cnt){const lab=HS.ind||'전체 산업군';HD.ri=lab;const keep=CX.ind;
+ CX.ind=Object.fromEntries(Object.keys(keep).map(c=>[c,cos.includes(c)?[lab].concat(keep[c].slice(1)):keep[c]]));
+ try{return _hr(cos,[lab],{[lab]:cos.length}).replace(/<div class="hp" id="hri"[^]*?<\/div>/,'').replace('산업군 리포트',HS.ind?'산업군 리포트':'전체 리포트')}finally{CX.ind=keep}}})();
+const NAV={last:'',restoring:false,ime:false,tm:null,ready:false};
+function navState(){return {co:S.co,view:S.view,ind:HS.ind,cho:HS.cho,flt:Object.keys(HS.flt).filter(k=>HS.flt[k]),q:HS.q,bq:HS.bq,bind:HS.bind}}
+function navKey(s){return JSON.stringify(s)}
+function navInit(){if(NAV.ready)return;NAV.ready=true;const _render=render;
+ document.addEventListener('compositionstart',()=>{NAV.ime=true},true);
+ document.addEventListener('compositionend',e=>{NAV.ime=false;const t=e.target;if(t&&t.matches&&t.matches('#board input'))navDefer(t)},true);
+ window.render=render=function(){const ev=window.event;const t=ev&&ev.type==='input'&&ev.target;
+  if(t&&t.matches&&t.matches('#board input')){navDefer(t);return}
+  const r=_render.apply(this,arguments);navPush();return r};
+ function navDefer(t){clearTimeout(NAV.tm);NAV.tm=setTimeout(()=>{if(NAV.ime){navDefer(t);return}const id=t.id,p=t.selectionStart;_render();navPush();const n=id&&document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(p,p)}catch(e){}}},380)}
+ window.addEventListener('popstate',e=>{const st=e.state&&e.state.rtn;if(!st)return;NAV.restoring=true;const coChanged=st.co!==S.co,viewChanged=st.view!==S.view;
+  if(st.co!=='HOME'&&coChanged)setCo(st.co);S.co=st.co;S.view=st.view;HS.ind=st.ind;HS.cho=st.cho;HS.flt={};st.flt.forEach(k=>HS.flt[k]=true);HS.q=st.q;HS.bq=st.bq;HS.bind=st.bind;
+  const hi=document.getElementById('hhq');if(hi)hi.value=HS.q;
+  _render();NAV.last=navKey(navState());NAV.restoring=false;if(coChanged||viewChanged){scrollTo(0,0);try{if(window.parent!==window)parent.postMessage({type:'rtn-top'},'*')}catch(e){}}});
+ const s0=navState();NAV.last=navKey(s0);try{history.replaceState({rtn:s0},'')}catch(e){}}
+function navPush(){if(NAV.restoring||!NAV.ready)return;const s=navState(),k=navKey(s);if(k===NAV.last)return;NAV.last=k;try{history.pushState({rtn:s},'')}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',navInit);else setTimeout(navInit,0);
+
 const CXS={k:'s1',q:'',open:'',m:'core',gq:'',gc:''};
 function vGoal(){
  const by={};CX.g.forEach(r=>{(by[r[0]]=by[r[0]]||[]).push(r)});
@@ -922,7 +986,7 @@ $('#hp').hidden=true;
 
 $('#hmeta').innerHTML=[['리뷰 대상',`2026 보고서(${R.published}) · 2025 보고서(2025-06-27)`],['보고기간','2025.1.1–12.31'],['작성 기준','GRI 2021 · TCFD · SASB · UN SDGs'],['검증','안진회계법인'],['원문',`<a href="${R.url}" target="_blank" rel="noopener">2026 PDF</a> · <a href="${R25}" target="_blank" rel="noopener">2025 PDF</a>`],['정정 요청',`<a href="https://rethenew.com/index-ask?from=company&org=${encodeURIComponent(C.name)}" target="_top">문의·정정 요청</a>`]].map(([a,b])=>`<span><b>${a}</b>${b}</span>`).join('');
 $('#asof').textContent='2026.10.8 기준 · 1차 자동 대조';
-$('#foot').innerHTML=`원문: ESG 포털(한국거래소) 공시 지속가능경영보고서 252개사 677건(2024~2026년 공시) · 모든 수치는 원문 표기 그대로이며 점수·순위는 산출하지 않습니다.<br><b>1차 자동 대조 단계</b>: 추출한 값은 인용 문구가 보고서 해당 쪽에 있는지 자동으로 대조한 것만 싣습니다. 빈칸은 확인되지 않은 것이며 미공시를 뜻하지 않습니다. 2026.10.8 기준.<br>파이브세컨즈 지속가능전략AI분석연구소 · <a id="askLink" href="https://rethenew.com/index-ask?from=company" target="_top" style="color:inherit">문의·정정 요청</a> · v1`;
+$('#foot').innerHTML=`원문: ESG 포털(한국거래소) 공시 지속가능경영보고서 252개사 677건(2024~2026년 공시) · 모든 수치는 원문 표기 그대로이며 점수·순위는 산출하지 않습니다.<br><b>1차 자동 대조 단계</b>: 추출한 값은 인용 문구가 보고서 해당 쪽에 있는지 자동으로 대조한 것만 싣습니다. 빈칸은 확인되지 않은 것이며 미공시를 뜻하지 않습니다. 2026.10.8 기준.<br>파이브세컨즈 지속가능전략AI분석연구소 · <a id="askLink" href="https://rethenew.com/index-ask?from=company" target="_top" style="color:inherit">문의·정정 요청</a> · v2`;
 // ---- state
 const S={co:'HOME',view:'home',dom:'전체',div:'전사',cmp:'',fw:'GRI',st:'',q:'',lim:60};
 const pills=(el,items,key,cb)=>{$(el).innerHTML=items.map(([v,l,n])=>v==='|'?`<span class="dpsep">${l}</span>`:`<button class="dpill" aria-pressed="${S[key]===v}" data-v="${esc(v)}"><span class="dl">${l}</span>${n!=null?`<span class="dn">${n}</span>`:''}</button>`).join('');$(el).onclick=e=>{const b=e.target.closest('.dpill');if(!b)return;S[key]=b.dataset.v;S.lim=60;if(cb)cb();render()}};
@@ -1192,7 +1256,7 @@ function vCom(){const vol=byName('임직원 봉사활동 총 시간'),csr=std('c
  <div class="pspw">${pills}</div>
  <div class="tblx"><table class="ptab"><thead><tr><th>프로그램·활동</th><th>2023</th><th>2024</th><th>2025</th><th></th></tr></thead><tbody>${body}</tbody></table></div>
  ${S.psec==='사회공헌'?`<div class="sec" style="margin-top:28px">관련 지표</div><div class="mc" style="max-width:520px">${csr?mcard(csr,'사회공헌 비용'):''}${vol?mcard(vol,'임직원 봉사 총 시간'):''}</div>`:''}
- <div class="cta"><p>사회공헌 활동 사례는 리더뉴 지속가능 INDEX에서 다른 기업 사례와 함께 볼 수 있습니다.</p><a href="https://rethenew.com/index" target="_top">리더뉴 INDEX 보기</a></div>`}
+ <div class="cta"><p>이 기업의 사회공헌 사례는 사회공헌 INDEX에서 다른 기업 사례와 함께 볼 수 있습니다.</p><a href="https://rethenew.com/csr" target="_top">사회공헌 INDEX에서 보기 →</a></div>`}
 function progCard(ix){const e=(PROG3[S.co]||[])[ix];if(!e)return;const yrs=['2023','2024','2025'],YC=['#C9CED1','#5CCFBB','#00806D'];
  const pn=v=>{const t=String(v||'').replace(/,/g,'');return /^-?\d+(\.\d+)?$/.test(t)?parseFloat(t):null};
 
