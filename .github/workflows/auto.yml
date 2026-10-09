@@ -31,6 +31,9 @@ jobs:
         run: |
           git commit -q -m "[auto] $BR 반영 · $(git log -1 --format=%s "origin/$BR" | cut -c1-80)"
           ok=0; for i in 1 2 3; do if git push -q origin HEAD:main; then ok=1; break; fi; git pull -q --rebase origin main; done; [ "$ok" = 1 ] || { echo "- ❌ main 올리기 실패" >> "$RESULT"; exit 1; }
+      - name: 다 된 방 브랜치 지우기 (다음엔 main 최신에서 새로 만들면 됨)
+        if: success() && startsWith(github.ref_name, 'room-')
+        run: git push -q origin --delete "$BR" || true
       - name: 결과 기록
         if: always()
         run: |
