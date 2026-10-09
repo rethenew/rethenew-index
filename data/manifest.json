@@ -1,5 +1,5 @@
 {
- "built": "2026-10-09 16:57",
+ "built": "2026-10-09 18:57",
  "db": "rethenew-data",
  "files": {
   "company": {
@@ -25,8 +25,8 @@
    }
   },
   "csr": {
-   "bytes": 2049606,
-   "sha": "5a3afdbc16ff",
+   "bytes": 4035461,
+   "sha": "4e0aeffdc9d6",
    "asof": "2026-09-20 (수집 9/17 정지)",
    "counts": {
     "캠페인": 5004,
