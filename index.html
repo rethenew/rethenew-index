@@ -554,7 +554,8 @@ body.ready .loadmask{opacity:0;pointer-events:none;visibility:hidden}
 <script>
 var D = {camp:[]};
 </script>
-<!-- v113 — 화면 단계 중복 정리(screen_merge): 추가 판정 101쌍 + 대표 카드 = 내용 가장 많은 행.
+<!-- v114 — 주소로 열기(딥링크 표준 v1): /csr?org=&item= → 그 카드 · 합쳐진 행은 남은 카드 · 기업·공공기관 INDEX 링크에 org·item.
+     v113 — 화면 단계 중복 정리(screen_merge): 추가 판정 101쌍 + 대표 카드 = 내용 가장 많은 행.
      v112 — 「지속가능경영보고서 반영」 칸(합쳐진 사업의 보고서 기록·KIND 원문·회사 카드 연결).
      v111 — 산업군 기업 INDEX 기준 통일·대상 7개 묶음·중복 합침(데이터는 총괄 csr_clean), 출처 칸 크기 수정, 「함께 확인된 출처」.
      v110 — feed_cases(지속가능경영보고서 · ALIO 공시)를 함께 읽는다. 제목 「리더뉴 사회공헌 INDEX」.
@@ -677,7 +678,7 @@ var SRCS=['news','report','alio'];
     hit.forEach(function(c){ c.__drop=true; });
     var k=g.card, nc={s:null,evu:[],hit:null,med:null,tit:null,mon:null,led:null,qry:'',bad:'',ex:null};
     Object.keys(k).forEach(function(f){ nc[f]=k[f]; });
-    nc.also=k.also||[];
+    nc.also=k.also||[]; nc.__mk=g.keys||[];   /* v114 — 주소로 열기: 합쳐진 행도 이 카드로 */
     add.push(nc);
   });
   CAMP=CAMP.filter(function(c){ return !c.__drop; }).concat(add);
@@ -1259,6 +1260,34 @@ function srcLinks(c, url){
 /* v111 — 중복 회의(검토자 3명 만장일치)로 합쳐진 건: 남긴 쪽(보고서 > ALIO > 보도자료)에 함께 확인된 출처를 적는다. 기사 링크는 v57 정책대로 내보내지 않는다. */
 /* v112 — 지속가능경영보고서 반영: 같은 사업으로 합쳐진 묶음에 보고서 기록이 있으면
    어느 회사 보고서 몇 쪽에 실렸는지, KIND 원문과 그 회사 카드로 잇는다. (단장님 10/9) */
+/* v114 — 주소로 열기(딥링크 표준 v1, 총괄지시 #11).
+   공통 ID: 기관 = data/orgs.json id(C:·P:), 사업 = <idx>:<sha1(정리한 기관명|정리한 사업명)[:10]> (총괄 tools/item_ids.py와 같은 정리). */
+function dlN(s){ return String(s||'').replace(/\(주\)|㈜|주식회사|\(재\)|\(사\)|재단법인|사단법인|[\s·ㆍ'"‘’“”「」『』<>《》\-_.,()\[\]]/g,'').toLowerCase(); }
+function dlSha1(str){
+  var b=unescape(encodeURIComponent(str)), n=b.length, w=[], i;
+  for(i=0;i<n;i++) w[i>>2]|=b.charCodeAt(i)<<(24-(i%4)*8);
+  w[n>>2]|=0x80<<(24-(n%4)*8); w[(((n+8)>>6)<<4)+15]=n*8;
+  var h0=0x67452301,h1=0xEFCDAB89,h2=0x98BADCFE,h3=0x10325476,h4=0xC3D2E1F0,W=[];
+  function rl(x,c){return (x<<c)|(x>>>(32-c));}
+  for(var k=0;k<w.length;k+=16){
+    var a=h0,bb=h1,c=h2,d=h3,e=h4;
+    for(var t=0;t<80;t++){
+      W[t]=t<16?(w[k+t]|0):rl(W[t-3]^W[t-8]^W[t-14]^W[t-16],1);
+      var f=t<20?((bb&c)|(~bb&d))+0x5A827999:t<40?(bb^c^d)+0x6ED9EBA1:t<60?((bb&c)|(bb&d)|(c&d))+0x8F1BBCDC:(bb^c^d)+0xCA62C1D6;
+      var tmp=(rl(a,5)+f+e+W[t])|0; e=d; d=c; c=rl(bb,30); bb=a; a=tmp;
+    }
+    h0=(h0+a)|0; h1=(h1+bb)|0; h2=(h2+c)|0; h3=(h3+d)|0; h4=(h4+e)|0;
+  }
+  return [h0,h1,h2,h3,h4].map(function(v){return ('00000000'+(v>>>0).toString(16)).slice(-8)}).join('');
+}
+var DL_ORG={};   /* 정리한 이름 → 기관 ID (data/orgs.json 이름·별칭) */
+function dlOrg(name){ var k=dlN(name); return DL_ORG[k]||DL_ORG[dlN(String(name||'').replace(/\(.*?\)/g,''))]||''; }
+function dlUrl(idx,org,name){
+  var oid=dlOrg(org), q=[];
+  if(oid) q.push('org='+encodeURIComponent(oid));
+  if(name) q.push('item='+encodeURIComponent(idx+':'+dlSha1(dlN(org)+'|'+dlN(name)).slice(0,10)));
+  return 'https://rethenew.com/'+idx+(q.length?'?'+q.join('&'):'');
+}
 var RLMAP=null;
 function rlKey(h,n){ return String(h||'').replace(/\(주\)|㈜|주식회사|[\s·ㆍ]/g,'').toLowerCase()+'|'+String(n||'').replace(/\s/g,'').toLowerCase(); }
 function rlFind(c){
@@ -1276,7 +1305,7 @@ function reportHtml(c){
     var lk=[];
     if(/^\d{14}$/.test(rcp)) lk.push('<a class="srclk" href="https://kind.krx.co.kr/common/disclsviewer.do?method=search&acptno='+esc(rcp)+'" target="_blank" rel="noopener">KIND 원문</a>');
     if(HOSTS[co]) lk.push('<a class="srclk" href="#" data-host="'+esc(co)+'">'+esc(co)+' 카드 보기</a>');
-    lk.push('<a class="srclk" href="https://rethenew.com/company" target="_top">기업 INDEX →</a>');
+    lk.push('<a class="srclk" href="'+esc(dlUrl('company',co,nm))+'" target="_top">기업 INDEX →</a>');
     return h+'<br><span class="yr">'+lk.join(' · ')+'</span>';
   }).join('<br>');
 }
@@ -1301,8 +1330,9 @@ function feedTask(c){
   var org='';
   if(c.src==='alio') org=[c.otype,c.mini,[c.sido,c.sgg].filter(Boolean).join(' ')].filter(Boolean).map(esc).join(' · ');
   var go='';
-  if(c.src==='report') go='<a class="srclk" href="https://rethenew.com/company" target="_top">기업 INDEX에서 보기 →</a>';
-  if(c.src==='alio') go='<a class="srclk" href="#" data-ogorg="'+esc(c.host)+'">기관 패널에서 봉사·기부 공시 보기 →</a>';
+  if(c.src==='report') go='<a class="srclk" href="'+esc(dlUrl('company',c.host,c.n))+'" target="_top">기업 INDEX에서 보기 →</a>';
+  if(c.src==='alio') go='<a class="srclk" href="#" data-ogorg="'+esc(c.host)+'">기관 패널에서 봉사·기부 공시 보기 →</a>'
+                    +' · <a class="srclk" href="'+esc(dlUrl('public',c.host,c.n))+'" target="_top">공공기관 INDEX →</a>';
   return trow('활동', tv(c.act))
        + trow(c.src==='alio'?'기관':'기업', tv(c.host) + (org?' <span class="yr">('+org+')</span>':''))
        + (c.src==='report'?trow('구분', tv(c.cat)):'')
@@ -1613,6 +1643,60 @@ var hsubmit=wireSearch($('#hq'),$('#hac')); $('#hgo').onclick=hsubmit;
 function prFrom(a){var d=new Date(a+'T00:00:00');if(isNaN(d))return '';d.setFullYear(d.getFullYear()-1);d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)}
 
 drawFilters(); drawList();
+
+/* v114 — 주소로 열기: /csr?org=<기관ID>&item=<사업ID>
+   item → data/items.json 행 → 같은 사업 묶음(same) 안에서 사회공헌 행부터 이 화면 카드를 찾는다
+   (합쳐져 빠진 행은 남은 카드의 묶음 키·「함께 확인된 출처」로 찾는다) → 없으면 org의 주최 화면 → 없으면 첫 화면 */
+(function(){
+  var Q={org:'',item:''};
+  try{ var p=new URLSearchParams(location.search); Q={org:p.get('org')||'',item:p.get('item')||''}; }catch(e){}
+  window.RTN_Q=Q;
+  function get(u,cb){ try{ fetch(u,{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).then(cb,function(){cb(null)}); }catch(e){ cb(null); } }
+  function key(h,n){ return dlN(h)+'|'+dlN(n); }
+  var own=null, via=null;
+  function idx(){
+    if(own) return; own={}; via={};
+    function put(m,k,c){ if(!m[k]) m[k]=c; }
+    CAMP.forEach(function(c){ put(own,key(c.host,c.n),c); put(own,key(String(c.host||'').replace(/\(.*?\)/g,''),c.n),c); });
+    CAMP.forEach(function(c){
+      (c.__mk||[]).forEach(function(k){ put(via,key(k[1],k[2]),c); });
+      (c.also||[]).forEach(function(x){ if(x&&x.length) put(via,key(x[1],x[2]),c); });
+    });
+  }
+  function find(org,name){ idx(); var k=key(org,name), k2=key(String(org||'').replace(/\(.*?\)/g,''),name); return own[k]||own[k2]||via[k]||via[k2]||null; }
+  function hostOf(oid,names){
+    var cand=(names||[]).slice();
+    (DL_ORGS||[]).forEach(function(o){ if(o.id===oid) cand=cand.concat([o.name]).concat(o.aliases||[]); });
+    if(/^[CP]:/.test(oid)) cand.push(oid.slice(2));
+    var hk={}; Object.keys(HOSTS).forEach(function(h){ hk[dlN(h)]=h; hk[dlN(h.replace(/\(.*?\)/g,''))]=hk[dlN(h.replace(/\(.*?\)/g,''))]||h; });
+    for(var i=0;i<cand.length;i++){ var h=hk[dlN(cand[i])]; if(h) return h; }
+    return '';
+  }
+  function done(){ try{ toTop(); }catch(e){} try{ window.__pingHeight&&window.__pingHeight(); }catch(e){} }
+  var DL_ORGS=null;
+  get('data/orgs.json',function(o){
+    DL_ORGS=Array.isArray(o)?o:[];
+    DL_ORGS.forEach(function(x){ [x.name].concat(x.aliases||[]).forEach(function(a){ var k=dlN(a); if(k&&!DL_ORG[k]) DL_ORG[k]=x.id; }); });
+    if(!Q.org&&!Q.item) return;
+    if(!Q.item){ var h0=hostOf(Q.org); if(h0){ show(h0); done(); } return; }
+    get('data/items.json',function(it){
+      var R=(it&&it.rows)||[], me=null, i;
+      for(i=0;i<R.length;i++) if(R[i][0]===Q.item){ me=R[i]; break; }
+      var list=[];
+      if(me){
+        list.push(me);
+        if(me[6]) R.forEach(function(r){ if(r[6]===me[6]&&r!==me) list.push(r); });
+        list.sort(function(a,b){ return (a[1]==='csr'?0:1)-(b[1]==='csr'?0:1); });
+      }
+      var c=null;
+      for(i=0;i<list.length&&!c;i++){ idx(); var k=key(list[i][3],list[i][4]); c=own[k]||null; }
+      for(i=0;i<list.length&&!c;i++) c=find(list[i][3],list[i][4]);
+      if(c){ showCamp(c.i); done(); return; }
+      var h=hostOf(Q.org||(me&&me[2])||'',me?[me[3]]:[]);
+      if(h){ show(h); done(); }
+    });
+  });
+})();
 })();
 }
 
