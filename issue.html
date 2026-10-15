@@ -215,14 +215,26 @@ details.more2[open]>summary{margin-bottom:12px}
 .kl{display:inline-block;font-size:11px;color:#777;border:1px solid #ccc;padding:0 4px;margin-right:4px;font-weight:700}
 .foot a{color:#888}
 .ver{font-size:11px;color:#aaa}
+
+.chips{flex-wrap:nowrap!important;justify-content:center;gap:5px!important;margin:4px auto 10px!important;max-width:none!important;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;font-size:12.5px!important;padding:6px 8px!important;white-space:nowrap;gap:5px!important}
+.chips button.on{padding:5px 8px!important}
+.chips button em{width:10px!important;height:10px!important}
+.hl{display:inline}
+.hn{display:inline-block;max-width:100%;overflow-wrap:anywhere;margin-right:2px}
+.hn:not(:last-child)::after{content:'·';margin-left:5px;color:#aaa;text-decoration:none;display:inline-block}
+.hn .lnk{text-decoration:underline;text-decoration-color:#ccc;text-underline-offset:3px}
+@media (max-width:1100px){.chips{justify-content:flex-start}}
+@media (max-width:700px){.chips button{font-size:12px!important;padding:5px 7px!important}.chips button.on{padding:4px 6px!important}}
 </style></head><body>
 <div class="wrap">
-<div class="eb">리더뉴 사회문제 INDEX</div>
-<h1 id="ttl">사회문제, 누가 어디에 얼마나 있나</h1>
+<div class="eb">리더뉴 지속가능 INDEX</div>
+<h1 id="ttl">리더뉴 사회문제 INDEX</h1>
 <div class="sbox"><input id="q" placeholder="문제·대상·기업·기관 찾기 (예: 장애, 노인, SK)" autocomplete="off">
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l6 6"/></svg></div>
 <p class="hint" id="hint"></p>
-<div class="stage"><svg id="chart"></svg><div class="chips" id="chips"></div><div class="pop" id="pop" hidden></div></div>
+<div class="stage"><div class="chips" id="chips"></div><svg id="chart"></svg><div class="pop" id="pop" hidden></div></div>
 <section id="stg" hidden></section>
 <p class="foot" id="foot"></p>
 </div>
@@ -259,8 +271,7 @@ const P=D.P.map(p=>{DP[p.id]=p;const hs=[...new Set(p.rows.map(r=>r.h))];const k
  const st=p.stages.map((s,i)=>p.rows.filter(r=>(r.st||[]).includes(i+1)).length);
  return {id:p.id,n:p.name,g:p.group,s:p.s,m:p.m,v:p.rows.length,h:hs.length,hs,k:p.stages.length,thin:st.filter(x=>x<=3).length,kc,loc:p.loc.length}});
 const TOT=new Set(D.P.flatMap(p=>p.rows.map(r=>r.ids[0]))).size;
-$('#ttl').textContent=`사회문제 ${P.length}개, 누가 어디에 얼마나 있나`;
-const HINT='조각 하나가 문제 하나입니다. 조각이 길수록 사회공헌·공공 사업이 많습니다. 조각을 누르면 요약, 아래 분류를 누르면 그 분류만 모아 봅니다.';
+const HINT='조각 하나가 문제 하나입니다. 조각이 길수록 사회공헌·공공 사업이 많습니다. 조각을 누르면 요약, 위 분류를 누르면 그 분류만 모아 봅니다.';
 $('#hint').textContent=HINT;
 $('#foot').innerHTML=`조각 길이 = 문제별 사업 수(면적 비례). 사업은 리더뉴 INDEX 통합 DB(기업·공공기관·사회공헌 INDEX, 공통 사업 ID ${esc(D.basis.items)} 기준 · 주최 구분은 통합 기관 목록 기준)에서 같은 사업을 하나로 합쳐 셌고, 한 사업이 여러 문제에 걸칠 수 있습니다 · 기후행동 사업은 집계에서 뺐습니다<br>지역 근거 = 지역문제 MAP·공공기관 INDEX의 지자체 계획·공식 통계 항목 · ${esc(D.asof)} 판정 · 검토자 2명 일치(갈리면 3번째 검토자) 기준 · <a href="${BASE}index-ask?from=issue" target="_top">정정·제보 · 문의</a>`;
 let sel=null,qv='',gsel=null,mode='';
@@ -328,7 +339,7 @@ const cntm=a=>{const m=new Map();a.forEach(x=>m.set(x,(m.get(x)||0)+1));return [
 const CTN={long:'10년 이상',mid:'5~9년',recent:'최근 4년',once:'일회성',unknown:'기간 미상'};
 const kcount=rs=>{const k={c:0,p:0,n:0,g:0,x:0};rs.forEach(r=>k[r.k]=(k[r.k]||0)+1);return k};
 const ksp=k=>KO.filter(x=>k[x]).map(x=>`${KN[x]} ${k[x]}`).join(' · ')||'0';
-function hostsHTML(rs){const m=new Map();rs.forEach(r=>{if(!m.has(r.h))m.set(r.h,r.o)});return [...m].map(([h,o])=>orgA(h,o)).join(' · ')}
+function hostsHTML(rs){const m=new Map();rs.forEach(r=>{if(!m.has(r.h))m.set(r.h,r.o)});return '<span class="hl">'+[...m].map(([h,o])=>`<span class="hn">${orgA(h,o)}</span>`).join('')+'</span>'}
 function locA(l){if(l.id.startsWith('map:'))return `<a class="lnk" href="${BASE}LOCALMAP?item=${E(l.id)}" target="_top">${esc(l.t)}</a>`;return l.u?`${esc(l.t)} <a href="${esc(l.u)}" target="_blank" rel="noopener">원문</a>`:esc(l.t)}
 function stages(id){
  const p=DP[id],rp=P.find(x=>x.id==id);const el=$('#stg');if(!p){el.hidden=true;return}
