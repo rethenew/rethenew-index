@@ -986,7 +986,7 @@ $('#hp').hidden=true;
 
 $('#hmeta').innerHTML=[['리뷰 대상',`2026 보고서(${R.published}) · 2025 보고서(2025-06-27)`],['보고기간','2025.1.1–12.31'],['작성 기준','GRI 2021 · TCFD · SASB · UN SDGs'],['검증','안진회계법인'],['원문',`<a href="${R.url}" target="_blank" rel="noopener">2026 PDF</a> · <a href="${R25}" target="_blank" rel="noopener">2025 PDF</a>`],['정정 요청',`<a href="https://rethenew.com/index-ask?from=company&org=${encodeURIComponent(C.name)}" target="_top">문의·정정 요청</a>`]].map(([a,b])=>`<span><b>${a}</b>${b}</span>`).join('');
 $('#asof').textContent='2026.10.8 기준 · 1차 자동 대조';
-$('#foot').innerHTML=`원문: ESG 포털(한국거래소) 공시 지속가능경영보고서 252개사 677건(2024~2026년 공시) · 모든 수치는 원문 표기 그대로이며 점수·순위는 산출하지 않습니다.<br><b>1차 자동 대조 단계</b>: 추출한 값은 인용 문구가 보고서 해당 쪽에 있는지 자동으로 대조한 것만 싣습니다. 빈칸은 확인되지 않은 것이며 미공시를 뜻하지 않습니다. 2026.10.8 기준.<br>파이브세컨즈 지속가능전략AI분석연구소 · <a id="askLink" href="https://rethenew.com/index-ask?from=company" target="_top" style="color:inherit">문의·정정 요청</a> · v2`;
+$('#foot').innerHTML=`원문: ESG 포털(한국거래소) 공시 지속가능경영보고서 252개사 677건(2024~2026년 공시) · 모든 수치는 원문 표기 그대로이며 점수·순위는 산출하지 않습니다.<br><b>1차 자동 대조 단계</b>: 추출한 값은 인용 문구가 보고서 해당 쪽에 있는지 자동으로 대조한 것만 싣습니다. 빈칸은 확인되지 않은 것이며 미공시를 뜻하지 않습니다. 2026.10.8 기준.<br>파이브세컨즈 지속가능전략AI분석연구소 · <a id="askLink" href="https://rethenew.com/index-ask?from=company" target="_top" style="color:inherit">문의·정정 요청</a> · v3`;
 // ---- state
 const S={co:'HOME',view:'home',dom:'전체',div:'전사',cmp:'',fw:'GRI',st:'',q:'',lim:60};
 const pills=(el,items,key,cb)=>{$(el).innerHTML=items.map(([v,l,n])=>v==='|'?`<span class="dpsep">${l}</span>`:`<button class="dpill" aria-pressed="${S[key]===v}" data-v="${esc(v)}"><span class="dl">${l}</span>${n!=null?`<span class="dn">${n}</span>`:''}</button>`).join('');$(el).onclick=e=>{const b=e.target.closest('.dpill');if(!b)return;S[key]=b.dataset.v;S.lim=60;if(cb)cb();render()}};
@@ -1256,7 +1256,7 @@ function vCom(){const vol=byName('임직원 봉사활동 총 시간'),csr=std('c
  <div class="pspw">${pills}</div>
  <div class="tblx"><table class="ptab"><thead><tr><th>프로그램·활동</th><th>2023</th><th>2024</th><th>2025</th><th></th></tr></thead><tbody>${body}</tbody></table></div>
  ${S.psec==='사회공헌'?`<div class="sec" style="margin-top:28px">관련 지표</div><div class="mc" style="max-width:520px">${csr?mcard(csr,'사회공헌 비용'):''}${vol?mcard(vol,'임직원 봉사 총 시간'):''}</div>`:''}
- <div class="cta"><p>이 기업의 사회공헌 사례는 사회공헌 INDEX에서 다른 기업 사례와 함께 볼 수 있습니다.</p><a href="https://rethenew.com/csr" target="_top">사회공헌 INDEX에서 보기 →</a></div>`}
+ <div class="cta"><p>이 기업의 사회공헌 사례는 사회공헌 INDEX에서 다른 기업 사례와 함께 볼 수 있습니다.</p><a href="https://rethenew.com/csr?org=${encodeURIComponent('C:'+String(C.name||'').replace(/\s+/g,''))}" target="_top">사회공헌 INDEX에서 보기 →</a></div>`}
 function progCard(ix){const e=(PROG3[S.co]||[])[ix];if(!e)return;const yrs=['2023','2024','2025'],YC=['#C9CED1','#5CCFBB','#00806D'];
  const pn=v=>{const t=String(v||'').replace(/,/g,'');return /^-?\d+(\.\d+)?$/.test(t)?parseFloat(t):null};
 
@@ -1384,7 +1384,16 @@ hq.oninput=()=>{const q=hq.value.trim().toLowerCase();sel=-1;if(!q){hac.classLis
 hac.onclick=e=>{const d=e.target.closest('[data-i]');if(!d)return;hac.classList.remove('on');items[+d.dataset.i].go()};
 hq.onkeydown=e=>{const o=[...hac.querySelectorAll('[data-i]')];if(e.key==='ArrowDown'){sel=Math.min(sel+1,o.length-1);e.preventDefault()}else if(e.key==='ArrowUp'){sel=Math.max(sel-1,0);e.preventDefault()}else if(e.key==='Enter'){if(items[sel<0?0:sel]){hac.classList.remove('on');items[sel<0?0:sel].go()}return}else if(e.key==='Escape'){hac.classList.remove('on');return}o.forEach((x,i)=>x.classList.toggle('sel',i===sel))};
 document.addEventListener('click',e=>{if(!e.target.closest('.hsearch'))hac.classList.remove('on')});
+/* 주소로 열기 · 공통/딥링크_표준_v1 — ?org=C:<기업> (또는 기업명) · ?item=<사업ID>(items.json의 same 묶음으로 기업 찾기) */
+var RTN_Q=(function(){try{var p=new URLSearchParams(location.search);return {org:p.get('org')||'',item:p.get('item')||''}}catch(e){return {org:'',item:''}}})();
+function rtnNorm(x){return String(x||'').replace(/^C:/,'').replace(/\s+/g,'')}
+function rtnFindCo(org){const k=rtnNorm(org);if(!k||/^P:/.test(org))return '';return allCos().find(c=>rtnNorm(c)===k)||''}
+function rtnOpenCo(c){S.co=CXFULL[c]||'X:'+c;setCo(S.co);S.view='easy'}
+(function(){const c=rtnFindCo(RTN_Q.org);if(c)rtnOpenCo(c)})();
 render();
+if(!rtnFindCo(RTN_Q.org)&&RTN_Q.item){fetch('data/items.json').then(r=>r.json()).then(j=>{const R=j.rows||[];const row=R.find(r=>r[0]===RTN_Q.item);if(!row)return;
+ let t=row;if(row[1]!=='company'){const g=row[6]||row[0];t=R.find(r=>r[1]==='company'&&(r[0]===g||r[6]===g))||row}
+ const c=rtnFindCo(t[2]);if(!c)return;rtnOpenCo(c);render();scrollTo(0,0);try{if(window.parent!==window)parent.postMessage({type:'rtn-top'},'*')}catch(e){}if(window.__pingHeight)window.__pingHeight()}).catch(()=>{})}
 </script>
 
 <script>
