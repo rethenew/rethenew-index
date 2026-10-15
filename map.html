@@ -8817,6 +8817,52 @@ function switchProv(k,push){
 }
 var VALID=['jn','jb','gn','gb','cb','cn','gw','gg','bs','dg','ic','dj','us','jj','se','sj'];
 function fromHash(){var h=location.hash.slice(1);return VALID.indexOf(h)>=0?h:'kr';}
+/* v107: 주소로 열기 — ?item=map:<지역문제 id> (공통/딥링크_표준_v1 · 총괄지시 #11)
+   그 광역 → 그 시군구 → 「근거 목록」의 그 행을 펼침. 여러 시군구·광역 공통 항목은 광역 「전체 근거」.
+   item이 다른 INDEX ID면 data/items.json same 묶음의 map 항목. 못 찾으면 첫 화면 그대로. */
+var RTN_Q=(function(){ try{ var p=new URLSearchParams(location.search); return {org:p.get('org')||'',item:p.get('item')||''}; }catch(e){ return {org:'',item:''}; } })();
+function __mapFind(d,it){
+  var id=String(it).replace(/^map:/,''); var k=id.split('-')[0];
+  var L=(((d&&d.PROBLEM)||{})[k]||{}).P||[];
+  for(var i=0;i<L.length;i++){ if(L[i].id===id) return {k:k,p:L[i]}; }
+  return null;
+}
+function __mapSame(d,it,cb){
+  fetch('data/items.json',{cache:'no-cache'}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(J){
+    var c=J.cols||[], I=c.indexOf('id'), X=c.indexOf('idx'), S=c.indexOf('same'), R=J.rows||[], g=null, h=null, i;
+    for(i=0;i<R.length;i++){ if(R[i][I]===it){ g=R[i][S]; break; } }
+    if(g!==null&&g!==undefined) for(i=0;i<R.length&&!h;i++){ if(R[i][S]===g&&R[i][X]==='map') h=__mapFind(d,R[i][I]); }
+    cb(h);
+  }).catch(function(){ cb(null); });
+}
+function __mapGo(h){
+  var p=h.p, pl=p.pl||[], want=String(p.t||'').trim();
+  /* 2차 보도·후보 항목은 「검토 자료 포함」에서만 보인다 */
+  if(p.o==='2차 보도'||p.st==='후보'){ var v=document.querySelector('#fV [data-v="all"]'); if(v&&v.getAttribute('aria-pressed')!=='true') v.click(); }
+  function sli(n){ var b=null; [].slice.call(document.querySelectorAll('.sli')).forEach(function(x){ if(!b&&x.getAttribute('data-s')===n) b=x; }); return b; }
+  function tab(k){ var t=document.querySelector('#rpanel [data-pk="'+k+'"]'); if(t&&t.getClientRects().length){ t.click(); return true; } return false; }
+  function rowIn(){ var r=null; [].slice.call(document.querySelectorAll('details.lr')).forEach(function(x){ var l=x.querySelector('.lt'); if(!r&&l&&l.textContent.trim()===want&&x.getClientRects().length) r=x; }); return r; }
+  var r=null, how='', i, b;
+  var one=(pl.length===1&&!/전역$/.test(pl[0]))?pl[0]:'';
+  if(one){ b=sli(one); if(b){ b.click(); if(tab('ev')) r=rowIn(); how='sigungu'; if(!r&&tab('p-ev')){ r=rowIn(); how='sigungu-all'; } } }  /* 후보는 「전체 근거」의 「참고 후보」 */
+  else {
+    var cand=p.st==='후보';
+    if(cand){ var c=document.querySelector('#fS [data-v="후보"]'); if(c) c.click(); }  /* 광역 목록은 「검토 후보」 칸에서 */
+    if(tab('p-ev')){ r=rowIn(); how='province'; }                       /* PC: 광역 「전체 근거」 */
+    for(i=0;!r&&i<pl.length;i++){ b=sli(pl[i]); if(b){ b.click(); if(tab('ev')) r=rowIn(); how='sigungu-of-many'; if(!r&&cand&&tab('p-ev')) r=rowIn(); } }  /* 휴대폰: 해당 시군구의 「근거 목록」(후보는 「참고 후보」) */
+    if(!r){ var all=[].slice.call(document.querySelectorAll('.sli')); for(i=0;!r&&i<all.length&&i<60;i++){ b=sli(all[i].getAttribute('data-s')); if(!b) continue; b.click(); how='province-after-pick'; if(tab('ev')) r=rowIn(); if(!r&&tab('p-ev')) r=rowIn(); } }  /* 휴대폰: 광역 공통 근거가 붙는 시군구를 차례로 */
+  }
+  window.__MAPHIT=r?how:(how||'none')+'-only';
+  if(!r){ if(window.__pingHeight) window.__pingHeight(); return; }
+  r.open=true; r.classList.add('rtn-hit');
+  if(!document.getElementById('rtn-hit-css')){ var s=document.createElement('style'); s.id='rtn-hit-css'; s.textContent='details.lr.rtn-hit{outline:2px solid #111;outline-offset:2px}'; document.head.appendChild(s); }
+  if(window.__pingHeight) window.__pingHeight();
+  setTimeout(function(){
+    var y=Math.max(0,Math.round(r.getBoundingClientRect().top+(window.scrollY||window.pageYOffset||0)-12));
+    try{ window.scrollTo(0,y); }catch(e){}
+    if(window.parent!==window){ try{ window.parent.postMessage({type:'rtn-scroll',top:y},'*'); }catch(e){} }
+  },400);
+}
 /* v106: 데이터는 통합 DB 공개본 data/map.json 에서 받는다 (로더 v1 · 4초 안에 못 받으면 예비 사본 rtn-snap) */
 window.__MAPP=function(k){ var D=window.__MAPD||{}, o={};
   ['REGION','PROBLEM','TREND','DESIG','RESP'].forEach(function(c){ var x=(D[c]||{})[k]; if(x){ x=JSON.parse(JSON.stringify(x)); for(var n in x) o[n]=x[n]; } });
@@ -8825,8 +8871,11 @@ RTN_DATA('map',function(d,how){
   window.__MAPHOW=how;
   if(!d||!d.REGION){ document.getElementById('app').innerHTML='<div style="padding:60px 20px;text-align:center;color:#555">지도 데이터를 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</div>'; if(window.__pingHeight) window.__pingHeight(); return; }
   window.__MAPD=d; window.ORGX=d.ORGX;
-  switchProv(fromHash());
+  var _hit=RTN_Q.item?__mapFind(d,RTN_Q.item):null;
+  switchProv(_hit?_hit.k:fromHash());
   try{history.replaceState({p:fromHash()},'',location.href);}catch(e){}
+  if(_hit) __mapGo(_hit);
+  else if(RTN_Q.item&&!/^map:/.test(RTN_Q.item)) __mapSame(d,RTN_Q.item,function(h){ if(h){ switchProv(h.k); try{history.replaceState({p:h.k},'',location.href);}catch(e){} __mapGo(h); } });
   if(window.__pingHeight) window.__pingHeight();
 });
 
