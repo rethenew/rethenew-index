@@ -247,8 +247,8 @@ var RTN_Q=(function(){var p=new URLSearchParams(location.search);return {org:p.g
 </script>
 <script>
 RTN_DATA('issue',function(_d,how){
-var _s=null;if(!_d||!_d.P){try{_s=JSON.parse(document.getElementById('rtn-snap').textContent)}catch(e){}}
-const D=(_d&&_d.P)?_d:_s;if(!D){console.error('[rtn-issue] 데이터 없음');return}
+var _s=null;if(!_d||!(_d.P||(_d.D&&_d.D.P))){try{_s=JSON.parse(document.getElementById('rtn-snap').textContent)}catch(e){}}
+const D=(_d&&_d.D&&_d.D.P)?_d.D:(_d&&_d.P)?_d:_s;if(!D){console.error('[rtn-issue] 데이터 없음');return}
 window.__rtnHow=how;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
