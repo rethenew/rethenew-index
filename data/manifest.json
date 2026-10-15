@@ -1,5 +1,5 @@
 {
- "built": "2026-10-15 19:34",
+ "built": "2026-10-15 19:47",
  "db": "rethenew-data",
  "files": {
   "company": {
@@ -66,8 +66,8 @@
    }
   },
   "issue": {
-   "bytes": 1385312,
-   "sha": "52e5754d36fc",
+   "bytes": 1402199,
+   "sha": "ff7dfbb72e5c",
    "asof": "2026-10-15",
    "counts": {
     "사회문제": 43,
