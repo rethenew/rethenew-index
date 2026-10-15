@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head>
-<!-- 리더뉴 기후행동 INDEX v31 · 2026-10-09 · 로더 v1(data/climate.json, 예비 사본 rtn-snap) -->
+<!-- 리더뉴 기후행동 INDEX v32 · 2026-10-15 · 로더 v1(data/climate.json, 예비 사본 rtn-snap) · 주소로 열기(?org=&item=, 공통/딥링크_표준_v1) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>리더뉴 기후행동 INDEX</title>
@@ -592,6 +592,32 @@ $('nq').addEventListener('change',e=>{const v=e.target.value.trim();if(v)showEnt
 $('nq').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v)showEnt(ekey(v))}});
 $('nclr').onclick=()=>{$('nq').value='';$('nres').innerHTML='';clearEnt(true)};
 $('nres').addEventListener('click',e=>{const ek=e.target.closest('[data-ek]');if(ek){const q=ek.dataset.ek;$('nq').value=ENT[q].name;showEnt(q);$('net').scrollIntoView({behavior:'smooth',block:'start'});return}const kw=e.target.closest('[data-kw]');if(kw){st.q=kw.dataset.kw;$('q').value=st.q;st.show=40;draw();document.querySelector('#lt').scrollIntoView({behavior:'smooth',block:'start'});return}const b=e.target.closest('[data-id]');if(!b)return;if(b.dataset.t==='h'){openProg=b.dataset.id;drawHub();$('hubbar').scrollIntoView({behavior:'smooth',block:'start'})}else openCard(b.dataset.id)});
+// ===== 주소로 열기 (공통/딥링크_표준_v1) — ?org=<기관ID>&item=<사업ID> =====
+// item: data/items.json에서 찾고, 다른 INDEX ID면 같은 사업 묶음(same)의 기후행동 항목을 연다 → 없으면 org(기관 연결망) → 없으면 첫 화면
+(function(){
+  var P;try{P=new URLSearchParams(location.search)}catch(e){return}
+  var org=(P.get('org')||'').trim(), item=(P.get('item')||'').trim();
+  if(!org&&!item)return;
+  var orgName=org.replace(/^[CP]:/,'');
+  function toPos(el){if(!el)return;if(window.parent!==window){var y=el.getBoundingClientRect().top+(window.scrollY||window.pageYOffset||0);try{window.parent.postMessage({type:'rtn-scroll',y:Math.round(y)},'*')}catch(e){}}else{try{el.scrollIntoView({block:'start'})}catch(e){}}}
+  function setOrg(name){if(!name)return false;var k=ekey(name);if(!ENT[k]&&!ENTALL[k])return false;$('nq').value=ENT[k]?ENT[k].name:name;showEnt(k);return true}
+  function done(nat,rowOrg){
+    if(nat&&DID[nat]){if(orgName)setOrg(orgName);openCard(nat);if(window.__pingHeight)window.__pingHeight();return}
+    if(setOrg(orgName)||setOrg(rowOrg)){setTimeout(function(){toPos($('net'));if(window.__pingHeight)window.__pingHeight()},800)}
+  }
+  if(!item){done(null,'');return}
+  if(DID[item]){done(item,'');return}
+  fetch('data/items.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(J){
+    var rows=(J&&J.rows)||[],row=null,nat=null,i,r;
+    for(i=0;i<rows.length;i++)if(rows[i][0]===item){row=rows[i];break}
+    if(row){
+      if(row[1]==='climate')nat=row[5];
+      else if(row[6]){for(i=0;i<rows.length;i++){r=rows[i];if(r[1]==='climate'&&r[6]===row[6]){nat=r[5];break}}}
+    }
+    if(!nat){var c='climate:'+item.split(':').pop();for(i=0;i<rows.length;i++)if(rows[i][0]===c){nat=rows[i][5];break}}
+    done(nat,row?row[3]:'');
+  });
+})();
 if(window.__pingHeight)window.__pingHeight();
 });
 </script>
