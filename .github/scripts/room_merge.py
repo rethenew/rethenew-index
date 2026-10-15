@@ -8,7 +8,7 @@ import os,re,sys,subprocess,tempfile,json
 KIND,BR=sys.argv[1],sys.argv[2]
 ROOM=BR.replace('room-','',1)
 OUT=os.environ.get('RESULT','result.md')
-PAGES={'company':['company.html'],'public':['public.html'],'csr':['index.html','pr.html'],'climate':['climate.html'],'map':['map.html'],'farm':['farm.html']}
+PAGES={'company':['company.html'],'public':['public.html'],'csr':['index.html','pr.html'],'climate':['climate.html'],'map':['map.html'],'farm':['farm.html'],'issue':['issue.html']}   # issue: 사회문제 INDEX (10/15 등록)
 GEN_INDEX=('data/','auto/')                                   # 공개 데이터는 총괄 도구가 만든다 — 방이 올린 것은 무시
 GEN_DATA=('manifest.json','master/','db/','feeds/','auto/','indexes/csr/feed_cases.json')  # run_all이 다시 만드는 것 — 무시
 FORBID=['mailto:','ceo@','hani@','claude.ai/artifact']
@@ -25,7 +25,7 @@ def done(ok):
     head=f"# {KIND} · {BR} → main : {'✅ 반영' if ok else '❌ 중단'}\n\n"
     open(OUT,'w',encoding='utf-8').write(head+'\n'.join(log+[f'- ❌ {b}' for b in bad])+'\n')
     print(open(OUT,encoding='utf-8').read()); sys.exit(0 if ok else 1)
-if ROOM not in PAGES: bad.append(f'모르는 방 이름: {BR} (room-company·public·csr·climate·map·farm)'); done(False)
+if ROOM not in PAGES: bad.append(f'모르는 방 이름: {BR} (' + '·'.join('room-'+k for k in PAGES) + ')'); done(False)
 sh('git','fetch','-q','origin','main',BR)
 base=sh('git','merge-base','origin/main',f'origin/{BR}').strip()
 tip=sh('git','rev-parse','--short',f'origin/{BR}').strip()
