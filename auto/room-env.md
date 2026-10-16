@@ -1,6 +1,5 @@
-# index · room-env → main : ✅ 반영
+# index · room-env → main : ❌ 중단
 
-- 브랜치 끝 7d79108 · 갈라진 곳 89d968d · main cf24185
-- 반영: env.html
-- 검사 env.html: 1,331,083바이트 · 스크립트 3개 문법 확인
-- 상태: success · 2026-10-16 10:14 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/38834030204
+- 브랜치 끝 09adf93 · 갈라진 곳 be489cb · main be489cb
+- ❌ 자기 방 밖 파일: eindex.html — 「총괄 요청」으로 남길 것
+- 상태: failure · 2026-10-16 10:23 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/38834810023
