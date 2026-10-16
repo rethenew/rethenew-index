@@ -423,8 +423,9 @@ function stages(id){
  el.innerHTML=h;el.hidden=false;if(window.__pingHeight)window.__pingHeight();
 }
 function tapStage(el,i){if(matchMedia('(max-width:700px)').matches){el.classList.toggle('open')}else openCard(i)}
-function openCard(i){const d=document.querySelector('#stg details.more2');if(d)d.open=true;const c=document.getElementById('sc_'+i);if(c){c.querySelector('details.jd')&&(c.querySelector('details.jd').open=true);c.scrollIntoView({behavior:'smooth'})}}
-function goStg(){const e=$('#stg');e&&e.scrollIntoView({behavior:'smooth'});return false}
+function openCard(i){const d=document.querySelector('#stg details.more2');if(d)d.open=true;const c=document.getElementById('sc_'+i);if(c){c.querySelector('details.jd')&&(c.querySelector('details.jd').open=true);goEl(c)}}
+function goEl(e){if(!e)return;if(window.parent!==window){try{window.parent.postMessage({type:'rtn-scrollto',y:Math.round(e.getBoundingClientRect().top+window.pageYOffset)},'*')}catch(_){}}else e.scrollIntoView({behavior:'smooth'})}
+function goStg(){goEl($('#stg'));return false}
 function goAll(){const d=document.querySelector('#stg details.more2');if(d)d.open=true;document.querySelectorAll('#stg details.jd').forEach(d=>d.open=true);return goStg()}
 function open(id){sel=id;const p=P.find(x=>x.id==id);const pop=$('#pop');pop.hidden=false;
  pop.innerHTML=`<span class="x" onclick="closeP()">×</span><div class="gname">${esc(p.g)}</div><h3>${esc(p.n)}</h3><div class="bx"><div>사회공헌·공공 사업<b>${p.v.toLocaleString()}건</b></div><div>참여 기업·기관<b>${p.h.toLocaleString()}곳</b></div></div><div class="ks">${KO.filter(x=>p.kc[x]).map(x=>`<span>${KN[x]} ${p.kc[x]}</span>`).join('')}${p.loc?`<span>지역 근거 ${p.loc}</span>`:''}</div><p class="st">여정 ${p.k}단계 중 <b>사업 3건 이하 ${p.thin}단계</b></p><p class="st" style="margin-top:4px;color:#888">차트 아래에 단계별 정리가 열렸습니다</p><div class="lk">자세히 보기: <a href="#stg" onclick="return goStg()">단계별 정리</a> | <a href="#stg" onclick="return goAll()">사업 목록</a></div>`;stages(id);draw()}
