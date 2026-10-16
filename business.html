@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>리더뉴 지속가능사업 INDEX</title>
+<title>리더뉴 지속가능 INDEX</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap">
 <style>
+/* 관문 v6 (10/16): 리더뉴 지속가능 INDEX = 사회문제혁신 + 환경문제혁신(장미 차트 2개). 원천 INDEX 6개는 「데이터 출처」 */
+
 /* 관문 페이지: 리더뉴 지속가능 INDEX 디자인 계승 — 잉크 상단·히어로, 민트 포인트, 흰 본문. 기업/공공기관 두 갈래 선택이 첫 화면의 전부. 자매 페이지와 같은 단일 라이트 테마 */
 :root{
   --ink:#0E1A17;--paper:#fff;--mint:#00A98F;--mint-d:#00806D;--mint-l:#5CCFBB;--mint-05:#F0FBF8;--mint-10:#DCF4EE;
@@ -20,148 +22,172 @@ body{font-family:var(--f-body);background:var(--paper);color:var(--ink);line-hei
 a{color:inherit}
 :focus-visible{outline:2px solid var(--mint);outline-offset:2px}
 
-.top{background:var(--ink);color:var(--on-ink);position:sticky;top:env(safe-area-inset-top,0px);z-index:10}
-html.emb .top{position:static}
-.topin{display:flex;align-items:center;gap:12px;min-height:58px;flex-wrap:wrap;padding-block:8px}
+.top{background:var(--ink);color:var(--on-ink)}
+.topin{display:flex;align-items:center;gap:12px;min-height:56px;padding-block:8px}
 .logo{font-size:18px;font-weight:900;white-space:nowrap}.logo span{font-weight:400;opacity:.7}
-.toplink{margin-left:auto;font-size:13px;font-weight:700;color:var(--on-ink-2);text-decoration:none;border:1px solid var(--ink-rule);border-radius:8px;padding:6px 11px;white-space:nowrap}
-.toplink:hover{color:var(--on-ink);border-color:var(--mint-l)}
 
-.hero{background:var(--ink);color:var(--on-ink);padding-block:34px 40px;border-top:1px solid var(--ink-rule)}
+.hero{background:var(--ink);color:var(--on-ink);padding-block:30px 34px;border-top:1px solid var(--ink-rule)}
 .kick{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--mint-l);margin-bottom:10px}
-.hero h1{font-size:clamp(23px,4.2vw,32px);font-weight:900;letter-spacing:-.02em;line-height:1.32;text-wrap:balance;max-width:22em}
+.hero h1{font-size:clamp(24px,4.4vw,36px);font-weight:900;letter-spacing:-.02em;line-height:1.28}
 .hero h1 em{font-style:normal;color:var(--mint-l)}
-.hero p{font-size:15.5px;color:var(--on-ink-2);margin-top:12px;max-width:44em;line-height:1.7}
+.hero p{font-size:15.5px;color:var(--on-ink-2);margin-top:12px;max-width:40em;line-height:1.7}
+.sbox{position:relative;margin-top:20px;max-width:620px}
+.sbox input{width:100%;font:inherit;font-size:16px;padding:14px 48px 14px 18px;border-radius:999px;border:0;background:#fff;color:var(--ink)}
+.sbox svg{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;pointer-events:none}
+.sres{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);list-style:none;overflow:hidden;z-index:5}
+.sres:empty{display:none}
+.sres a{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;text-decoration:none;font-size:14.5px}
+.sres a:hover,.sres a.on{background:var(--mint-05)}
+.sres small{color:var(--g60);font-size:12px;white-space:nowrap}
+.sres .none{padding:10px 16px;font-size:14px;color:var(--g60)}
 
-.pick{margin-top:-22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.pick{grid-template-columns:1fr}}
-.door{display:flex;flex-direction:column;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px;text-decoration:none;color:var(--ink);box-shadow:0 10px 30px rgba(14,26,23,.08);min-width:0;transition:border-color .15s,transform .15s}
-.door:hover{border-color:var(--mint);transform:translateY(-2px)}
-.dh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.dh h2{font-size:24px;font-weight:900;letter-spacing:-.02em}
-.st{font-size:11.5px;font-weight:800;color:var(--g80);background:var(--g05);border:1px solid var(--g20);border-radius:6px;padding:2px 8px;white-space:nowrap}
-.big{display:flex;align-items:baseline;gap:6px}
-.big b{font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--mint-d)}
-.big span{font-size:14px;font-weight:700;color:var(--g60)}
-.door p{font-size:14.5px;color:var(--g80);line-height:1.7}
-.door ul{list-style:none;display:grid;gap:6px;border-top:1px dashed var(--g20);padding-top:12px}
-.door li{position:relative;padding-left:14px;font-size:13.5px;color:var(--g80)}
-.door li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:2px;background:var(--mint)}
-.go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--on-ink);font-weight:800;font-size:14.5px;padding:11px 18px;border-radius:9px}
-.door:hover .go{background:var(--mint-d)}
+.ways{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:-18px;position:relative}
+@media(max-width:900px){.ways{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.ways{grid-template-columns:1fr}}
+.way{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;box-shadow:0 8px 24px rgba(14,26,23,.07);display:flex;flex-direction:column;gap:8px;min-width:0}
+.way .wh{display:flex;align-items:center;gap:10px}
+.way .ic{width:38px;height:38px;border-radius:50%;background:var(--ink);display:grid;place-items:center;flex:none}
+.way .ic svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8}
+.way h2{font-size:20px;font-weight:900}
+.way p{font-size:13.5px;color:var(--g60);line-height:1.55}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.chips a{font-size:13px;font-weight:800;text-decoration:none;border:1px solid var(--g20);border-radius:999px;padding:5px 11px;white-space:nowrap}
+.chips a:hover{border-color:var(--ink);background:var(--g05)}
+.chips a.main{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chips a.main:hover{background:var(--mint-d);border-color:var(--mint-d)}
 
-.sec{font-size:12.5px;font-weight:900;letter-spacing:.08em;color:var(--g60);margin:40px 0 12px}
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
-@media(max-width:760px){.how{grid-template-columns:1fr}}
-.how div{padding:14px 16px 16px 0;border-bottom:1px solid var(--line);min-width:0}
-@media(min-width:761px){.how div+div{padding-left:16px;border-left:1px solid var(--line)}}
-.how b{display:block;font-size:15px;font-weight:900;margin-bottom:4px}
-.how span{font-size:13.5px;color:var(--g80);line-height:1.65}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);margin-top:0;border-block:1px solid var(--line)}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{padding:14px 12px;border-left:1px solid var(--line)}
+.stats div:first-child{border-left:0}
+.stats span{display:block;font-size:12.5px;font-weight:700;color:var(--g60)}
+.stats b{font-size:24px;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats small{font-size:13px;font-weight:700;color:var(--g60);margin-left:2px}
 
-.src{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:10px}
-@media(max-width:760px){.src{grid-template-columns:1fr 1fr}}
-.src div{padding:12px 14px;border-left:1px solid var(--line)}
-.src div:first-child{border-left:0}
-@media(max-width:760px){.src div:nth-child(3){border-left:0}.src div:nth-child(n+3){border-top:1px solid var(--line)}}
-.src b{display:block;font-size:22px;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.src span{font-size:12px;font-weight:700;color:var(--g60)}
-.subs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media(max-width:900px){.subs{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.subs{grid-template-columns:1fr}}
-.sub{display:flex;flex-direction:column;gap:5px;border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;text-decoration:none;color:var(--ink);background:var(--paper);min-width:0}
-.sub:hover{border-color:var(--ink)}
-.sub .sk{font-size:11px;font-weight:900;letter-spacing:.06em;color:var(--mint-d)}
-.sub b{font-size:15.5px;font-weight:900;line-height:1.35}
-.sub .sn{font-size:12.5px;font-weight:700;color:var(--g60)}.sub .sn em{font-style:normal;font-size:18px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:2px}
-.sub .sd{font-size:13px;color:var(--g80);line-height:1.6}
-.sub .sg{margin-top:auto;padding-top:6px;font-size:13px;font-weight:800;color:var(--ink)}
-.sub:hover .sg{text-decoration:underline}
-.note{font-size:12.5px;color:var(--g60);margin-top:8px}
+.main3{display:grid;grid-template-columns:1.05fr 1.3fr .9fr;gap:14px;margin-top:26px}
+@media(max-width:1000px){.main3{grid-template-columns:1fr 1fr}.main3 .srcs{grid-column:1/-1}}
+@media(max-width:700px){.main3{grid-template-columns:1fr}}
+.pane{border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0;display:flex;flex-direction:column}
+.pane h3{font-size:17px;font-weight:900;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:12.5px;font-weight:800;border:0;background:#fff;color:var(--ink);padding:4px 10px;cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}
+.grps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:420px){.grps{grid-template-columns:1fr 1fr}}
+.grp{border:1px solid var(--line);border-radius:10px;padding:10px;text-decoration:none;background:var(--g05);display:flex;flex-direction:column;gap:2px;min-width:0}
+.grp:hover{border-color:var(--ink);background:#fff}
+.grp b{font-size:14px;font-weight:900;line-height:1.3}
+.grp span{font-size:12px;color:var(--g60)}
+.allk{margin-top:12px;align-self:flex-end;font-size:13px;font-weight:800;text-decoration:none;border:1px solid var(--ink);border-radius:8px;padding:6px 12px}
+.allk:hover{background:var(--ink);color:#fff}
 
-.cta{margin-top:36px;border:1px solid var(--mint);background:var(--mint-05);border-radius:12px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-.cta p{font-size:14.5px;color:var(--g80);max-width:40em;line-height:1.65}.cta p b{color:var(--ink)}
-.mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.mail code{font-family:inherit;font-weight:800;font-size:15px;user-select:all;background:var(--paper);border:1px solid var(--mint-10);border-radius:8px;padding:9px 12px}
-.ask{display:inline-flex;align-items:center;background:var(--ink);color:var(--on-ink);font-weight:800;font-size:15px;padding:12px 20px;border-radius:9px;text-decoration:none;white-space:nowrap}
+.pv .tag{font-size:11.5px;font-weight:900;color:var(--mint-d);letter-spacing:.04em}
+.pv h4{font-size:20px;font-weight:900;margin:2px 0 4px}
+.pv .meta{font-size:13px;color:var(--g60);margin-bottom:10px}
+.stg{list-style:none;display:grid;gap:7px}
+.stg li{display:grid;grid-template-columns:24px minmax(0,8.5em) 1fr 3.2em;align-items:center;gap:8px;font-size:13.5px}
+.stg .no{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:900;display:grid;place-items:center}
+.stg .nm{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stg .bar{height:10px;background:var(--g10);border-radius:5px;overflow:hidden}
+.stg .bar i{display:block;height:100%;background:var(--ink);border-radius:5px}
+.stg li.low .bar i{background:repeating-linear-gradient(90deg,var(--g60) 0 4px,transparent 4px 7px)}
+.stg .ct{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.pvf{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:12px;flex-wrap:wrap}
+.pvf small{font-size:12px;color:var(--g60)}
+.btn{font:inherit;font-size:13px;font-weight:800;text-decoration:none;border:1px solid var(--ink);border-radius:8px;padding:6px 12px;background:#fff;color:var(--ink);cursor:pointer}
+.btn.dk{background:var(--ink);color:#fff}
+.btn:hover{background:var(--mint-d);border-color:var(--mint-d);color:#fff}
+
+.srcs ul{list-style:none;display:grid;gap:6px}
+.srcs a{display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-decoration:none;padding:8px 10px;border:1px solid var(--line);border-radius:9px}
+.srcs a:hover{border-color:var(--ink)}
+.srcs b{font-size:13.5px;font-weight:800}
+.srcs span{font-size:12.5px;color:var(--g60);white-space:nowrap;font-variant-numeric:tabular-nums}
+.srcs p{font-size:12px;color:var(--g60);margin-top:8px;line-height:1.55}
+
+.main2{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:860px){.main2{grid-template-columns:1fr}}
+.grp{cursor:pointer;font:inherit;text-align:left;color:var(--ink)}
+.grp.on{background:var(--ink);border-color:var(--ink);color:#fff}.grp.on span{color:rgba(255,255,255,.75)}
+.plist{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--g20)}
+.plist button{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--g20);background:#fff;border-radius:999px;padding:5px 11px;cursor:pointer;color:var(--ink)}
+.plist button em{font-style:normal;color:var(--g60);font-weight:700;margin-left:4px;font-variant-numeric:tabular-nums}
+.plist button:hover{border-color:var(--ink)}
+.plist button.on{background:var(--mint-05);border-color:var(--mint-d)}
+.srcs .sec{margin:30px 0 10px}
+.srcs ul{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:760px){.srcs ul{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.srcs ul{grid-template-columns:1fr}}
+.srcs em{font-style:normal}
+.sec{font-size:12.5px;font-weight:900;letter-spacing:.08em;color:var(--g60)}
+.roses{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:34px}
+@media(max-width:900px){.roses{grid-template-columns:1fr;gap:36px}}
+.rose{min-width:0}
+.rh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rh h2{font-size:clamp(19px,2.4vw,23px);font-weight:900;letter-spacing:-.02em}
+.go2{font-size:14px;font-weight:800;text-decoration:none;border-bottom:2px solid var(--ink);padding-bottom:1px;white-space:nowrap}
+.go2:hover{color:var(--mint-d);border-color:var(--mint-d)}
+.rd{font-size:14px;color:var(--g80);margin-top:4px}.rd b{font-variant-numeric:tabular-nums}
+.rbox{margin-top:8px}
+.rbox svg{display:block;width:100%;height:auto;overflow:visible}
+.rbox .w{cursor:pointer;transition:opacity .15s}
+.rbox svg:hover .w{opacity:.55}.rbox svg .w:hover{opacity:1}
+.rnote{font-size:12.5px;color:var(--g60);text-align:center;margin-top:6px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;font-size:12.5px;padding:6px 9px;border-radius:7px;z-index:20;white-space:nowrap}
+.note{font-size:12px;color:var(--g60);margin-top:10px;line-height:1.6}
+.cta{margin-top:28px;border:1px solid var(--mint);background:var(--mint-05);border-radius:12px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.cta p{font-size:14.5px;color:var(--g80);line-height:1.65}.cta p b{color:var(--ink)}
+.ask{display:inline-flex;background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:12px 20px;border-radius:9px;text-decoration:none;white-space:nowrap}
 .ask:hover{background:var(--mint-d)}
-.copy{font:inherit;font-size:13px;font-weight:800;border:0;background:var(--mint);color:var(--on-ink);border-radius:8px;padding:10px 14px;cursor:pointer}
-.copy:hover{background:var(--mint-d)}
-
-footer{margin-top:44px;border-top:1px solid var(--line);padding-block:16px 28px;color:var(--g60);font-size:12px;line-height:1.75}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-block:16px 28px;color:var(--g60);font-size:12px;line-height:1.75}
+footer b{color:var(--g80)}
 </style>
 </head>
 <body>
-
 <header class="top"><div class="wrap"><div class="topin">
-  <div class="logo">리더뉴 지속가능사업 <span>INDEX</span></div>
+  <div class="logo">리더뉴 지속가능 <span>INDEX</span></div>
 </div></div></header>
 
 <section class="hero"><div class="wrap">
-  <div class="kick">SUSTAINABLE BUSINESS INDEX</div>
-  <h1>기업과 공공기관의 <em>다음 지속가능사업</em>을 공개 데이터로 찾습니다</h1>
-  <p>지속가능경영보고서, 공공기관 공시, 지역의 공식 문제, 리더뉴 INDEX의 실행 사례를 한곳에 모았습니다. 담당하시는 조직 유형을 고르세요.</p>
+  <div class="kick">SUSTAINABLE INDEX</div>
+  <h1>사회·환경 문제와 대응 사업을 잇는<br><em>리더뉴 지속가능 INDEX</em></h1>
+  <p>문제를 고르면 해결 단계마다 기업·공공기관·비영리가 하는 사업과 출처가 나옵니다. 사업이 적은 단계도 바로 보입니다.</p>
+  <div class="sbox">
+    <input id="q" type="search" placeholder="문제, 기업·기관 이름으로 검색" autocomplete="off" aria-label="검색" aria-controls="sres">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+    <div class="sres" id="sres" role="listbox"></div>
+  </div>
 </div></section>
 
 <main class="wrap">
-  <div class="pick">
-    <a class="door" href="https://rethenew.com/company" target="_top" rel="noopener">
-      <div class="dh"><h2>기업</h2><span class="st">1차 자동 대조</span></div>
-      <div class="big"><b>252</b><span>개 기업 지속가능경영보고서</span></div>
-      <p>ESG 포털에 공시된 최근 3년 지속가능경영보고서를 원문 수치 그대로 정리했습니다. 핵심 지표와 목표부터 협력사, 이중중대성, 기후전략, 사회공헌까지 담았습니다.</p>
-      <ul>
-        <li>산업군별로 찾고 같은 업종끼리 나란히 비교</li>
-        <li>온실가스·에너지·용수 등 연도별 지표와 GRI·KSSB·ESRS 공시 매핑</li>
-        <li>보고서 원문 쪽 번호 표기, 최근 발간 보고서 게시판</li>
-      </ul>
-      <span class="go">기업 INDEX 보기 →</span>
-    </a>
-    <a class="door" href="https://rethenew.com/public" target="_top" rel="noopener">
-      <div class="dh"><h2>공공기관</h2><span class="st">검수 중 초안</span></div>
-      <div class="big"><b>355</b><span>개 공공기관</span></div>
-      <p>사업장이 있는 지역의 공식 지역문제와 기관이 이미 하고 있는 사업, 리더뉴 INDEX의 실행 선례를 연결해 사업기회를 보여드립니다.</p>
-      <ul>
-        <li>기관명으로 검색, 사업장 지역·주무부처로 필터</li>
-        <li>기존 사업을 지역문제에 맞춰 넓히는 방향 제시</li>
-        <li>모든 지역문제에 공식 원문 출처 표기</li>
-      </ul>
-      <span class="go">공공기관 INDEX 보기 →</span>
-    </a>
+<div class="tip" id="tip" hidden></div>
+  <div class="roses">
+    <section class="rose" data-x="issue">
+      <div class="rh"><h2>리더뉴 사회문제혁신 INDEX</h2><a class="go2" href="https://rethenew.com/sindex" target="_top">바로가기 →</a></div>
+      <p class="rd"><b data-r="n">43</b>개 사회문제 해결을 위해 단계별로 <b data-r="h">1,255</b>곳이 참여하고 있습니다.</p>
+      <div class="rbox"><svg aria-label="사회문제 장미 차트"></svg></div>
+    </section>
+    <section class="rose" data-x="env">
+      <div class="rh"><h2>리더뉴 환경문제혁신 INDEX</h2><a class="go2" href="https://rethenew.com/eindex" target="_top">바로가기 →</a></div>
+      <p class="rd"><b data-r="n">44</b>개 환경문제 해결을 위해 단계별로 <b data-r="h">1,432</b>곳이 참여하고 있습니다.</p>
+      <div class="rbox"><svg aria-label="환경문제 장미 차트"></svg></div>
+    </section>
   </div>
-
-
-  <h2 class="sec">지속가능 INDEX로 사업 기획하기</h2>
-  <div class="subs">
-    <a class="sub" href="https://rethenew.com/csr" target="_top" rel="noopener">
-      <span class="sk">사회공헌</span>
-      <b>리더뉴 사회공헌 INDEX</b>
-      <span class="sn"><em>5,004</em>건 사례</span>
-      <span class="sd">기업·기관의 사회공헌·지속가능 프로젝트를 산업군·주제·대상·혁신유형별로 분류하고, 기업·공공기관별로도 찾을 수 있는 사례 데이터베이스</span>
-      <span class="sg">열기 →</span>
-    </a>
-    <a class="sub" href="https://rethenew.com/climate" target="_top" rel="noopener">
-      <span class="sk">기후행동</span>
-      <b>리더뉴 기후행동 INDEX</b>
-      <span class="sn"><em>5,793</em>건 사례</span>
-      <span class="sd">기업·기관·지자체·단체의 기후 프로젝트와 제도를 누가·어디서·무엇을 기준으로 탐색</span>
-      <span class="sg">열기 →</span>
-    </a>
-    <a class="sub" href="https://rethenew.com/LOCALMAP" target="_top" rel="noopener">
-      <span class="sk">지역문제 해결</span>
-      <b>리더뉴 지역문제 해결 MAP</b>
-      <span class="sn">전국 광역 단위</span>
-      <span class="sd">시도·시군구별 공식 지역문제를 원문 출처와 함께 지도에서 확인하고, 그 지역의 기업·공공기관 활동까지 함께 보기</span>
-      <span class="sg">열기 →</span>
-    </a>
-    <a class="sub" href="https://rethenew.com/localmarket" target="_top" rel="noopener">
-      <span class="sk">직거래 활성화</span>
-      <b>리더뉴 농산물 판로 INDEX</b>
-      <span class="sn">오프라인·온라인 판로</span>
-      <span class="sd">로컬푸드 직매장·직거래장터·생협과 온라인 판로, 농가 지원 사업을 지역별로 탐색</span>
-      <span class="sg">열기 →</span>
-    </a>
-  </div>
-  <p class="note">사례 건수: 사회공헌 INDEX는 2026년 9월 20일 수집분, 기후행동은 2026년 10월 8일 공개본 기준입니다.</p>
+  <p class="rnote">조각 길이 = 그 문제에 연결된 사업 수 · 조각을 누르면 그 문제의 단계별 사업 현황으로 이동합니다.</p>
+  <section class="srcs">
+    <h2 class="sec">데이터 출처 — 원천 INDEX</h2>
+    <ul>
+      <li><a href="https://rethenew.com/company" target="_top"><b>기업 지속가능경영보고서</b><span><em data-k="company:기업">252</em>개사</span></a></li>
+      <li><a href="https://rethenew.com/public" target="_top"><b>공공기관</b><span><em data-k="public:기관">355</em>곳</span></a></li>
+      <li><a href="https://rethenew.com/csr" target="_top"><b>사회공헌 사례</b><span>9,364건</span></a></li>
+      <li><a href="https://rethenew.com/climate" target="_top"><b>기후행동 사례</b><span><em data-k="climate:항목">5,793</em>건</span></a></li>
+      <li><a href="https://rethenew.com/LOCALMAP" target="_top"><b>지역문제 MAP</b><span><em data-k="map:지역문제">1,321</em>건</span></a></li>
+      <li><a href="https://rethenew.com/localmarket" target="_top"><b>농산물 판로</b><span><em data-k="farm:오프라인 판로">1,209</em>곳</span></a></li>
+    </ul>
+  </section>
+  <p class="note">건수는 공개 데이터에서 자동으로 읽습니다. 장미 차트의 사업 수는 문제별로 센 값입니다(한 사업이 두 문제에 걸리면 둘 다 셈). 참여 곳 수는 사업 주최 기준입니다. 사회공헌 사례는 보도자료(2026년 9월 20일 수집분)·지속가능경영보고서·ALIO 공시를 같은 사업끼리 합친 수입니다.</p>
 
   <div class="cta">
     <p><b>우리 조직의 정보 정정이나 사업 상담이 필요하시면</b> 문의 페이지로 남겨 주십시오.</p>
@@ -170,11 +196,9 @@ footer{margin-top:44px;border-top:1px solid var(--line);padding-block:16px 28px;
 </main>
 
 <footer><div class="wrap">
-  <b>리더뉴 지속가능사업 INDEX</b> · (주)파이브세컨즈<br>
-  기업과 기관을 평가하거나 등급을 매기지 않습니다. 수치는 각 보고서와 공시 원문 그대로 옮기며, 출처가 확인된 정보만 싣습니다. · v4
+  <b>리더뉴 지속가능 INDEX</b> · (주)파이브세컨즈<br>
+  기업과 기관을 평가하거나 등급을 매기지 않습니다. 수치는 각 보고서와 공시 원문 그대로 옮기며, 출처가 확인된 정보만 싣습니다. · v6
 </div></footer>
-
-
 <script>
 /* ── 아임웹 삽입 연동 · 리덱스 표준 브리지 v1 (climate·map·pr과 같은 방식) ──
    ① 부모(아임웹)에 콘텐츠 높이를 알린다: {type:'rtn-height', height}
@@ -220,6 +244,100 @@ footer{margin-top:44px;border-top:1px solid var(--line);padding-block:16px 28px;
   ping();
 })();
 </script>
+<script>
+/* 관문 v7 — 사회문제혁신·환경문제혁신 장미 차트 두 개. 데이터는 data/manifest.json summary (두 INDEX 화면과 같은 그림 규칙) */
+(function(){
+  var URL={issue:'https://rethenew.com/sindex',env:'https://rethenew.com/eindex'};
+  var NAME={issue:'사회문제혁신',env:'환경문제혁신'};
+  var CEN={issue:'사회문제',env:'환경문제'};
+  var SUM=null, ORGS=null;
+  function $(id){return document.getElementById(id)}
+  function fmt(n){return Number(n).toLocaleString('ko-KR')}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function ping(){if(window.__pingHeight)window.__pingHeight()}
 
+  function rose(sec){
+    var k=sec.getAttribute('data-x'), S=SUM&&SUM[k], svg=sec.querySelector('svg'); if(!S)return;
+    var box=sec.querySelector('.rbox').clientWidth||500, mob=box<460;
+    var W=box, H=W, cx=W/2, cy=H/2;
+    var fs=mob?8.6:Math.max(10,Math.min(12.5,W/46)), lw=fs*(mob?5.8:7.6);
+    var R=W/2-(mob?4:14), Rg=R-6, Rmax=Rg-lw-14, r0=Rmax*.14;
+    var P=S.P.map(function(p,i){return {id:p[0],n:p[1],g:p[2],v:p[3],s:p[7]||p[1],m:p[8]||p[7]||p[1],h:Math.round(8+340*i/S.P.length)}});
+    var G=(S.G||[]).filter(function(g){return P.some(function(p){return p.g===g})});
+    P.sort(function(a,b){return G.indexOf(a.g)-G.indexOf(b.g)});
+    var GAP=.7, slots=P.length+G.length*GAP, da=2*Math.PI/slots, max=Math.max.apply(null,P.map(function(p){return p.v}).concat([1]));
+    function rad(v){return Math.sqrt(r0*r0+(Rmax*Rmax-r0*r0)*v/max)}
+    function pt(r,a){return [cx+r*Math.sin(a),cy-r*Math.cos(a)]}
+    function nrm(a){return ((a%(2*Math.PI))+2*Math.PI)%(2*Math.PI)}
+    function col(p,l){return 'hsl('+p.h+','+(l<70?58:72)+'%,'+l+'%)'}
+    var defs='',body='',a=0,last=null,arcs=[];
+    [.25,.5,1].forEach(function(f){body+='<circle cx="'+cx+'" cy="'+cy+'" r="'+rad(max*f)+'" fill="none" stroke="#efefef"/>'});
+    P.forEach(function(p,i){
+      if(p.g!==last){if(last!==null)arcs[arcs.length-1].a1=a;a+=GAP*da/(i?1:2);arcs.push({g:p.g,a0:a,ps:[]});last=p.g}
+      arcs[arcs.length-1].ps.push(p);
+      var a0=a+da*.07,a1=a+da*.93,r=rad(p.v),m=a+da/2;
+      var q0=pt(r0,a0),q1=pt(r,a0),q2=pt(r,a1),q3=pt(r0,a1);
+      defs+='<radialGradient id="g'+k+i+'" gradientUnits="userSpaceOnUse" cx="'+cx+'" cy="'+cy+'" r="'+Math.max(r,r0+1)+'"><stop offset="0" stop-color="'+col(p,95)+'"/><stop offset="'+(r0/r).toFixed(2)+'" stop-color="'+col(p,90)+'"/><stop offset="1" stop-color="'+col(p,72)+'"/></radialGradient>';
+      body+='<a href="'+URL[k]+'?item='+encodeURIComponent(p.id)+'" target="_top"><path class="w" data-t="'+esc(p.n+' · 사업 '+fmt(p.v)+'건')+'" d="M'+q0+'L'+q1+'A'+r+','+r+' 0 0 1 '+q2+'L'+q3+'A'+r0+','+r0+' 0 0 0 '+q0+'Z" fill="url(#g'+k+i+')" stroke="#fff" stroke-width="1"/></a>';
+      var na=nrm(m),deg=na*180/Math.PI,rt=na<Math.PI;
+      if(!mob&&r-r0>34){var vp=pt(r-6,m);body+='<text x="'+vp[0]+'" y="'+vp[1]+'" transform="rotate('+(rt?deg-90:deg+90)+' '+vp[0]+' '+vp[1]+')" text-anchor="'+(rt?'end':'start')+'" dominant-baseline="central" font-size="'+(fs-1)+'" font-weight="800" fill="#333" pointer-events="none">'+p.v+'</text>'}
+      var lp=pt(Rmax+8,m);
+      body+='<text x="'+lp[0]+'" y="'+lp[1]+'" transform="rotate('+(rt?deg-90:deg+90)+' '+lp[0]+' '+lp[1]+')" text-anchor="'+(rt?'start':'end')+'" dominant-baseline="central" font-size="'+fs+'" font-weight="700" fill="#222" pointer-events="none">'+esc(mob?p.m:p.s)+(mob?'':'<tspan fill="#999" font-weight="400" font-size="'+(fs-2.5)+'"> '+p.v+'</tspan>')+'</text>';
+      a+=da;
+    });
+    arcs[arcs.length-1].a1=a;
+    arcs.forEach(function(g,j){
+      var mid=g.ps[Math.floor(g.ps.length/2)], c='hsl('+mid.h+',45%,62%)';
+      var s0=pt(Rg,g.a0+da*.1),s1=pt(Rg,g.a1-da*.1),big=(g.a1-g.a0)>Math.PI?1:0;
+      body+='<path d="M'+s0+'A'+Rg+','+Rg+' 0 '+big+' 1 '+s1+'" fill="none" stroke="'+c+'" stroke-width="'+(mob?2.5:3.5)+'" stroke-linecap="round"/>';
+      if(!mob){var mm=nrm((g.a0+g.a1)/2),bottom=mm>Math.PI/2&&mm<Math.PI*1.5,rr=Rg+(bottom?14:7);
+        var e0=pt(rr,bottom?g.a1:g.a0),e1=pt(rr,bottom?g.a0:g.a1);
+        body+='<path id="ga'+k+j+'" d="M'+e0+'A'+rr+','+rr+' 0 '+big+' '+(bottom?0:1)+' '+e1+'" fill="none"/><text font-size="'+(fs-.5)+'" font-weight="800" fill="#555" letter-spacing="1"><textPath href="#ga'+k+j+'" startOffset="50%" text-anchor="middle">'+esc(g.g)+'</textPath></text>'}
+    });
+    body+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r0-3)+'" fill="#fff"/><text x="'+cx+'" y="'+(cy-6)+'" text-anchor="middle" font-size="'+(mob?9:11.5)+'" fill="#777">'+CEN[k]+'</text><text x="'+cx+'" y="'+(cy+(mob?10:14))+'" text-anchor="middle" font-size="'+(mob?15:20)+'" font-weight="800">'+P.length+'</text>';
+    svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.innerHTML='<defs>'+defs+'</defs>'+body;
+    sec.querySelector('[data-r="n"]').textContent=P.length;
+    if(S.hosts)sec.querySelector('[data-r="h"]').textContent=fmt(S.hosts);
+  }
+  function drawAll(){document.querySelectorAll('.rose').forEach(rose);ping()}
+  var rt=null; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(drawAll,150)});
+  var tip=$('tip');
+  document.addEventListener('mousemove',function(e){var t=e.target&&e.target.getAttribute&&e.target.getAttribute('data-t');
+    if(!t){tip.hidden=true;return} tip.textContent=t;tip.hidden=false;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px'});
+
+  /* 검색: 문제(두 INDEX) + 기관(기업 INDEX·공공기관 INDEX·사회공헌 수록 기관) */
+  var qi=$('q'), box=$('sres'), sel=-1;
+  function norm(s){return String(s||'').replace(/\(주\)|㈜|주식회사|\s/g,'').toLowerCase()}
+  function orgLink(o){var id=encodeURIComponent(o.id),i=o['in']||{};
+    if(i.company) return ['https://rethenew.com/company?org='+id,'기업'];
+    if(i['public']) return ['https://rethenew.com/public?org='+id,'공공기관'];
+    if(i.csr_campaigns||i.csr_panel) return ['https://rethenew.com/csr?org='+id,'사회공헌'];
+    return null}
+  function search(){
+    var t=norm(qi.value), hits=[]; sel=-1;
+    if(!t){box.innerHTML='';ping();return}
+    if(SUM)['issue','env'].forEach(function(k){(SUM[k]&&SUM[k].P||[]).forEach(function(p){if(norm(p[1]).indexOf(t)>=0||norm(p[7]).indexOf(t)>=0)hits.push({u:URL[k]+'?item='+encodeURIComponent(p[0]),n:p[1],s:NAME[k]+' · 문제'})})});
+    if(ORGS)ORGS.forEach(function(o){if(hits.length>=14)return;var names=[o.name].concat(o.aliases||[]);
+      if(names.some(function(n){return norm(n).indexOf(t)>=0})){var l=orgLink(o); if(l)hits.push({u:l[0],n:o.name,s:l[1]})}});
+    hits=hits.slice(0,10);
+    box.innerHTML=hits.length?hits.map(function(h){return '<a href="'+esc(h.u)+'" target="_top" role="option"><span>'+esc(h.n)+'</span><small>'+esc(h.s)+'</small></a>'}).join(''):'<div class="none">찾는 결과가 없습니다</div>';
+    ping();
+  }
+  qi.addEventListener('focus',function(){ if(ORGS) return; ORGS=[];
+    fetch('data/orgs.json').then(function(r){return r.ok?r.json():[]}).then(function(o){ORGS=o||[];search()}).catch(function(){}) });
+  qi.addEventListener('input',search);
+  qi.addEventListener('keydown',function(e){var A=box.querySelectorAll('a'); if(!A.length)return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();sel=(sel+(e.key==='ArrowDown'?1:-1)+A.length)%A.length;A.forEach(function(a,i){a.classList.toggle('on',i===sel)})}
+    else if(e.key==='Enter'){e.preventDefault();var a=A[sel<0?0:sel];try{window.top.location.href=a.href}catch(x){window.open(a.href,'_top')}}
+    else if(e.key==='Escape'){box.innerHTML='';ping()}});
+  document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.sbox'))box.innerHTML=''});
+
+  fetch('data/manifest.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).then(function(m){
+    if(!m)return; var F=m.files||{};
+    document.querySelectorAll('[data-k]').forEach(function(el){var a=el.getAttribute('data-k').split(':'),c=F[a[0]]&&F[a[0]].counts,v=c&&c[a[1]]; if(typeof v==='number'&&v>0)el.textContent=fmt(v)});
+    SUM=m.summary||null; drawAll();
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>
