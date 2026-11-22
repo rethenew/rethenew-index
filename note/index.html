@@ -783,6 +783,7 @@ svg.krmap .krg.khit{fill:transparent}svg.krmap .krg.khit:hover{fill:rgba(0,0,0,.
 @media(max-width:1100px){.dkab{grid-template-columns:1fr}.dkR{position:static}}
 .dkcolh{display:flex;align-items:center;gap:8px;min-height:40px}.dkcolh h2{flex:1;font-size:17px;margin:0}.dkcolh h2 small{font-size:12.5px;color:var(--mute);font-weight:600;margin-left:4px}.dkcolm{margin:0;font-size:12px;white-space:nowrap}.dkR{display:flex;flex-direction:column;gap:12px}
 html.noai [data-dk="planai"]{display:none!important}
+.pjask{color:inherit;font-weight:700;text-decoration:none;border-bottom:1px solid currentColor;white-space:nowrap}
 </style><style>
 .lsrch{display:flex;gap:12px;align-items:center;margin-bottom:14px}.lsrch input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;font:inherit;font-size:15px}.lsrch input:focus{outline:none;border-color:var(--fg)}.lsrch span{color:var(--mute);font-size:13px;white-space:nowrap}
 .lgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -1499,6 +1500,7 @@ const KIND=a=>'https://kind.krx.co.kr/common/disclsviewer.do?method=search&acptn
 const RICH={};
 const NOTE={};
 const ASK=n=>'https://rethenew.com/index-ask?from=org-page&org='+encodeURIComponent(n);
+const ASKP=n=>'https://rethenew.com/index-ask?from=org-page&pj='+encodeURIComponent(n);
 const KN={C:'기업',P:'공공기관',L:'지자체'};
 let PICK=false,STG=null,LSTG=0,LSTGV='';const LISTH=()=>['#list','#desk',''].includes(location.hash);const OH=()=>PICK?'#desk-':'#o-';
 function hasB(n){const s=String(n).replace(/[\s)\]」』'"·]+$/,'');const c=s.slice(-1);const k=c.charCodeAt(0);if(k>=0xAC00&&k<=0xD7A3)return (k-0xAC00)%28>0;if(/[0-9]/.test(c))return '0136789'.includes(c);if(/[A-Za-z]/.test(c)){const w=s.match(/[A-Za-z]+$/)[0];if(w===w.toUpperCase()&&w.length<=4)return 'LMN'.includes(c.toUpperCase())||c.toUpperCase()==='R';return /(l|m|n|ng|k|t|p|b|d|g)$/i.test(w)}return false}
@@ -1574,7 +1576,7 @@ function bento(recent){const lm=VIS.reduce((m,r)=>r[15]&&r[15]>m?r[15]:m,'');con
  <a class="bt bt-d" href="#desk"><p class="bk">리더뉴 NOTE <span class="dktag">체험판</span></p><b class="bbig" style="font-size:20px;line-height:1.3">내 기관 고르기</b><p class="bs">담당자용 업무 화면 — 우리 기관을 업계·지역과 비교하고 신규 검토 과제와 협력 대상을 찾습니다</p></a>
  </div>`}
 function gStrip(lv,G){const [st,cnt,base]=STG[lv];const k=LSTG-1;const P=k>=0?(PJS[lv]||[]).filter(r=>(r[2]||[]).includes(LSTG)):[];
- return `<div class="card pj gstg"><div class="pjh"><div><span class="cy">${base==='eindex'?'환경문제':'사회문제'} · 해결 단계</span><h3>${E(lv)}</h3></div><span class="msg">숫자 = 단계별 INDEX 수록 사업 수 · 칸을 누르면 그 단계 사업이 열립니다</span></div>
+ return `<div class="card pj gstg"><div class="pjh"><div><span class="cy">${base==='eindex'?'환경문제':'사회문제'} · 해결 단계</span><h3>${E(lv)}</h3></div><span class="msg">숫자 = 단계별 INDEX 수록 사업 수 · 칸을 누르면 그 단계 사업이 열립니다 · <a class="pjask" href="${ASKP(lv)}" target="_top" rel="noopener">이 문제로 문의 →</a></span></div>
  <div class="strip" style="grid-template-columns:repeat(${st.length},minmax(0,1fr))">${st.map((n,x)=>`<button type="button" class="cell${(cnt[x]??0)<=3?' thin':''}${k===x?' sel':''}" data-gstg="${x+1}" aria-expanded="${k===x}"><b>${cnt[x]??''}</b><span>${E(n)}</span></button>`).join('')}</div>
  ${k>=0?`<div class="pjpan"><div class="pjph"><b>「${E(st[k])}」 단계 사업 ${P.length}건</b><span class="msg">리더뉴 ${base==='eindex'?'환경문제혁신':'사회문제혁신'} INDEX 수록 기준 · 아래 카드는 이 중 리더뉴 INDEX 기관 페이지가 있는 곳만 보입니다</span><button class="lclr" data-gstg="${LSTG}">닫기 ×</button></div><div class="pjog">${P.map(r=>`<div class="pjo">${r[3]>=0?`<a href="${OH()}${r[3]}"><b>${E(r[0])}</b></a>`:`<b>${E(r[0])}</b>`}<span title="${E(r[1])}">${E(r[1])}</span>${r[4]?`<a class="pjsrc" href="${E(r[4])}" target="_blank" rel="noopener">출처 ↗</a>`:''}</div>`).join('')||'<p class="note">이 단계에 수록된 사업이 아직 없습니다.</p>'}</div></div>`:''}</div>`}
 function pickHead(){const me=DK.st.me;return `<section class="pickhd"><h1>어느 기관의 담당자인가요</h1><p class="lead">기관을 고르면 그 기관의 업무 화면이 열립니다. 업계·지역과의 비교, 신규 검토 과제, 협력·벤치마킹 대상, 보고서 초안을 한 화면에서 봅니다.</p>${me!=null&&IX[me]?`<a class="pickme" href="#desk-${me}">최근에 연 기관 · <b>${E(IX[me][1])}</b> 이어서 열기 →</a>`:''}</section>`}
