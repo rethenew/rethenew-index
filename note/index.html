@@ -1919,7 +1919,7 @@ addEventListener('hashchange',()=>{render().then(()=>scrollTo(0,0))});render();
 (function(){
   if(window.parent===window) return;
   document.documentElement.classList.add('emb');
-  var last=0, timer=null;
+  var last=0, sent=0, hold=0, timer=null;
   window.__rtnView=null;
   window.addEventListener('message',function(e){
     var d=e&&e.data; if(!d||d.type!=='rtn-view') return;
@@ -1943,7 +1943,8 @@ addEventListener('hashchange',()=>{render().then(()=>scrollTo(0,0))});render();
     var v=contentHeight();
     if(!v||v<300) return;
     if(Math.abs(v-last)<40) return;
-    last=v;
+    if(v<sent && Date.now()<hold) return;  /* 기관 바꾸는 중(불러오는 동안) 잠깐 줄어드는 것 막기 */
+    last=v; sent=v;
     try{ window.parent.postMessage({type:'rtn-height', height:v},'*'); }catch(e){}
   }
   function ping(){ clearTimeout(timer); timer=setTimeout(send,150); }
@@ -1952,9 +1953,10 @@ addEventListener('hashchange',()=>{render().then(()=>scrollTo(0,0))});render();
   window.addEventListener('resize',ping);
   ['click','keyup','change','toggle'].forEach(function(ev){ document.addEventListener(ev,ping,true); });
   setInterval(send,2500);
+  if(window.ResizeObserver){ try{ new ResizeObserver(ping).observe(document.body); var ap=document.querySelector('.app'); if(ap) new ResizeObserver(ping).observe(ap); }catch(e){} }
   ping();
   /* 기관·화면이 바뀌면 아임웹 쪽을 INDEX 맨 위로 (rtn-top, 표준 메시지) */
-  window.addEventListener('hashchange',function(){ try{ window.parent.postMessage({type:'rtn-top'},'*'); }catch(e){} last=0; ping(); });
+  window.addEventListener('hashchange',function(){ try{ window.parent.postMessage({type:'rtn-top'},'*'); }catch(e){} hold=Date.now()+3000; last=0; ping(); });
 })();
 </script>
 <style>html.emb .app{min-height:0}html.emb aside{position:static;height:auto;border-top:1px solid #e3e6ec}</style>
