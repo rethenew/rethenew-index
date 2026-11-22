@@ -8,7 +8,7 @@ import os,re,sys,subprocess,tempfile,json
 KIND,BR=sys.argv[1],sys.argv[2]
 ROOM=BR.replace('room-','',1)
 OUT=os.environ.get('RESULT','result.md')
-PAGES={'company':['company.html'],'public':['public.html'],'csr':['index.html','pr.html'],'climate':['climate.html'],'map':['map.html'],'farm':['farm.html'],'issue':['sindex.html'],'env':['eindex.html','env.html']}   # issue: 사회문제 INDEX (10/15) · env: 기후·환경문제 INDEX (10/16, 리덱스 환경문제 담당)
+PAGES={'note':['note/'],'company':['company.html'],'public':['public.html'],'csr':['index.html','pr.html'],'climate':['climate.html'],'map':['map.html'],'farm':['farm.html'],'issue':['sindex.html'],'env':['eindex.html','env.html']}   # issue: 사회문제 INDEX (10/15) · env: 기후·환경문제 INDEX (10/16, 리덱스 환경문제 담당)
 GEN_INDEX=('data/','auto/')                                   # 공개 데이터는 총괄 도구가 만든다 — 방이 올린 것은 무시
 GEN_DATA=('manifest.json','master/','db/','feeds/','auto/','indexes/csr/feed_cases.json')  # run_all이 다시 만드는 것 — 무시
 FORBID=['mailto:','ceo@','hani@','claude.ai/artifact']
@@ -17,7 +17,7 @@ def sh(*a,check=True):
     if check and r.returncode: raise SystemExit(f'명령 실패: {" ".join(a)}\n{r.stderr}')
     return r.stdout
 def allowed(p):
-    if KIND=='index': return p in PAGES.get(ROOM,[])
+    if KIND=='index': return p in PAGES.get(ROOM,[]) or any(x.endswith('/') and p.startswith(x) for x in PAGES.get(ROOM,[]))
     return p.startswith(f'indexes/{ROOM}/') or p.startswith(f'sources/{ROOM}/')
 def gen(p): return p.startswith(GEN_INDEX) if KIND=='index' else (p in GEN_DATA or p.startswith(GEN_DATA))
 log=[]; bad=[]
@@ -50,6 +50,7 @@ for st,p in take:
 if KIND=='index':
     for st,p in take:
         if st=='D': continue
+        if not p.endswith('.html'): continue   # note/ 자료 파일(json)은 페이지 검사 대상 아님
         new=open(p,'rb').read(); t=new.decode('utf-8','replace')
         for f in FORBID:
             if f in t: bad.append(f'{p}: 금지 문자열 「{f}」')
