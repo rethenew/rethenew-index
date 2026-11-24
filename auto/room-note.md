@@ -1,7 +1,6 @@
 # index · room-note → main : ✅ 반영
 
-- 브랜치 끝 91d29ee · 갈라진 곳 438d49b · main 438d49b
-- 반영: note/o/07.json
+- 브랜치 끝 97f514e · 갈라진 곳 e4d9262 · main e4d9262
 - 반영: note/o/08.json
 - 반영: note/o/09.json
 - 반영: note/o/10.json
@@ -14,5 +13,4 @@
 - 반영: note/o/17.json
 - 반영: note/o/18.json
 - 반영: note/o/19.json
-- 반영: note/o/20.json
-- 상태: success · 2026-11-24 13:36 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45327544241
+- 상태: success · 2026-11-24 22:17 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45401855976
