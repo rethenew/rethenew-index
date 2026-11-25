@@ -1117,7 +1117,7 @@ function dkDocx(root,title){const X=s=>String(s).replace(/&/g,'&amp;').replace(/
 /* ---------- 담당자 노트 (체험판) — 모든 기관에서 #desk-<i> 로 연다 ---------- */
 const DK={st:{me:null,orgs:{}},mode:'local',ref:null,busy:false,again:false,open:null,tab:'own',peer:null,pick:false};
 const DKK='ln_desk_v1';
-function zzFix(L){return (Array.isArray(L)?L:[]).filter(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.k==='string'&&typeof x.t==='string').slice(0,600).map(x=>({id:x.id,k:x.k,t:x.t,s:typeof x.s==='string'?x.s:'',u:typeof x.u==='string'?x.u:'',o:Number.isInteger(x.o)?x.o:null,on:typeof x.on==='string'?x.on:'',at:+x.at||0,pin:!!x.pin}))}
+function zzFix(L){return (Array.isArray(L)?L:[]).filter(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.k==='string'&&typeof x.t==='string').slice(0,600).map(x=>({id:x.id,k:x.k,t:x.t,s:typeof x.s==='string'?x.s:'',u:typeof x.u==='string'&&/^(https?:\/\/|#)/.test(x.u)?x.u:'',o:Number.isInteger(x.o)?x.o:null,on:typeof x.on==='string'?x.on:'',at:+x.at||0,pin:!!x.pin}))}
 function dkFix(s){const o=s&&typeof s==='object'?s:{};const orgs=o.orgs&&typeof o.orgs==='object'?o.orgs:{};return {me:Number.isInteger(o.me)?o.me:null,orgs,zz:zzFix(o.zz)}}
 function dkLoad(){try{const v=JSON.parse(localStorage.getItem(DKK));if(v)DK.st=dkFix(v)}catch(e){}}
 function dkSaveLocal(){try{localStorage.setItem(DKK,JSON.stringify(DK.st))}catch(e){}}
