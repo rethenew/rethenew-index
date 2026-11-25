@@ -1,14 +1,6 @@
 # index · room-note → main : ✅ 반영
 
-- 브랜치 끝 6ad7a6e · 갈라진 곳 e51448e · main e51448e
-- 반영: note/index.html
-- 반영: note/o/00.json
-- 반영: note/o/01.json
-- 반영: note/o/02.json
-- 반영: note/o/03.json
-- 반영: note/o/04.json
-- 반영: note/o/05.json
-- 반영: note/o/06.json
+- 브랜치 끝 13745d5 · 갈라진 곳 002cb6f · main 002cb6f
 - 반영: note/o/07.json
 - 반영: note/o/08.json
 - 반영: note/o/09.json
@@ -25,13 +17,4 @@
 - 반영: note/o/20.json
 - 반영: note/o/21.json
 - 반영: note/o/22.json
-- 반영: note/o/23.json
-- 반영: note/o/24.json
-- 반영: note/o/25.json
-- 반영: note/o/26.json
-- 반영: note/o/27.json
-- 반영: note/o/28.json
-- 반영: note/o/29.json
-- 반영: note/sx.json
-- 검사 note/index.html: 1,414,078바이트 · 스크립트 2개 문법 확인
-- 상태: success · 2026-11-25 05:16 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45479087186
+- 상태: success · 2026-11-25 13:16 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45545631098
