@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>예비·초기창업팀 AI 활용 가이드 | KSAI</title>
+<style>
+:root{--ink:#111;--sub:#555;--line:#e3e3e3;--soft:#f6f6f5}
+*{box-sizing:border-box}html,body{margin:0;background:#fff;color:var(--ink)}
+body{font-family:'Freesentation','Pretendard','Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.75;word-break:keep-all}
+.top{background:#000;color:#fff;padding:44px 0 36px}.top .k{font-size:12px;letter-spacing:.22em;opacity:.6}
+main,.top>div{max-width:980px;margin:0 auto;padding:0 32px}
+h1.t{font-size:34px;line-height:1.3;margin:10px 0 6px;font-weight:700}
+main{padding-top:8px;padding-bottom:80px}
+main>p:first-child{display:none}
+h2{font-size:24px;margin:56px 0 14px;padding-top:22px;border-top:2px solid var(--ink)}
+h3{font-size:18px;margin:34px 0 10px}
+p{margin:10px 0}ol,ul{padding-left:22px}li p{margin:4px 0}
+.tw{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
+th,td{border-bottom:1px solid var(--line);padding:11px 12px;text-align:left;vertical-align:top}
+th{background:var(--ink);color:#fff;font-weight:600;white-space:nowrap}
+tr:nth-child(even) td{background:var(--soft)}
+pre{background:var(--soft);border-left:3px solid var(--ink);padding:16px 18px;white-space:pre-wrap;font-family:inherit;font-size:14.5px;line-height:1.7;margin:10px 0 18px}
+code{font-family:inherit}a{color:var(--ink)}
+.ft{border-top:1px solid var(--line);margin-top:60px;padding-top:18px;font-size:13px;color:#888}
+@media(max-width:700px){h1.t{font-size:26px}main,.top>div{padding:0 18px}}
+</style></head><body>
+<div class="top"><div><div class="k">KSAI ACADEMY · AI 교육</div><h1 class="t" id="예비초기창업팀-ai-활용-가이드">예비·초기창업팀 AI 활용 가이드</h1></div></div>
+<main><p><time data-atom="date" datetime="2026-11-04">2026-11-04</time></p>
+<h2 id="요약">요약</h2>
+<p>예비·초기창업팀은 범용 AI 1개를 중심에 두고, 업무별 전문 도구 2~3개만 붙이는 구성이 가장 효율적입니다. 도구 수보다 &quot;어떤 업무를 AI에 넘기고, 어떤 판단을 사람이 하는가&quot;를 먼저 정해야 합니다.</p>
+<p>핵심 원칙 3가지:</p>
+<ol><li><p><strong>범용 AI 1개를 주력으로 정합니다.</strong> ChatGPT·Claude·Gemini 중 하나를 팀 공용으로 정하고 프롬프트를 축적합니다.</p></li><li><p><strong>숫자·출처는 반드시 사람이 검증합니다.</strong> 시장규모·통계·법령·지원사업 조건은 AI가 틀리게 말하는 대표 영역입니다.</p></li><li><p><strong>고객 데이터·미공개 사업 아이디어는 입력 기준을 정합니다.</strong> 무료 요금제는 학습 활용 여부를 확인하고, 민감 정보는 가립니다.</p></li></ol>
+<p>이 문서 구성: ① AI 서비스 종류 → ② 창업 단계별 AI 업무 → ③ 복사해서 쓰는 프롬프트 → ④ 예산별 도구 조합과 주의사항</p>
+<h2 id="1-ai-서비스-종류">1. AI 서비스 종류</h2>
+<p>창업팀에 필요한 AI는 9개 유형으로 나뉩니다. 처음에는 ①번 1개 + 팀 업무에 맞는 ②~⑨ 중 2~3개면 충분합니다.</p>
+<table><thead><tr><th>유형</th><th>대표 서비스</th><th>주로 하는 일</th><th>도입 우선순위</th></tr></thead><tbody><tr><td>① 범용 대화형 AI</td><td>ChatGPT, Claude, Gemini, 뤼튼</td><td>기획·글쓰기·요약·분석·번역 등 대부분의 사무 업무</td><td>필수 (1개 주력)</td></tr><tr><td>② 리서치·검색 AI</td><td>Perplexity, ChatGPT·Claude·Gemini의 리서치 기능</td><td>시장조사, 경쟁사 조사, 출처 달린 자료 수집</td><td>높음</td></tr><tr><td>③ 문서·발표 자료</td><td>Gamma, 미리캔버스, Notion AI, MS Copilot</td><td>사업계획서 초안, IR 덱, 소개서, 회의록 정리</td><td>높음</td></tr><tr><td>④ 디자인·이미지</td><td>Canva, 미리캔버스, Midjourney, ChatGPT 이미지 생성</td><td>로고 시안, 상세페이지, SNS 카드뉴스, 목업 이미지</td><td>중간</td></tr><tr><td>⑤ 영상·음성</td><td>Vrew, CapCut, 클로바노트, ElevenLabs</td><td>홍보 영상 편집, 자막, 회의 녹취, 내레이션</td><td>중간</td></tr><tr><td>⑥ 노코드·코딩 (MVP 제작)</td><td>Lovable, Bolt.new, Replit, Cursor, Claude Code</td><td>랜딩페이지, 시제품 웹앱, 설문·예약 기능 구현</td><td>MVP 단계에서 높음</td></tr><tr><td>⑦ 업무 자동화</td><td>Zapier, Make, n8n</td><td>폼 응답→시트 정리→메일 발송 같은 반복 작업 연결</td><td>낮음 (반복 업무가 생긴 뒤)</td></tr><tr><td>⑧ 회의·협업</td><td>Notion AI, 클로바노트, tl;dv, Otter</td><td>회의 녹음·요약, 할 일 추출, 팀 위키 정리</td><td>중간</td></tr><tr><td>⑨ 고객응대·영업</td><td>채널톡 AI, 각종 AI 챗봇, CRM 내장 AI</td><td>FAQ 자동응답, 리드 정리, 영업 메일 초안</td><td>고객이 생긴 뒤</td></tr></tbody></table>
+<p>도구 선택 기준은 3가지입니다. <strong>한국어 품질</strong>, <strong>무료 요금제 범위</strong>, <strong>팀원 간 공유 가능 여부</strong>. 요금·기능은 수시로 바뀌므로 도입 전 각 서비스 요금 페이지에서 확인합니다.</p>
+<h2 id="2-창업-단계별-ai로-할-수-있는-업무">2. 창업 단계별 AI로 할 수 있는 업무</h2>
+<p>AI가 가장 크게 시간을 줄여주는 구간은 시장조사·사업계획서·MVP 제작입니다. 반대로 고객 인터뷰와 최종 의사결정은 사람이 직접 해야 하는 구간입니다.</p>
+<table><thead><tr><th>단계</th><th>AI에 맡길 업무</th><th>사람이 직접 할 업무</th><th>추천 유형</th></tr></thead><tbody><tr><td>1. 아이디어 검증</td><td>문제 정의 정리, 페르소나 초안, 반론·리스크 도출, 유사 서비스 탐색</td><td>실제 고객 5~10명 인터뷰, 문제의 절실함 판단</td><td>① ②</td></tr><tr><td>2. 시장·경쟁 조사</td><td>TAM·SAM·SOM 산정 논리, 경쟁사 비교표, 산업 동향 요약, 관련 법·규제 1차 탐색</td><td>통계 원문 확인, 수치 출처 검증, 규제는 전문가 확인</td><td>② ①</td></tr><tr><td>3. 비즈니스 모델</td><td>린캔버스·BM 캔버스 초안, 가격 시나리오, 수익 구조 대안 비교</td><td>가격·채널 최종 결정</td><td>①</td></tr><tr><td>4. 사업계획서·지원사업</td><td>공고문 요약, 평가항목별 목차 설계, 문장 다듬기, 예상 질문 뽑기</td><td>핵심 차별성·실적·수치 작성, 발표 시 본인 말로 설명 가능한지 점검</td><td>① ③</td></tr><tr><td>5. 브랜딩·디자인</td><td>네이밍 후보, 슬로건, 로고 시안, 상세페이지·카드뉴스 초안</td><td>상표 등록 가능 여부 확인(KIPRIS), 최종 선택</td><td>① ④</td></tr><tr><td>6. MVP·시제품</td><td>랜딩페이지, 사전신청 폼, 간단한 웹앱, 데모 화면</td><td>핵심 기능 범위 결정, 개인정보·결제 등 보안 검토</td><td>⑥</td></tr><tr><td>7. 마케팅·고객 확보</td><td>SNS 콘텐츠 캘린더, 광고 문구 A/B안, 블로그 초안, 숏폼 편집</td><td>브랜드 톤 최종 확인, 성과 지표 판단</td><td>① ④ ⑤</td></tr><tr><td>8. 운영·관리</td><td>회의록 요약, 업무 매뉴얼, 계약서 검토 포인트 정리, 반복업무 자동화</td><td>계약 최종 판단(법무 자문), 세무·노무 신고</td><td>⑦ ⑧</td></tr><tr><td>9. 투자유치·IR</td><td>IR 덱 구조, 투자자 예상 질문과 답변, 재무 추정 가정 점검</td><td>재무 수치 확정, 투자 조건 협상</td><td>① ③</td></tr></tbody></table>
+<h2 id="3-바로-쓰는-프롬프트-모음">3. 바로 쓰는 프롬프트 모음</h2>
+<p>좋은 프롬프트는 <strong>역할 · 배경 · 과업 · 형식 · 제약</strong> 5요소를 갖춥니다. 아래 프롬프트의 [대괄호]만 바꿔서 사용합니다.</p>
+<h3 id="0-기본-설정-모든-대화-첫머리에-붙이기">0. 기본 설정 (모든 대화 첫머리에 붙이기)</h3>
+<pre><code class="language-text">너는 [업종] 분야 초기 스타트업을 돕는 사업 전략가다.
+우리 팀 정보: 아이템 [한 줄 설명], 목표 고객 [누구], 현재 단계 [예비창업/사업자 등록 후 N개월], 팀 구성 [인원·역할].
+답변 원칙: 1) 근거가 없는 수치는 &quot;추정&quot;이라고 표시 2) 모르면 모른다고 말할 것 3) 결론부터, 표로 정리 4) 마지막에 내가 직접 확인해야 할 사항을 3개 이내로 제시</code></pre>
+<h3 id="1-아이디어-검증">1. 아이디어 검증</h3>
+<pre><code class="language-text">아래 창업 아이디어를 냉정하게 검증해줘.
+아이디어: [설명]
+1) 이 아이디어가 해결하는 문제를 한 문장으로 다시 정의
+2) 이 문제를 가장 절실하게 겪는 고객군 3개와 그 이유
+3) 실패 가능성이 높은 이유 5가지 (심사위원·투자자 관점)
+4) 위 리스크를 2주 안에 저비용으로 검증할 방법
+칭찬은 빼고 약점 위주로 써줘.</code></pre>
+<h3 id="2-고객-인터뷰-설계">2. 고객 인터뷰 설계</h3>
+<pre><code class="language-text">[목표 고객]을 대상으로 30분 문제 검증 인터뷰를 하려고 해.
+- 유도 질문 없이 과거 실제 행동을 묻는 질문 10개 (마미 테스트 원칙)
+- 질문별로 확인하려는 가설
+- 인터뷰 후 기록할 항목 양식 (표)
+를 만들어줘.</code></pre>
+<h3 id="3-시장규모tamsamsom-산정">3. 시장규모(TAM·SAM·SOM) 산정</h3>
+<pre><code class="language-text">[아이템]의 국내 시장규모를 TAM·SAM·SOM으로 산정하는 논리를 설계해줘.
+- 탑다운과 바텀업 두 가지 방식 각각
+- 각 계산에 필요한 통계 항목과 찾을 수 있는 공공 출처(통계청 KOSIS, 산업별 협회 등)
+- 수치는 내가 직접 찾아 넣을 수 있도록 빈칸 계산식으로
+수치를 지어내지 마.</code></pre>
+<h3 id="4-경쟁사-분석">4. 경쟁사 분석</h3>
+<pre><code class="language-text">[아이템]의 국내외 경쟁 서비스를 조사해서 비교표로 정리해줘.
+항목: 서비스명, 운영사, 핵심 기능, 가격, 목표 고객, 강점, 약점, 출처 링크
+마지막에 우리 아이템이 차별화할 수 있는 빈 자리 3개를 제시해줘.</code></pre>
+<p>※ 리서치·검색 기능이 있는 AI에서 사용하고, 출처 링크를 직접 열어 확인합니다.</p>
+<h3 id="5-비즈니스-모델린캔버스">5. 비즈니스 모델(린캔버스)</h3>
+<pre><code class="language-text">아래 정보로 린캔버스 9개 칸을 채워줘.
+[아이템·고객·문제 설명]
+수익원은 3가지 대안(구독형/건당 과금/B2B 라이선스 등)으로 비교하고, 각 대안의 초기 6개월 리스크를 표로 정리해줘.</code></pre>
+<h3 id="6-정부지원사업-공고-분석">6. 정부지원사업 공고 분석</h3>
+<pre><code class="language-text">아래 공고문을 분석해줘.
+[공고문 붙여넣기 또는 파일 첨부]
+1) 신청 자격과 제외 대상 (내가 해당되는지 체크리스트로)
+2) 평가 항목과 배점
+3) 사업계획서 양식의 목차별로 평가위원이 확인하려는 것
+4) 놓치기 쉬운 제출 서류와 마감 일정</code></pre>
+<h3 id="7-사업계획서-초안첨삭">7. 사업계획서 초안·첨삭</h3>
+<pre><code class="language-text">[예비창업패키지 등] 사업계획서의 [문제인식/실현가능성/성장전략/팀구성] 항목을 작성 중이야.
+내가 쓴 초안: [붙여넣기]
+평가위원 관점에서 1) 근거가 약한 문장 2) 추상적인 표현 3) 수치가 필요한 곳을 표시하고, 개선안을 제시해줘.
+내가 쓰지 않은 사실·실적·수치는 추가하지 마.</code></pre>
+<h3 id="8-발표피칭-대비">8. 발표(피칭) 대비</h3>
+<pre><code class="language-text">아래 사업계획서를 보고 심사위원이 할 만한 날카로운 질문 15개를 뽑아줘.
+[사업계획서 요약]
+질문별로 1) 질문 의도 2) 30초 답변 가이드 3) 준비해야 할 근거 자료를 표로 정리해줘.</code></pre>
+<h3 id="9-ir-덱-구조">9. IR 덱 구조</h3>
+<pre><code class="language-text">시드 투자 유치용 IR 덱 10~12장 구조를 짜줘.
+우리 정보: [아이템·고객·현재 지표·팀·필요 자금]
+장마다 제목(메시지형 한 문장), 들어갈 핵심 내용, 필요한 데이터·그래프를 제시해줘.</code></pre>
+<h3 id="10-브랜드-네이밍">10. 브랜드 네이밍</h3>
+<pre><code class="language-text">[아이템] 브랜드명 후보 20개를 제안해줘.
+조건: 한글·영문 모두 발음 쉬움, 3음절 이내, 도메인·SNS 계정 확보 가능성 고려, 업종 이미지 [원하는 느낌]
+각 후보의 의미와 약점도 한 줄씩 적어줘.</code></pre>
+<p>※ 최종 후보는 KIPRIS에서 상표 검색을 반드시 확인합니다.</p>
+<h3 id="11-mvp랜딩페이지-제작-lovablebolt-등에-입력">11. MVP·랜딩페이지 제작 (Lovable·Bolt 등에 입력)</h3>
+<pre><code class="language-text">[아이템] 사전 신청을 받는 랜딩페이지를 만들어줘.
+구성: 1) 한 줄 가치 제안 2) 고객이 겪는 문제 3가지 3) 해결 방식 4) 사용 장면 3단계 5) 사전신청 폼(이름, 이메일, 관심 이유) 6) FAQ 5개
+톤: [신뢰감 있는/친근한], 모바일 우선, 한국어</code></pre>
+<h3 id="12-마케팅-콘텐츠">12. 마케팅 콘텐츠</h3>
+<pre><code class="language-text">[목표 고객]을 대상으로 [인스타그램/블로그] 4주 콘텐츠 캘린더를 짜줘.
+주 3회, 콘텐츠 유형(정보형·사례형·참여형) 비율 배분, 게시물별 제목·핵심 메시지·CTA를 표로 정리하고,
+첫 주 게시물 3개는 본문 초안까지 써줘.</code></pre>
+<h3 id="13-회의록업무-정리">13. 회의록·업무 정리</h3>
+<pre><code class="language-text">아래 회의 녹취를 정리해줘.
+[녹취 텍스트]
+형식: 1) 결정된 사항 2) 담당자별 할 일(마감일 포함) 3) 다음 회의 전까지 확인할 쟁점
+결정되지 않은 내용을 결정된 것처럼 쓰지 마.</code></pre>
+<h3 id="14-계약서-1차-검토">14. 계약서 1차 검토</h3>
+<pre><code class="language-text">아래 [용역/투자/공동창업자] 계약서 초안에서 우리에게 불리할 수 있는 조항을 찾아줘.
+[계약서 붙여넣기 — 상대방 개인정보는 가리기]
+조항별로 1) 리스크 2) 수정 요청 문구 예시 3) 변호사에게 꼭 물어볼 질문을 정리해줘.</code></pre>
+<p>※ AI 검토는 1차 점검용이며 최종 판단은 법률 전문가와 합니다.</p>
+<h2 id="4-예산별-도구-조합과-주의사항">4. 예산별 도구 조합과 주의사항</h2>
+<p>예비창업 단계는 무료 조합으로 시작하고, 반복 사용이 확인된 도구 1개부터 유료로 전환합니다.</p>
+<table><thead><tr><th>예산 구간</th><th>추천 조합</th><th>적합한 팀</th></tr></thead><tbody><tr><td>무료</td><td>범용 AI 1개(무료) + 미리캔버스·Canva 무료 + 클로바노트 + Vrew 무료</td><td>아이디어 검증·예비창업패키지 준비 단계</td></tr><tr><td>월 3~5만 원 수준</td><td>범용 AI 유료 1개 + Gamma 또는 Canva 유료</td><td>사업계획서·IR 자료를 자주 만드는 팀</td></tr><tr><td>월 10만 원 내외</td><td>위 조합 + 노코드 앱빌더(Lovable·Bolt 등) 1개</td><td>MVP·랜딩페이지를 직접 만드는 팀</td></tr></tbody></table>
+<p>금액은 대략적인 범위입니다. 해외 서비스는 달러 결제·사용량 과금이 많아 실제 청구액이 달라질 수 있습니다. 참고로 <a href="https://automationatlas.io/guides/lovable-vs-bolt-new-2026-comparison/">Lovable은 월 25달러, Bolt.new는 월 20달러부터</a> 시작하며, 대부분 사용량에 따라 추가 과금됩니다.</p>
+<h3 id="주의사항">주의사항</h3>
+<ul><li><p><strong>수치·출처 검증</strong>: AI가 제시한 시장규모·통계·인용은 &quot;자료&quot;가 아니라 &quot;확인할 질문&quot;으로 취급합니다. 원문 출처를 열어보지 않은 수치는 사업계획서에 넣지 않습니다.</p></li><li><p><strong>정보 보안</strong>: 고객 개인정보, 미공개 기술, 계약 정보, 내부 재무자료는 외부 AI에 그대로 입력하지 않습니다. 무료 요금제는 입력 데이터의 학습 활용 설정을 확인합니다.</p></li><li><p><strong>지원사업 서류</strong>: AI 활용 자체가 감점 사유는 아니지만, 해당 공고의 양식·윤리 기준을 반드시 확인합니다. 발표에서 본인 말로 설명하지 못하는 문장은 빼는 것이 원칙입니다.</p></li><li><p><strong>AI 창업 아이템 주의</strong>: 범용 생성형 AI API를 단순 호출하는 수준의 아이템은 일부 AI 특화 지원사업에서 <a href="https://thevc.kr/grants/9b085a9f4e0ae4bd2306c029">지원 불가로 명시</a>되기도 합니다. 자체 데이터·도메인 역량을 차별성으로 제시해야 합니다.</p></li><li><p><strong>도구 과다 도입 경계</strong>: 도구를 늘리는 것보다 주력 AI 1개로 팀 공용 프롬프트를 쌓는 것이 효과가 큽니다.</p></li></ul>
+<h3 id="sources">Sources</h3>
+<ul><li><p><a href="https://automationatlas.io/guides/lovable-vs-bolt-new-2026-comparison/">Lovable vs Bolt.new 2026 비교 — Automation Atlas</a></p></li><li><p><a href="https://thevc.kr/grants/9b085a9f4e0ae4bd2306c029">2026년 용인시 AI 데이터 기반 창업 지원 공고 — THE VC</a></p></li><li><p><a href="https://eopla.net/magazines/45214">사업계획서 AI 활용 시 검증 이슈 — 이플라 매거진</a></p></li></ul>
+<div class="ft">KSAI 한국지속가능혁신원 · ACADEMY@ksai.co.kr</div></main>
+<script>document.querySelectorAll('table').forEach(function(t){var w=document.createElement('div');w.className='tw';t.parentNode.insertBefore(w,t);w.appendChild(t)})</script>
+</body></html>
