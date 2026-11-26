@@ -1595,7 +1595,7 @@ function acHTML(q){q=q.trim();if(!q)return '';const qj=/^[ㄱ-ㅎ]+$/.test(q);
  if(progs.length)h+=`<div class="acg">사업</div>`+progs.map(([p,r])=>`<a class="acopt" href="#o-${r[0]}-chron"><b>${hl(p,q)}</b><small>${E(r[1])} · 사업 연대기</small></a>`).join('');
  if(cats.length)h+=`<div class="acg">분류</div><div class="acchips">`+cats.slice(0,6).map(([m,f])=>`<button class="acopt acchip" data-lm2="${m}" data-lv2="${E(f)}">${E(f)} <small>${cnt(m,f)}</small></button>`).join('')+`</div>`;
  if(!qj&&q.length>=2){if(!SX){if(Date.now()-SXERR>20000)sxLoad().then(d=>{const el=$('lq');if(el&&el.value.trim()===q)el.dispatchEvent(new Event('input'))});h+=`<div class="acg">사회문제·지역문제·사업</div><p class="acnone">${SXERR?'내용 검색 자료를 불러오지 못했습니다. 잠시 뒤 다시 입력해 주십시오.':'내용을 찾는 중…'}</p>`}
-  else{const H=sxFind(q);if(H.length){const ql=q.toLowerCase();const G=sxGroups(H,q).filter(g=>g.lab.toLowerCase().includes(ql));const P=G.filter(g=>g.k==='사회문제'||g.k==='지역문제');const S=(P.length?P:G).slice(0,6);ins((S.length?`<div class="acg">${P.length?'사회문제·지역문제':'사업·활동'} <small>${(P.length?P:G).length}가지</small></div>`:`<div class="acg">사회문제·지역문제·사업</div>`)+S.map(g=>{if(g.k==='사회문제'&&PGM[g.lab])return `<button class="acopt" data-lm2="grp" data-lv2="${E(g.lab)}"><b>${hl(g.lab,q)}</b><small>${E(PGM[g.lab])} · ${g.n}곳</small></button>`;if(g.n===1){const [i,v]=[...g.ids.entries()][0];const r=IX[i];return `<a class="acopt" href="#o-${i}-${r[2]==='L'&&v==='probs'?'lprob':v}"><b>${hl(g.lab,q)}</b><small>${E(r[1])} · ${E(g.k)}</small></a>`}return `<button class="acopt" data-sxl="${SXG.indexOf(g)}"><b>${hl(g.lab,q)}</b><small>${E(g.k)} · ${g.n}곳</small></button>`}).join('')+`<button class="acopt acall" data-lqc="${E(q)}">내용 결과 ${H.length}건 모두 보기 →</button>`)}}}
+  else{const H=sxFind(q);if(H.length){const ql=q.toLowerCase();const G=sxGroups(H,q);const P=G.filter(g=>g.k==='사회문제'||g.k==='지역문제');const S=(P.length?P:G).slice(0,6);ins((S.length?`<div class="acg">${P.length?'사회문제·지역문제':'사업·활동'} <small>${(P.length?P:G).length}가지</small></div>`:`<div class="acg">사회문제·지역문제·사업</div>`)+S.map(g=>{if(g.k==='사회문제'&&PGM[g.lab])return `<button class="acopt" data-lm2="grp" data-lv2="${E(g.lab)}"><b>${hl(g.lab,q)}</b><small>${E(PGM[g.lab])} · ${g.n}곳</small></button>`;if(g.n===1){const [i,v]=[...g.ids.entries()][0];const r=IX[i];return `<a class="acopt" href="#o-${i}-${r[2]==='L'&&v==='probs'?'lprob':v}"><b>${hl(g.lab,q)}</b><small>${E(r[1])} · ${E(g.k)}</small></a>`}return `<button class="acopt" data-sxl="${SXG.indexOf(g)}"><b>${hl(g.lab,q)}</b><small>${E(g.k)} · ${g.n}곳</small></button>`}).join('')+`<button class="acopt acall" data-lqc="${E(q)}">내용 결과 ${H.length}건 모두 보기 →</button>`)}}}
  return h||`<p class="acnone">「${E(q)}」에 맞는 기관·사업·분류가 없습니다. 초성(ㅎㄱㅈㄹ)이나 업종 이름으로도 찾을 수 있습니다.</p>`}
 
 function cmpBar(){if(!CMP.length)return '';
@@ -1656,9 +1656,13 @@ let FMT=0;new MutationObserver(()=>{cancelAnimationFrame(FMT);FMT=requestAnimati
 /* 내용 검색 (사회문제·지역문제·사업·사회적 가치) */
 let SX=null,SXP=null;
 let SXERR=0;function sxLoad(){if(!SXP)SXP=fetch('sx.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{SX=d;SXERR=0;return d}).catch(()=>{SXP=null;SXERR=Date.now();return null});return SXP}
-const SXK=['사회문제','지역문제','사업','지자체 사업','사회적 가치'];
-function sxFind(q){if(!SX)return [];const l=q.toLowerCase();const out=[];
- for(const [i,arr] of Object.entries(SX)){const r=IX[+i];if(!r||r[16]>=0)continue;for(const e of arr){if(e[1].toLowerCase().includes(l)||(e[3]||'').toLowerCase().includes(l))out.push([+i,...e])}}
+const SXK=['사회문제','지역문제','사업','지자체 사업','사회적 가치','소식','수상·인증','함께하는 곳'];
+/* 띄어쓰기 무시 + 같은 말 묶음 (환경유전자=eDNA=환경DNA, 시민과학=시민 과학) */
+const SXSYN=[['환경유전자','edna','환경dna','환경디엔에이'],['시민과학','시민과학자','citizenscience'],['생물다양성','biodiversity'],['탄소중립','넷제로','netzero'],['자립준비청년','보호종료아동']];
+const sxN=s=>String(s||'').toLowerCase().replace(/\s+/g,'');
+function sxQs(q){const n=sxN(q);const g=SXSYN.find(a=>a.some(w=>n.includes(w)));if(!g)return [n];const w=g.find(w=>n.includes(w));return g.map(x=>n.replace(w,x))}
+function sxFind(q){if(!SX)return [];const l=q.toLowerCase();const Q=sxQs(q);const out=[];
+ for(const [i,arr] of Object.entries(SX)){const r=IX[+i];if(!r||r[16]>=0)continue;for(const e of arr){const t=sxN(e[1])+'\u0001'+sxN(e[3]);if(Q.some(x=>t.includes(x)))out.push([+i,...e])}}
  return out.sort((x,y)=>SXK.indexOf(x[1])-SXK.indexOf(y[1])||(y[2].toLowerCase().includes(l)?1:0)-(x[2].toLowerCase().includes(l)?1:0))}
 
 let PGSIDE='사회문제',PGOPEN={};
