@@ -1,8 +1,37 @@
 # index · room-note → main : ✅ 반영
 
-- 브랜치 끝 f272058 · 갈라진 곳 3fcdfb4 · main 3fcdfb4
+- 브랜치 끝 a949ff0 · 갈라진 곳 22892a4 · main 22892a4
 - 반영: note/index.html
+- 반영: note/o/00.json
+- 반영: note/o/01.json
+- 반영: note/o/02.json
+- 반영: note/o/03.json
+- 반영: note/o/04.json
+- 반영: note/o/05.json
+- 반영: note/o/06.json
 - 반영: note/o/07.json
+- 반영: note/o/08.json
+- 반영: note/o/09.json
+- 반영: note/o/10.json
+- 반영: note/o/11.json
+- 반영: note/o/12.json
+- 반영: note/o/13.json
+- 반영: note/o/14.json
+- 반영: note/o/15.json
+- 반영: note/o/16.json
+- 반영: note/o/17.json
+- 반영: note/o/18.json
+- 반영: note/o/19.json
+- 반영: note/o/20.json
+- 반영: note/o/21.json
+- 반영: note/o/22.json
+- 반영: note/o/23.json
+- 반영: note/o/24.json
+- 반영: note/o/25.json
+- 반영: note/o/26.json
+- 반영: note/o/27.json
+- 반영: note/o/28.json
+- 반영: note/o/29.json
 - 반영: note/sx.json
-- 검사 note/index.html: 1,441,221바이트 · 스크립트 2개 문법 확인
-- 상태: success · 2026-11-26 19:16 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45799703187
+- 검사 note/index.html: 1,441,229바이트 · 스크립트 2개 문법 확인
+- 상태: success · 2026-11-27 05:17 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/45889886482
