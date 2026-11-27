@@ -1,37 +1,12 @@
 # index · room-note → main : ✅ 반영
 
-- 브랜치 끝 4df3e8e · 갈라진 곳 ed96deb · main ed96deb
+- 브랜치 끝 4977d21 · 갈라진 곳 20cc3c9 · main 20cc3c9
 - 반영: note/index.html
-- 반영: note/o/00.json
-- 반영: note/o/01.json
-- 반영: note/o/02.json
-- 반영: note/o/03.json
-- 반영: note/o/04.json
-- 반영: note/o/05.json
-- 반영: note/o/06.json
-- 반영: note/o/07.json
-- 반영: note/o/08.json
 - 반영: note/o/09.json
-- 반영: note/o/10.json
 - 반영: note/o/11.json
-- 반영: note/o/12.json
 - 반영: note/o/13.json
-- 반영: note/o/14.json
-- 반영: note/o/15.json
-- 반영: note/o/16.json
-- 반영: note/o/17.json
 - 반영: note/o/18.json
 - 반영: note/o/19.json
-- 반영: note/o/20.json
-- 반영: note/o/21.json
 - 반영: note/o/22.json
-- 반영: note/o/23.json
-- 반영: note/o/24.json
-- 반영: note/o/25.json
-- 반영: note/o/26.json
-- 반영: note/o/27.json
-- 반영: note/o/28.json
-- 반영: note/o/29.json
-- 반영: note/sx.json
-- 검사 note/index.html: 1,441,835바이트 · 스크립트 3개 문법 확인
-- 상태: success · 2026-11-28 05:16 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/46062493628
+- 검사 note/index.html: 1,442,542바이트 · 스크립트 3개 문법 확인
+- 상태: success · 2026-11-28 08:32 KST · 실행 https://github.com/rethenew/rethenew-index/actions/runs/46083055559
