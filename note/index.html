@@ -879,6 +879,16 @@ html.mob .bento{grid-template-columns:minmax(0,1fr)!important}
  .lcards .lpg{grid-area:p!important;padding:0!important;gap:0!important}.lcards .lpg b{font-size:13px!important;font-weight:500!important;color:var(--sub);padding-left:0!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}.lcards .lpg b::before{display:none!important}
  .lcards .lpg .nil{display:none}
 }
+
+/* 비교 담기 없앰 · 카드 어디를 눌러도 기관 페이지 (2026-11-28) */
+.lcmp,.cmpbar{display:none!important}
+.lcards .lgo:not(.pk){display:none!important}
+@media(min-width:821px){.lcards .lrw:not(:has(.pk)){grid-template-areas:"n n" "p p" "w w" "g g"!important;grid-template-rows:auto!important;align-content:start}}
+.lcards .lrw:not(:has(.pk)){position:relative;padding-bottom:18px!important;cursor:pointer}
+.lcards .lrw:not(:has(.pk)) .lrn::after{content:"";position:absolute;inset:0;z-index:1}
+.lcards .lrw .zzr,.lcards .lrw .zzb,.lcards .lrw .zzw,.lcards .lrw .zzl{position:relative;z-index:2}
+.lcards .lrw:hover .lrn b{text-decoration:underline}
+.lrw:not(.lrl):not(:has(.pk)) .lgo{grid-column:2}
 </style><style>
 .lsrch{display:flex;gap:12px;align-items:center;margin-bottom:14px}.lsrch input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;font:inherit;font-size:15px}.lsrch input:focus{outline:none;border-color:var(--fg)}.lsrch span{color:var(--mute);font-size:13px;white-space:nowrap}
 .lgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
