@@ -861,6 +861,24 @@ html.mob .bento{grid-template-columns:minmax(0,1fr)!important}
  .lseg{display:none!important}
  .bt-a .bk,.bt-a .bs{display:none}.bt-a h1{font-size:20px!important}.bt-a{padding:14px!important}.bn button b{font-size:20px!important}
 }
+
+/* 모바일 목록: 비교 담기 없음 · 분류는 고르기 상자 · 기관은 한 줄 목록 (2026-11-28) */
+.lcsel{display:none}
+@media(max-width:820px){
+ .lcsel{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:8px 12px;box-shadow:var(--sh)}
+ .lcsel span{font-size:12.5px;font-weight:800;color:var(--mute);white-space:nowrap}
+ .lcsel select{flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;color:var(--fg);border:1px solid var(--line2);border-radius:10px;padding:9px 10px;background:var(--card)}
+ .lcsel+nav.lcats{display:none!important}
+ .lcards{gap:0!important;background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden}
+ .lcards .lrw{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"n w" "p p"!important;grid-template-rows:auto!important;gap:2px 10px!important;padding:12px 14px!important;border-radius:0!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--line)!important;text-align:left!important;position:relative}
+ .lcards .lrw:last-child{border-bottom:0!important}.lcards .lrw:hover{box-shadow:none!important;background:var(--soft)!important}
+ .lcards .lrn{margin:0!important;align-items:flex-start!important}.lcards .lrn .lk,.lcards .lgr,.lcards .lcmp,.lcards .lgo,.lcards .lpg small,.lcards .zzr,.lcards .zzb{display:none!important}
+ .lcards .lrn::after{content:"";position:absolute;inset:0}
+ .lcards .lrn b{font-size:15px!important}
+ .lcards .lnw{grid-area:w!important;align-self:center!important;padding:0!important;font-size:12px!important;color:var(--mute)!important;white-space:nowrap}.lcards .lnw::before{display:none!important}
+ .lcards .lpg{grid-area:p!important;padding:0!important;gap:0!important}.lcards .lpg b{font-size:13px!important;font-weight:500!important;color:var(--sub);padding-left:0!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}.lcards .lpg b::before{display:none!important}
+ .lcards .lpg .nil{display:none}
+}
 </style><style>
 .lsrch{display:flex;gap:12px;align-items:center;margin-bottom:14px}.lsrch input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;font:inherit;font-size:15px}.lsrch input:focus{outline:none;border-color:var(--fg)}.lsrch span{color:var(--mute);font-size:13px;white-space:nowrap}
 .lgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -2099,7 +2117,12 @@ const wm=e.target.closest('[data-wm]');if(wm){const el=document.getElementById('
 /* 2026-11-28 단장님: 모바일은 리더뉴 NOTE·대시보드 숨김 (INDEX 보기 전용) */
 const MOB=matchMedia('(max-width:820px)');const mobSet=()=>document.documentElement.classList.toggle('mob',MOB.matches);mobSet();
 try{MOB.addEventListener('change',()=>{mobSet();render()})}catch(e){}
-{const r0=render;render=async function(){if(MOB.matches&&/^#(note|desk)/.test(location.hash)){location.replace('#list');return}return r0.apply(this,arguments)}}
+/* 모바일: 분류 칩 줄 → 고르기 상자 한 개 */
+function lcSel(){if(!MOB.matches)return;const n=document.querySelector('nav.lcats:not(.lkr)');if(!n||(n.previousElementSibling&&n.previousElementSibling.classList.contains('lcsel')))return;
+ let h='',g=null,on='';n.querySelectorAll('.lcg,.lcat').forEach(el=>{if(el.classList.contains('lcg')){if(g!==null)h+='</optgroup>';g=el.textContent;h+=`<optgroup label="${E(g)}">`}else{const v=el.dataset.lv,t=el.querySelector('span'),c=el.querySelector('small');if(el.classList.contains('on'))on=v;h+=`<option value="${E(v)}"${el.classList.contains('on')?' selected':''}>${E(t?t.textContent:v)}${c?' ('+c.textContent+')':''}</option>`}});if(g!==null)h+='</optgroup>';
+ const w=document.createElement('label');w.className='lcsel';w.innerHTML=`<span>분류</span><select aria-label="분류 고르기">${on?'':'<option value="" selected>분류를 고르세요</option>'}${h}</select>`;n.before(w);
+ w.querySelector('select').addEventListener('change',e=>{const v=e.target.value;const bt=[...n.querySelectorAll('.lcat')].find(x=>x.dataset.lv===v);if(bt)bt.click()})}
+{const r0=render;render=async function(){if(MOB.matches&&/^#(note|desk)/.test(location.hash)){location.replace('#list');return}const x=await r0.apply(this,arguments);try{lcSel()}catch(e){}return x}}
 addEventListener('hashchange',()=>{render().then(()=>scrollTo(0,0))});render();
 
 </script><style>html.nonote .dkbtn,html.nonote .bt-d,html.nonote .zzb,html.nonote .zzo,html.nonote .zzr,html.nonote #trialBar,html.nonote .dktag{display:none!important}</style>
