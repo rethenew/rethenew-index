@@ -837,6 +837,10 @@ html.noai [data-dk="planai"]{display:none!important}
  .pdcard{min-height:60px}.pdadd{min-height:56px}.pdempty{padding:18px 12px}
  .pdh h2{font-size:16px}
 }
+
+/* 모바일: NOTE·대시보드 숨김 (2026-11-28) */
+html.mob .dkbtn,html.mob .bt-d,html.mob .zzb,html.mob .zzo,html.mob .zzr,html.mob #trialBar,html.mob .dktag{display:none!important}
+html.mob .bento{grid-template-columns:minmax(0,1fr)!important}
 </style><style>
 .lsrch{display:flex;gap:12px;align-items:center;margin-bottom:14px}.lsrch input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;font:inherit;font-size:15px}.lsrch input:focus{outline:none;border-color:var(--fg)}.lsrch span{color:var(--mute);font-size:13px;white-space:nowrap}
 .lgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -1644,11 +1648,11 @@ function pjPanel(o,j){const st=PJO[j.name];if(!st)return '';
  const k=st.k,L=(PJS[j.name]||[]).filter(r=>r[2].includes(k+1));
  return `<div class="pjpan"><div class="pjph"><b>「${E(j.st[k])}」 단계 사업 ${L.length}건</b><span class="msg">리더뉴 ${j.base==='eindex'?'환경문제혁신':'사회문제혁신'} INDEX 수록 기준 · 위 칸의 숫자와 같습니다</span><button class="lclr" data-pjst="${E(j.name)}|${k}">닫기 ×</button></div>
   <div class="pjog">${L.map(r=>`<div class="pjo${r[3]===o.i?' me':''}">${r[3]>=0?`<a href="#o-${r[3]}"><b>${E(r[0])}</b></a>`:`<b>${E(r[0])}</b>`}<span title="${E(r[1])}">${E(r[1])}</span>${r[4]?`<a class="pjsrc" href="${E(r[4])}" target="_blank" rel="noopener">출처 ↗</a>`:''}</div>`).join('')||'<p class="note">이 단계에 수록된 사업이 아직 없습니다.</p>'}</div></div>`}
-function pjLoad(){if(!PJSP)PJSP=Promise.all([fetch('pjs.json?v=6c644bc745').then(r=>r.json()),fetch('stg.json?v=6c644bc745').then(r=>r.json()).catch(()=>({}))]).then(([d,g])=>{PJS=d;STG=g}).catch(()=>{PJSP=null});return PJSP}
+function pjLoad(){if(!PJSP)PJSP=Promise.all([fetch('pjs.json?v=65de5cca6f').then(r=>r.json()),fetch('stg.json?v=65de5cca6f').then(r=>r.json()).catch(()=>({}))]).then(([d,g])=>{PJS=d;STG=g}).catch(()=>{PJSP=null});return PJSP}
 
 async function getOrg(i){const r=IX[i];if(!r)return null;const sh=String(r[8]).padStart(2,'0');
- if(!CACHE[sh])CACHE[sh]=fetch('o/'+sh+'.json?v=6c644bc745').then(x=>{if(!x.ok)throw new Error('load');return x.json()});
- if(!TCACHE[sh])TCACHE[sh]=fetch('t/'+sh+'.json?v=6c644bc745').then(x=>x.ok?x.json():{}).catch(()=>({})).then(t=>Object.assign(TH,t));
+ if(!CACHE[sh])CACHE[sh]=fetch('o/'+sh+'.json?v=65de5cca6f').then(x=>{if(!x.ok)throw new Error('load');return x.json()});
+ if(!TCACHE[sh])TCACHE[sh]=fetch('t/'+sh+'.json?v=65de5cca6f').then(x=>x.ok?x.json():{}).catch(()=>({})).then(t=>Object.assign(TH,t));
  const [d]=await Promise.all([CACHE[sh],TCACHE[sh]]);return d[String(i)]}
 const TH={},TCACHE={};
 const ph=(h,p,s)=>`<div class="ph"><div><h1>${h}</h1>${p?`<p>${p}</p>`:''}</div>${s?`<div class="src">${s}</div>`:''}</div>`;
@@ -1735,7 +1739,7 @@ function listView(){if(LM==='grp'&&LF==='지자체')LM='sub';
   return `<div class="lrw"><a class="lrn" href="${OH()}${r[0]}"><em class="lk">${E(KN[r[2]])}${r[3]?' · '+E(r[3]):''}</em><i class="lo">${E(r[1].replace(/^\(?(주|재)\)?/,"").slice(0,2))}</i><b>${E(r[1])}</b><small>${E(meta(r))}</small></a><div class="lpg">${GPJ?(gp&&gp.length?`<b>${E(gp[0])}</b><small>${E(LV)} 관련 사업${gp.length>1?` 외 ${gp.length-1}개`:''}</small>`:`<small class="nil">사업명 미상</small>`):op[0]?`<b>${E(op[0])}</b><small>${op[1]}년부터 · ${NOWY-(+op[1])+1}년째</small>`:'<small class="nil">시작 연도가 확인된 사업 없음</small>'}</div><div class="lgr">${g.map(x=>`<span>${E(x)}</span>`).join('')}</div><span class="lnw">${r[15]?(GPJ?'기관 전체 최근 소식 ':'최근 소식 ')+E(r[15]):'최근 소식 없음'}</span>${PICK?`<a class="lgo pk" href="#desk-${r[0]}">이 기관 NOTE 열기 →</a>`:`<button class="lcmp${on?' on':''}" data-cmp="${r[0]}" aria-pressed="${on}" aria-label="${E(r[1])} ${on?'비교에서 빼기':'비교에 담기'}">${on?'비교 담음 ✓':'비교 담기'}</button><a class="lgo" href="#o-${r[0]}">기관 페이지</a>`}</div>`}).join('');
  if(MAPM)LM='map';
  return top+(!PICK&&LQC&&!/^[ㄱ-ㅎ]+$/.test(LQC)&&LQC.length>=2?sxSection(LQC):'')+(LM==='grp'?pgMap(C):'')+`<div class="lpick${LM==='grp'?' one':LM==='abc'?' abc':MAPM?' mapm':''}" id="lpick">${LM==='grp'?'':MAPM&&!LQC?`<nav class="lcats lkr" aria-label="시·도 지도">${krMap(LV,C)}</nav>`:`<nav class="lcats" aria-label="분류">${cats}</nav>`}<section class="lres"><div class="lrh"><h2>${title} <small>${L.length}곳</small></h2>${MAPM&&!LQC?'':`<span class="lsort">${(LF==='지자체'?[['a','가나다순']]:LM==='grp'?[['n','최근 소식 순'],['a','가나다순']]:[['n','최근 소식 순'],['o','오래 이어온 순'],['a','가나다순']]).map(([k,l])=>`<button data-ls="${k}" class="${LS===k?'on':''}">${l}</button>`).join('')}</span>`}</div>${MAPM&&!LQC?pvMap(L):''}${GST&&STG&&STG[LV]?gStrip(LV,GST):''}${rows?`<div class="lcards">${rows}</div>`:'<p class="note">찾는 기관이 없습니다.</p>'}</section></div>`+(PICK?'':cmpBar())}
-let GEO=null,GEOP=null;function geoLoad(){if(!GEOP)GEOP=fetch('geo.json?v=6c644bc745').then(r=>r.json()).then(d=>{GEO=d}).catch(()=>{GEOP=null});return GEOP}
+let GEO=null,GEOP=null;function geoLoad(){if(!GEOP)GEOP=fetch('geo.json?v=65de5cca6f').then(r=>r.json()).then(d=>{GEO=d}).catch(()=>{GEOP=null});return GEOP}
 const KRC={se:'서울',bs:'부산',dg:'대구',dj:'대전',us:'울산',sj:'세종',gg:'경기',gw:'강원',cb:'충북',cn:'충남',jb:'전북',jn:'전남',gb:'경북',gn:'경남',jj:'제주',ic:'인천'};
 function krMap(lv,C){if(!GEO)return '<p class="note">지도를 불러오는 중…</p>';const code=Object.keys(KRC).find(k=>KRC[k]===lv);let b=GEO.kr.replace(/data-prov="(\w+)"/g,(m,c)=>`${m} data-mpv="${KRC[c]||''}"`);if(code)b=b.replace(new RegExp('class="krg"( data-prov="'+code+'")','g'),'class="krg on"$1');return `<p class="lkh">시·도를 누르세요</p><svg class="krmap" viewBox="0 0 1000 935" role="img" aria-label="전국 시도 지도">${b}</svg><p class="note">지도: 리더뉴 지역문제 MAP</p>`}
 function pvMap(L){if(!GEO||!L.length)return '';const full=L[0][14];const g=GEO.pv[full];if(!g)return '';const by={};L.forEach(r=>{by[r[1].split(' ').slice(1).join(' ')||r[1]]=r[0]});const b=g[2].replace(/<path class="rg"([^>]*?)data-n="([^"]+)"/g,(m,a,n)=>by[n]!=null?`<path class="rg go"${a}data-n="${n}" data-mgo="${by[n]}"`:`<path class="rg"${a}data-n="${n}"`);return `<div class="pvmap"><svg class="jg" viewBox="0 0 ${g[0]} ${g[1]}" role="img" aria-label="${E(full)} 시군구 지도">${b}</svg><div class="mtip" id="mtip" hidden></div><p class="note">시군구에 마우스를 올리면 요약이, 누르면 지자체 페이지가 열립니다 · 지도: 리더뉴 지역문제 MAP</p></div>`}
@@ -1747,7 +1751,7 @@ let FMT=0;new MutationObserver(()=>{cancelAnimationFrame(FMT);FMT=requestAnimati
 
 /* 내용 검색 (사회문제·지역문제·사업·사회적 가치) */
 let SX=null,SXP=null;
-let SXERR=0;function sxLoad(){if(!SXP)SXP=fetch('sx.json?v=6c644bc745').then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{SX=d;SXERR=0;return d}).catch(()=>{SXP=null;SXERR=Date.now();return null});return SXP}
+let SXERR=0;function sxLoad(){if(!SXP)SXP=fetch('sx.json?v=65de5cca6f').then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{SX=d;SXERR=0;return d}).catch(()=>{SXP=null;SXERR=Date.now();return null});return SXP}
 const SXK=['사회문제','지역문제','사업','지자체 사업','사회적 가치','소식','수상·인증','함께하는 곳'];
 /* 띄어쓰기 무시 + 같은 말 묶음 (환경유전자=eDNA=환경DNA, 시민과학=시민 과학) */
 const SXSYN=[['환경유전자','edna','환경dna','환경디엔에이'],['시민과학','시민과학자','citizenscience'],['생물다양성','biodiversity'],['탄소중립','넷제로','netzero'],['자립준비청년','보호종료아동'],['케미칼플래닛','chemicalplanet','케미컬플래닛']];
@@ -2025,7 +2029,7 @@ function zzMeta(el,k){const tx=x=>(x&&x.textContent||'').replace(/\s+/g,' ').tri
  const on=k==='org'?'':(O?O.n:'');const id=k+':'+(k==='org'?u:(O?O.i:'')+':'+(/^https?:/.test(u)?u:t)).slice(0,200);
  return {id,k,t,s:d,u,o:O?O.i:null,on}}
 function zzBtn(it){const on=zzHas(it.id);return `<button type="button" class="zzb${on?' on':''}" data-zz="${E(JSON.stringify(it))}" aria-pressed="${on}" title="${on?'담음 — 누르면 빼기':'리더뉴 NOTE에 담기'}">${on?'♥':'♡'}</button>`}
-function zzDeco(){const M=$('main');if(!M||/^#(desk|note)/.test(location.hash))return;
+function zzDeco(){const M=$('main');if(!M||document.documentElement.classList.contains('mob')||/^#(desk|note)/.test(location.hash))return;
  M.querySelectorAll('a.pi:not([data-zzd]),div.pi:not([data-zzd])').forEach(el=>{el.dataset.zzd=1;const k=zzCatOf(el);const l=el.lastElementChild;if(!l)return;const w=document.createElement('span');w.className='zzw';l.replaceWith(w);w.appendChild(l);w.insertAdjacentHTML('beforeend',zzBtn(zzMeta(el,k)))});
  M.querySelectorAll('a.ccd:not([data-zzd])').forEach(el=>{el.dataset.zzd=1;const cg=el.querySelector('.cg');const it=zzMeta(el,'prog');if(cg){const w=document.createElement('span');w.className='zzl';cg.replaceWith(w);w.appendChild(cg);w.insertAdjacentHTML('beforeend',zzBtn(it))}else el.insertAdjacentHTML('beforeend',`<span class="zzr">${zzBtn(it)}</span>`)});
  M.querySelectorAll('a.arc:not([data-zzd]),a.vc:not([data-zzd])').forEach(el=>{el.dataset.zzd=1;const k=zzCatOf(el);el.insertAdjacentHTML('beforeend',`<span class="zzr">${zzBtn(zzMeta(el,k))}</span>`)});
@@ -2074,6 +2078,10 @@ const wm=e.target.closest('[data-wm]');if(wm){const el=document.getElementById('
  const lf=e.target.closest('[data-lf]');if(lf){e.preventDefault();LF=lf.dataset.lf;LV='';if(!LISTH()){location.hash='list'}else render();return}
  const c=e.target.closest('[data-cat]');if(c&&O){CAT=c.dataset.cat;$('main').innerHTML=press(O);fixA();return}
  const j=e.target.closest('[data-jump]');if(j){e.preventDefault();const el=document.getElementById('ar-'+j.dataset.jump);if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-20,behavior:'smooth'})}});
+/* 2026-11-28 단장님: 모바일은 리더뉴 NOTE·대시보드 숨김 (INDEX 보기 전용) */
+const MOB=matchMedia('(max-width:820px)');const mobSet=()=>document.documentElement.classList.toggle('mob',MOB.matches);mobSet();
+try{MOB.addEventListener('change',()=>{mobSet();render()})}catch(e){}
+{const r0=render;render=async function(){if(MOB.matches&&/^#(note|desk)/.test(location.hash)){location.replace('#list');return}return r0.apply(this,arguments)}}
 addEventListener('hashchange',()=>{render().then(()=>scrollTo(0,0))});render();
 
 </script><style>html.nonote .dkbtn,html.nonote .bt-d,html.nonote .zzb,html.nonote .zzo,html.nonote .zzr,html.nonote #trialBar,html.nonote .dktag{display:none!important}@media (min-width:900px){html.nonote .bento{grid-template-columns:minmax(0,2fr) minmax(0,1.3fr)!important}}</style>
